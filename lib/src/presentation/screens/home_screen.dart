@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _sendReceiverService.createServer();
+    // _sendReceiverService.createServer();
   }
 
   @override
@@ -57,6 +57,18 @@ class _HomeScreenState extends State<HomeScreen> {
         height: double.infinity,
         child: Column(
           children: [
+            InkWell(
+              onTap: () async {
+                _sendReceiverService.createServer();
+              },
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                child: const Text('Create Server'),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
             InkWell(
               onTap: () async {
                 _sendReceiverService.send();

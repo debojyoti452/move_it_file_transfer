@@ -22,6 +22,7 @@ dependencies:
   shelf: 1.4.0
   shelf_router: 1.1.3
   dio: ^4.0.6
+  shared_preferences: ^2.0.17
 
 dev_dependencies:
   flutter_test:

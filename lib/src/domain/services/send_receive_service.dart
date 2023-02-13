@@ -26,12 +26,19 @@
  *
  */
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 class SendReceiverService {
   late HttpServer _server;
+  final Future<SharedPreferences> _prefs =
+      SharedPreferences.getInstance();
+  final client = HttpClient();
 
   void createServer() async {
     var ip = await getIp();
@@ -40,46 +47,103 @@ class SendReceiverService {
       return;
     }
     _server = await HttpServer.bind(ip.first, 8080);
+    _server.listen((HttpRequest event) async {
+      log('Request: ${event.requestedUri.path}');
+      switch (event.requestedUri.path) {
+        case '/data':
+          // post data
+
+          var response =
+              await event.asyncMap((element) async {
+            // convert utf8list to string
+            var data = utf8.decode(element);
+            return data;
+          }).first;
+
+          _writeItOnPref(jsonEncode(response));
+          event.response.write('Data Saved');
+          event.response.close();
+          break;
+        case '/getData':
+          var data = await _readItFromFile();
+          event.response.writeln(
+              'Received request ${event.method}: ${event.uri.path}');
+          event.response.writeln(data);
+          event.response.close();
+          break;
+        default:
+      }
+    });
     log('Server started at ${_server.address} port ${_server.port}');
-    send();
+  }
+
+  void _writeItOnPref(String data) async {
+    final SharedPreferences prefs = await _prefs;
+    prefs.setString('data', data);
+  }
+
+  Future<String> _readItFromFile() async {
+    final sharedPrefs = await _prefs;
+    return sharedPrefs.getString('data') ?? 'Not Found';
   }
 
   void send() async {
     var dataMap = {
       'name': 'Debojyoti Singha',
       'spouse': 'Ananya Singha',
-      'age': 45,
+      'age': 26,
+      'prof': 'Developer'
     };
     // send data
-    var ip = await getIp();
-    var client = HttpClient();
-    var request = await client
-        .postUrl(Uri.parse('http://${ip.first}:8080'));
-    request.headers.set('content-type', 'application/json');
-    request.add(utf8.encode(jsonEncode(dataMap)));
+    var url = Uri.parse(
+        'http://${_server.address.host}:${_server.port}/data');
+    var httpClient = HttpClient();
+    var request = await httpClient.postUrl(url);
+    request.headers.set(HttpHeaders.contentTypeHeader,
+        'application/json; charset=UTF-8');
+    request.write(jsonEncode(dataMap));
     var response = await request.close();
-    if (response.statusCode == HttpStatus.ok) {
-      var res =
-          await response.transform(utf8.decoder).join();
-      log('$res sent successfully at ${DateTime.now()} from ${ip.first} to ${_server.address} port ${_server.port}');
-    }
+    log('Response: ${response.statusCode}');
   }
 
   void receive() async {
-    var ip = await getIp();
-    if (ip.isEmpty) {
-      log('No IP found');
-      return;
-    }
     // check if server is running
-    var client = HttpClient();
-    var request = await client
-        .getUrl(Uri.parse('http://192.168.0.201:8080'));
-    var response = await request.close();
-    if (response.statusCode == HttpStatus.ok) {
-      var data =
-          await response.transform(utf8.decoder).join();
-      log(data);
+    var localIp =
+        Uri.parse('http://192.168.0.201:8080/getData');
+    try {
+      var socket =
+          await Socket.connect(localIp.host, localIp.port)
+              .timeout(const Duration(seconds: 2500));
+      log('Server running at ${socket.address.host}');
+      socket.listen((event) {
+        log('Received: ${utf8.decode(event)}');
+      });
+      socket.destroy();
+
+      var response = await Dio().get(localIp.toString());
+      log('Response: ${response.data}');
+    } catch (e) {
+      log('Server not running');
+    }
+  }
+
+  /// dio download
+  void download() async {
+    var url = Uri.parse('http://');
+    var savePath =
+        'C:\\Users\\Debojyoti Singha\\Downloads\\';
+    var fileName = 'test.txt';
+    var dio = Dio();
+    try {
+      await dio
+          .download(url.toString(), savePath + fileName,
+              onReceiveProgress: (received, total) {
+        if (total != -1) {
+          log('${(received / total * 100).toStringAsFixed(0)}%');
+        }
+      });
+    } catch (e) {
+      log('Download failed: $e');
     }
   }
 
