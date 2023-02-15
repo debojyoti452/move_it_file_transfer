@@ -26,4 +26,4 @@
 #  */
 #
 
-cd scripts && ./init.sh && cd .. && cd continental_network && flutter clean && flutter pub get && cd ..
+cd scripts && ./init.sh && cd .. && cd dx_http && flutter clean && flutter pub get && cd ..
