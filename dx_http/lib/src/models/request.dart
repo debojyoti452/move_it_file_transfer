@@ -26,7 +26,7 @@
  *
  */
 
-import 'package:continental_network/src/interface/methods.dart';
+import '../interface/methods.dart';
 
 abstract class _Request {
   String get url;

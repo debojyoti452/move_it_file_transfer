@@ -31,10 +31,10 @@ import 'dart:io';
 
 import '../interface/methods.dart';
 
-class _ContinentalCalls {
+class _DxHttpCalls {
   late final HttpClient _httpClients;
 
-  _ContinentalCalls() {
+  _DxHttpCalls() {
     _httpClients = HttpClient();
   }
 
@@ -86,8 +86,7 @@ class _ContinentalCalls {
 }
 
 class ContinentalCalls extends Methods {
-  static final _ContinentalCalls _instance =
-      _ContinentalCalls();
+  static final _DxHttpCalls _instance = _DxHttpCalls();
 
   @override
   Future<Response> get<Response>(
