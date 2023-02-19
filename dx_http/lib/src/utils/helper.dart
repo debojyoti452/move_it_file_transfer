@@ -26,70 +26,36 @@
  *
  */
 
-import 'package:dx_http/src/models/response.dart';
+import 'dart:io';
 
-import '../interface/methods.dart';
-import 'dx_http_core.dart';
+import 'package:path_provider/path_provider.dart';
 
-class DxHttp extends Methods {
-  late DxHttpCore _instance;
-
-  /// constructor
-  DxHttp() : super() {
-    _instance = DxHttpCore();
+mixin Helper {
+  static Map<String, dynamic> decodeHeader(
+    HttpHeaders headers,
+  ) {
+    Map<String, dynamic> headers0 = {};
+    headers.forEach((key, value) {
+      headers0[key] = value;
+    });
+    return headers0;
   }
 
-  @override
-  Future<Response<T>> get<T>(
-    String url, {
-    Map<String, dynamic>? headers,
-    Map<String, dynamic>? params,
-  }) {
-    return _instance.get<T>(
-      url,
-      headers: headers,
-      params: params,
-    );
+  static Future<File> saveFile(
+    String data,
+    String savePath,
+  ) async {
+    File file = File(savePath);
+    file.writeAsString(data);
+    return file;
   }
 
-  @override
-  Future<Response<String>> post(
-    String url, {
-    Map<String, dynamic>? headers,
-    Map<String, dynamic>? params,
-  }) {
-    return _instance.post(
-      url,
-      headers: headers,
-      params: params,
-    );
-  }
-
-  @override
-  Future<Response<T>> download<T>(
-    String url, {
-    Map<String, dynamic>? headers,
-    Map<String, dynamic>? params,
-  }) {
-    return _instance.download<T>(
-      url,
-      headers: headers,
-      params: params,
-    );
-  }
-
-  @override
-  Future<Response<File>> downloadFile<File>(
-    String url, {
-    Map<String, dynamic>? headers,
-    Map<String, dynamic>? params,
-    String? savePath,
-  }) {
-    return _instance.downloadFile<File>(
-      url,
-      headers: headers,
-      params: params,
-      savePath: savePath,
-    );
+  static Future<String> getFileNameFromUrl(
+    String url,
+  ) async {
+    var name = url.split('/').last;
+    String dir =
+        (await getApplicationDocumentsDirectory()).path;
+    return '$dir/${DateTime.now().millisecondsSinceEpoch}_$name';
   }
 }

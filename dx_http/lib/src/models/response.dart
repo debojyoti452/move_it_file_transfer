@@ -23,29 +23,28 @@
  *  *  * SOFTWARE.
  *  *  * Contact Email: support@swingtechnologies.in
  *  * ******************************************************************************************
- *  
  */
 
-abstract class _Response {
+abstract class _Response<T> {
   int get statusCode;
 
   String get statusMessage;
 
-  dynamic get data;
+  T get data;
 
   Map<String, dynamic> get headers;
 }
 
-class Response extends _Response {
+class Response<T> extends _Response<T> {
   int? _statusCode;
   String? _statusMessage;
-  dynamic _data;
+  T? _data;
   Map<String, dynamic>? _headers;
 
   Response({
     int? statusCode,
     String? statusMessage,
-    dynamic data,
+    T? data,
     Map<String, dynamic>? headers,
   }) {
     _statusCode = statusCode;
@@ -61,7 +60,7 @@ class Response extends _Response {
   String get statusMessage => _statusMessage ?? 'Not Found';
 
   @override
-  dynamic get data => _data;
+  T get data => _data!;
 
   @override
   Map<String, dynamic> get headers => _headers ?? {};

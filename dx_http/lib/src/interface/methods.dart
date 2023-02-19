@@ -26,6 +26,8 @@
  *
  */
 
+import '../models/response.dart';
+
 enum MethodType {
   GET,
   POST,
@@ -58,15 +60,28 @@ abstract class Methods {
     }
   }
 
-  Future<T> get<T>(
+  Future<Response<T>> get<T>(
     String url, {
     Map<String, dynamic>? headers,
     Map<String, dynamic>? params,
   });
 
-  Future<T> post<T>(
+  Future<Response<String>> post(
     String url, {
     Map<String, dynamic>? headers,
     Map<String, dynamic>? params,
+  });
+
+  Future<Response<T>> download<T>(
+    String url, {
+    Map<String, dynamic>? headers,
+    Map<String, dynamic>? params,
+  });
+
+  Future<Response<File>> downloadFile<File>(
+    String url, {
+    Map<String, dynamic>? headers,
+    Map<String, dynamic>? params,
+    String? savePath,
   });
 }

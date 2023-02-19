@@ -26,6 +26,7 @@
  *
  */
 
+import 'package:dx_http/dx_http.dart';
 import 'package:flutter/material.dart';
 import 'package:move_app_fileshare/src/domain/services/send_receive_service.dart';
 
@@ -39,11 +40,41 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final SendReceiverService _sendReceiverService =
       SendReceiverService();
+  final DxHttp _dxHttp = DxHttp();
+  final baseUrl = 'https://reqres.in/api/';
 
   @override
   void initState() {
     super.initState();
     // _sendReceiverService.createServer();
+  }
+
+  void _send() async {
+    // var resp = await _dxHttp.post(
+    //   '${baseUrl}users',
+    //   params: {
+    //     'name': 'test',
+    //     'price': 100,
+    //     'quantity': 10,
+    //   },
+    // );
+    //
+    // print(resp.data);
+    //
+    // var response =
+    //     await _dxHttp.get<String>('${baseUrl}users/2');
+    // print(response.data);
+    //https://tools.learningcontainer.com/sample-json-file.json
+
+    var data = await _dxHttp.downloadFile(
+      'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+    );
+
+    // var data = await _dxHttp.downloadFile(
+    //   'https://tools.learningcontainer.com/sample-json-file.json',
+    // );
+
+    print(data.data);
   }
 
   @override
@@ -90,6 +121,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: const Text('Receive'),
               ),
             ),
+            const SizedBox(
+              height: 20,
+            ),
+            InkWell(
+              onTap: () async {
+                _send();
+              },
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                child: const Text('Test DxHttp'),
+              ),
+            )
           ],
         ),
       ),
