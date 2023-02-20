@@ -32,13 +32,14 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:dx_http/dx_http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SendReceiverService {
   late HttpServer _server;
   final Future<SharedPreferences> _prefs =
       SharedPreferences.getInstance();
-  final client = HttpClient();
+  final _dxHttp = DxHttp();
 
   void createServer() async {
     var ip = await getIp();
@@ -91,36 +92,24 @@ class SendReceiverService {
     var dataMap = {
       'name': 'Debojyoti Singha',
       'spouse': 'Ananya Singha',
-      'age': 26,
+      'age': 27,
       'prof': 'Developer'
     };
     // send data
-    var url = Uri.parse(
-        'http://${_server.address.host}:${_server.port}/data');
-    var httpClient = HttpClient();
-    var request = await httpClient.postUrl(url);
-    request.headers.set(HttpHeaders.contentTypeHeader,
-        'application/json; charset=UTF-8');
-    request.write(jsonEncode(dataMap));
-    var response = await request.close();
+    var url =
+        'http://${_server.address.host}:${_server.port}/data';
+    var response = await _dxHttp.post(
+      url,
+      params: dataMap,
+    );
     log('Response: ${response.statusCode}');
   }
 
   void receive() async {
     // check if server is running
-    var localIp =
-        Uri.parse('http://192.168.0.201:8080/getData');
+    var localIp = 'http://192.168.0.201:8080/getData';
     try {
-      var socket =
-          await Socket.connect(localIp.host, localIp.port)
-              .timeout(const Duration(seconds: 2500));
-      log('Server running at ${socket.address.host}');
-      socket.listen((event) {
-        log('Received: ${utf8.decode(event)}');
-      });
-      socket.destroy();
-
-      var response = await Dio().get(localIp.toString());
+      var response = await _dxHttp.get(localIp);
       log('Response: ${response.data}');
     } catch (e) {
       log('Server not running');

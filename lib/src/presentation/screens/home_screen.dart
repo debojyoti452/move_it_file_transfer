@@ -26,8 +26,12 @@
  *
  */
 
+import 'dart:developer';
+
 import 'package:dx_http/dx_http.dart';
 import 'package:flutter/material.dart';
+import 'package:move_app_fileshare/src/data/model/client_model.dart';
+import 'package:move_app_fileshare/src/domain/core/move_server_service.dart';
 import 'package:move_app_fileshare/src/domain/services/send_receive_service.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -38,10 +42,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final SendReceiverService _sendReceiverService =
-      SendReceiverService();
-  final DxHttp _dxHttp = DxHttp();
+  final SendReceiverService _sendReceiverService = SendReceiverService();
   final baseUrl = 'https://reqres.in/api/';
+  final MoveServerService _moveServerService = MoveServerService();
+  final DxHttp _dxHttp = DxHttp();
 
   @override
   void initState() {
@@ -49,32 +53,35 @@ class _HomeScreenState extends State<HomeScreen> {
     // _sendReceiverService.createServer();
   }
 
-  void _send() async {
-    // var resp = await _dxHttp.post(
-    //   '${baseUrl}users',
-    //   params: {
-    //     'name': 'test',
-    //     'price': 100,
-    //     'quantity': 10,
-    //   },
-    // );
-    //
-    // print(resp.data);
-    //
-    // var response =
-    //     await _dxHttp.get<String>('${baseUrl}users/2');
-    // print(response.data);
-    //https://tools.learningcontainer.com/sample-json-file.json
-
-    var data = await _dxHttp.downloadFile(
-      'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-    );
-
-    // var data = await _dxHttp.downloadFile(
-    //   'https://tools.learningcontainer.com/sample-json-file.json',
-    // );
-
-    print(data.data);
+  void runServer() {
+    try {
+      _moveServerService.createServer();
+    } catch (e) {
+      debugPrint(e.toString());
+    } finally {
+      Future.delayed(const Duration(seconds: 2), () {
+        _moveServerService.getServerStream()?.listen((event) async {
+          switch (event.requestedUri.path) {
+            case '/data':
+              var clientModel = const ClientModel(
+                clientId: '62146514',
+                clientName: 'Ananya',
+                ipAddress: '2565413',
+                token: '123456',
+              );
+              event.response.write(clientModel.toJson());
+              event.response.write('Data Saved');
+              event.response.close();
+              break;
+            case '/getData':
+              event.response.write('Data Saved');
+              event.response.close();
+              break;
+            default:
+          }
+        });
+      });
+    }
   }
 
   @override
@@ -90,7 +97,8 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             InkWell(
               onTap: () async {
-                _sendReceiverService.createServer();
+                // _sendReceiverService.createServer();
+                runServer();
               },
               child: Container(
                 padding: const EdgeInsets.all(20),
@@ -102,7 +110,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             InkWell(
               onTap: () async {
-                _sendReceiverService.send();
+                var data = await _dxHttp
+                    .get('${_moveServerService.getLocalAddress.address}/data');
+                log(data.data);
+                // _sendReceiverService.send();
               },
               child: Container(
                 padding: const EdgeInsets.all(20),
@@ -114,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             InkWell(
               onTap: () async {
-                _sendReceiverService.receive();
+                // _sendReceiverService.receive();
               },
               child: Container(
                 padding: const EdgeInsets.all(20),
@@ -126,7 +137,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             InkWell(
               onTap: () async {
-                _send();
+                _moveServerService.nearbyClients().listen((event) {
+                  log('Nearby Client: $event');
+                });
               },
               child: Container(
                 padding: const EdgeInsets.all(20),
@@ -137,5 +150,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _moveServerService.stopServer();
+    super.dispose();
   }
 }

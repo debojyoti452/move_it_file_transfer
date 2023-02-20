@@ -26,70 +26,26 @@
  *
  */
 
-import 'package:dx_http/src/models/response.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../interface/methods.dart';
-import 'dx_http_core.dart';
+part 'network_address_model.freezed.dart';
+part 'network_address_model.g.dart';
 
-class DxHttp extends Methods {
-  late DxHttpCore _instance;
+enum NetworkAddressType { ipv4, ipv6 }
 
-  /// constructor
-  DxHttp() : super() {
-    _instance = DxHttpCore();
-  }
+@freezed
+class NetworkAddressModel with _$NetworkAddressModel {
+  @JsonSerializable(
+      fieldRename: FieldRename.snake, explicitToJson: true)
+  const factory NetworkAddressModel({
+    @JsonKey(name: 'address') String? address,
+    @JsonKey(name: 'host') String? host,
+    @JsonKey(name: 'port') int? port,
+    @JsonKey(name: 'path') String? path,
+    @JsonKey(name: 'type') NetworkAddressType? type,
+  }) = _NetworkAddressModel;
 
-  @override
-  Future<Response<T>> get<T>(
-    String url, {
-    Map<String, dynamic>? headers,
-    Map<String, dynamic>? params,
-  }) {
-    return _instance.get<T>(
-      url,
-      headers: headers,
-      params: params,
-    );
-  }
-
-  @override
-  Future<Response<String>> post(
-    String url, {
-    Map<String, dynamic>? headers,
-    Map<String, dynamic>? params,
-  }) {
-    return _instance.post(
-      url,
-      headers: headers,
-      params: params,
-    );
-  }
-
-  @override
-  Future<Response<T>> download<T>(
-    String url, {
-    Map<String, dynamic>? headers,
-    Map<String, dynamic>? params,
-  }) {
-    return _instance.download<T>(
-      url,
-      headers: headers,
-      params: params,
-    );
-  }
-
-  @override
-  Future<Response<File>> downloadFile<File>(
-    String url, {
-    Map<String, dynamic>? headers,
-    Map<String, dynamic>? params,
-    String? savePath,
-  }) {
-    return _instance.downloadFile<File>(
-      url,
-      headers: headers,
-      params: params,
-      savePath: savePath,
-    );
-  }
+  factory NetworkAddressModel.fromJson(
+          Map<String, dynamic> json) =>
+      _$NetworkAddressModelFromJson(json);
 }

@@ -1,5 +1,7 @@
 # Miscellaneous
+*.freezed.dart
 *.class
+*.g.dart
 *.log
 *.pyc
 *.swp
@@ -42,3 +44,5 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+lib/generated_plugin_registrant.dart

@@ -26,62 +26,25 @@
  *
  */
 
-import '../models/response.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:move_app_fileshare/src/data/model/client_model.dart';
 
-enum MethodType {
-  GET,
-  POST,
-  PUT,
-  DELETE,
-  PATCH,
-}
+import 'file_model.dart';
 
-abstract class Methods {
-  static const String GET = 'GET';
-  static const String POST = 'POST';
-  static const String PUT = 'PUT';
-  static const String DELETE = 'DELETE';
-  static const String PATCH = 'PATCH';
+part 'move_send_model.freezed.dart';
+part 'move_send_model.g.dart';
 
-  static String getMethod(MethodType methodType) {
-    switch (methodType) {
-      case MethodType.GET:
-        return GET;
-      case MethodType.POST:
-        return POST;
-      case MethodType.PUT:
-        return PUT;
-      case MethodType.DELETE:
-        return DELETE;
-      case MethodType.PATCH:
-        return PATCH;
-      default:
-        return GET;
-    }
-  }
+@freezed
+class MoveSendModel with _$MoveSendModel {
+  @JsonSerializable(
+      fieldRename: FieldRename.snake, explicitToJson: true)
+  const factory MoveSendModel({
+    @JsonKey(name: 'client_data') ClientModel? clientData,
+    @JsonKey(name: 'file_list')
+        List<FileModel>? fileDataList,
+  }) = _MoveSendModel;
 
-  Future<Response<T>> get<T>(
-    String url, {
-    Map<String, dynamic>? headers,
-    Map<String, dynamic>? params,
-  });
-
-  Future<Response<String>> post(
-    String url, {
-    Map<String, dynamic>? headers,
-    Map<String, dynamic>? params,
-  });
-
-  Future<Response<T>> download<T>(
-    String url, {
-    Map<String, dynamic>? headers,
-    Map<String, dynamic>? params,
-  });
-
-  Future<Response<File>> downloadFile<File>(
-    String url, {
-    Map<String, dynamic>? headers,
-    Map<String, dynamic>? params,
-    String? savePath,
-  });
+  factory MoveSendModel.fromJson(
+          Map<String, dynamic> json) =>
+      _$MoveSendModelFromJson(json);
 }

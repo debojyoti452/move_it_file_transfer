@@ -23,39 +23,23 @@
  *  *  * SOFTWARE.
  *  *  * Contact Email: support@swingtechnologies.in
  *  * ******************************************************************************************
- *
+ *  *
  */
 
-import 'dart:io';
+import 'dart:io' if (dart.library.html) 'dart:html';
 
-import 'package:path_provider/path_provider.dart';
-
-mixin Helper {
-  static Map<String, dynamic> decodeHeader(
-    HttpHeaders headers,
-  ) {
-    Map<String, dynamic> headers0 = {};
-    headers.forEach((key, value) {
-      headers0[key] = value;
-    });
-    return headers0;
+mixin FileHandler {
+  /// Returns the list of integers from the file
+  static List<int> getBytesFromFile(File file) {
+    var bytes = file.readAsBytesSync();
+    return bytes;
   }
 
-  static Future<File> saveFile(
-    String data,
-    String savePath,
-  ) async {
-    File file = File(savePath);
-    file.writeAsString(data);
+  /// Returns the file from the list of integers
+  static File getFileFromBytes(
+      List<int> bytes, String fileName) {
+    var file = File(fileName);
+    file.writeAsBytesSync(bytes);
     return file;
-  }
-
-  static Future<String> getFileNameFromUrl(
-    String url,
-  ) async {
-    var name = url.split('/').last;
-    String dir =
-        (await getApplicationDocumentsDirectory()).path;
-    return '$dir/${DateTime.now().millisecondsSinceEpoch}_$name';
   }
 }

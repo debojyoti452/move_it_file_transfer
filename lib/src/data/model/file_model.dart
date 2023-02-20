@@ -25,3 +25,23 @@
  *  * ******************************************************************************************
  *
  */
+
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'file_model.freezed.dart';
+part 'file_model.g.dart';
+
+@freezed
+class FileModel with _$FileModel {
+  @JsonSerializable(
+      fieldRename: FieldRename.snake, explicitToJson: true)
+  const factory FileModel({
+    @JsonKey(name: 'file_name') String? fileName,
+    @JsonKey(name: 'file_data') List<int>? fileData,
+    @JsonKey(name: 'file_size') int? fileSize,
+    @JsonKey(name: 'file_type') String? fileExtension,
+  }) = _FileModel;
+
+  factory FileModel.fromJson(Map<String, dynamic> json) =>
+      _$FileModelFromJson(json);
+}

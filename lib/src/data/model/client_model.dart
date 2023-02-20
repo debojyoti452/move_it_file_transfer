@@ -26,64 +26,22 @@
  *
  */
 
-import '../interface/methods.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-abstract class _Request {
-  String get url;
+part 'client_model.freezed.dart';
+part 'client_model.g.dart';
 
-  MethodType get method;
+@freezed
+class ClientModel with _$ClientModel {
+  @JsonSerializable(
+      fieldRename: FieldRename.snake, explicitToJson: true)
+  const factory ClientModel({
+    @JsonKey(name: 'client_id') String? clientId,
+    @JsonKey(name: 'client_name') String? clientName,
+    @JsonKey(name: 'token') String? token,
+    @JsonKey(name: 'ip_address') String? ipAddress,
+  }) = _ClientModel;
 
-  Map<String, dynamic> get headers;
-
-  Map<String, dynamic> get body;
-
-  int get timeout;
-
-  bool get isMultipart;
-
-  int get contentLength;
-
-  String get contentType;
-}
-
-class Request extends _Request {
-  String? _url;
-
-  MethodType? _method;
-
-  Map<String, dynamic>? _headers;
-
-  Map<String, dynamic>? _body;
-
-  int? _timeout;
-
-  bool? _isMultipart;
-
-  int? _contentLength;
-
-  String? _contentType;
-
-  @override
-  Map<String, dynamic> get body => _body ?? {};
-
-  @override
-  int get contentLength => _contentLength ?? 0;
-
-  @override
-  String get contentType => _contentType ?? '';
-
-  @override
-  Map<String, dynamic> get headers => _headers ?? {};
-
-  @override
-  bool get isMultipart => _isMultipart ?? false;
-
-  @override
-  MethodType get method => _method ?? MethodType.GET;
-
-  @override
-  int get timeout => _timeout ?? 0;
-
-  @override
-  String get url => _url ?? '';
+  factory ClientModel.fromJson(Map<String, dynamic> json) =>
+      _$ClientModelFromJson(json);
 }

@@ -212,9 +212,11 @@ packages:
   dx_http:
     dependency: "direct main"
     description:
-      path: dx_http
-      relative: true
-    source: path
+      path: "."
+      ref: main
+      resolved-ref: "09e679c7827aa00870f4792a9b659544acb8e6a5"
+      url: "https://github.com/debojyoti452/dxhttp.git"
+    source: git
     version: "0.0.1"
   equatable:
     dependency: "direct main"
@@ -248,6 +250,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.4"
+  file_picker:
+    dependency: "direct main"
+    description:
+      name: file_picker
+      sha256: d090ae03df98b0247b82e5928f44d1b959867049d18d73635e2e0bc3f49542b9
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.2.5"
   fixnum:
     dependency: transitive
     description:
@@ -277,6 +287,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  flutter_plugin_android_lifecycle:
+    dependency: transitive
+    description:
+      name: flutter_plugin_android_lifecycle
+      sha256: "60fc7b78455b94e6de2333d2f95196d32cf5c22f4b0b0520a628804cb463503b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.7"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -327,22 +345,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
-  http:
-    dependency: "direct main"
-    description:
-      name: http
-      sha256: "6aa2946395183537c8b880962d935877325d6a09a2867c3970c05c0fed6ac482"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.13.5"
-  http_methods:
-    dependency: transitive
-    description:
-      name: http_methods
-      sha256: c192bb6fb4ae99d06053f67a2c1c65350a29bc778a39d9a12b96bd2ec820e9dc
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.0"
   http_multi_server:
     dependency: transitive
     description:
@@ -632,21 +634,13 @@ packages:
     source: hosted
     version: "2.1.3"
   shelf:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: shelf
       sha256: c24a96135a2ccd62c64b69315a14adc5c3419df63b4d7c05832a346fdb73682c
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
-  shelf_router:
-    dependency: "direct main"
-    description:
-      name: shelf_router
-      sha256: "0b0bfb835e8b2bb43c5341ee689f0d2851e9cea377a4f2db4ec06a1a99beace4"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.3"
   shelf_web_socket:
     dependency: transitive
     description:
