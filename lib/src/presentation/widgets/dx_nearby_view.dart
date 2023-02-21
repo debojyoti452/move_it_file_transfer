@@ -194,6 +194,7 @@ class _DxNearbyViewPainter extends CustomPainter {
         0.0,
         pathMetric.length * value,
       );
+      if (extractPath.getBounds().isEmpty) return;
       try {
         var metric = extractPath.computeMetrics().first;
         final offset =
@@ -220,9 +221,13 @@ class _DxNearbyViewPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
+    if (oldDelegate is _DxNearbyViewPainter) {
+      return oldDelegate.value != value;
+    }
+    return false;
   }
 
+  @Deprecated('use drawAxis() instead.')
   void drawCircles(Canvas canvas, Size size) {
     final paint = Paint();
     paint.color = ColorConstants.GREY_DARK;
