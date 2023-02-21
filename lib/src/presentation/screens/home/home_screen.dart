@@ -26,17 +26,13 @@
  *
  */
 
-import 'dart:convert';
-import 'dart:developer';
-
-import 'package:dx_http/dx_http.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
-import '../../../data/model/client_model.dart';
-import '../../../domain/core/move_server_service.dart';
+import '../../../domain/global/secure_state_wrapper.dart';
 
 class HomeScreen extends StatefulWidget {
-  static const id = 'HOME_SCREEN';
+  static const String id = 'HOME_SCREEN';
 
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -44,119 +40,38 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  // final SendReceiverService _sendReceiverService = SendReceiverService();
-  final baseUrl = 'https://reqres.in/api/';
-  final MoveServerService _moveServerService = MoveServerService();
-  final DxHttp _dxHttp = DxHttp();
+class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
+  @override
+  void onInit() {}
 
   @override
-  void initState() {
-    super.initState();
-    // _sendReceiverService.createServer();
-  }
-
-  void runServer() {
-    try {
-      _moveServerService.createServer();
-    } catch (e) {
-      debugPrint(e.toString());
-    } finally {
-      Future.delayed(const Duration(seconds: 2), () {
-        _moveServerService.getServerStream()?.listen((event) async {
-          switch (event.requestedUri.path) {
-            case '/data':
-              var clientModel = const ClientModel(
-                clientId: '62146514',
-                clientName: 'Ananya',
-                ipAddress: '2565413',
-                token: '123456',
-              );
-              event.response.write(jsonEncode(clientModel.toJson()));
-              event.response.close();
-              break;
-            case '/getData':
-              event.response.write('Data Saved');
-              event.response.close();
-              break;
-            default:
-          }
-        });
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget onBuild(
+    BuildContext context,
+    Constraints constraints,
+    PlatformType platform,
+  ) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home Screen'),
       ),
-      body: SizedBox(
-        width: double.infinity,
-        height: double.infinity,
-        child: Column(
-          children: [
-            InkWell(
-              onTap: () async {
-                // _sendReceiverService.createServer();
-                runServer();
-              },
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                child: const Text('Create Server'),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            InkWell(
-              onTap: () async {
-                var data = await _dxHttp
-                    .get('${_moveServerService.getLocalAddress.address}/data');
-                log(data.data);
-                // _sendReceiverService.send();
-              },
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                child: const Text('Send'),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            InkWell(
-              onTap: () async {
-                // _sendReceiverService.receive();
-              },
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                child: const Text('Receive'),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            InkWell(
-              onTap: () async {
-                _moveServerService.nearbyClients().listen((event) {
-                  log('Nearby Client: $event');
-                });
-              },
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                child: const Text('Test DxHttp'),
-              ),
-            )
-          ],
-        ),
+      body: Center(
+        child: Text('Home Screen ${platform.name}'),
       ),
     );
   }
 
   @override
-  void dispose() {
-    _moveServerService.stopServer();
-    super.dispose();
-  }
+  void onDestroy() {}
+
+  @override
+  void onDispose() {}
+
+  @override
+  void onPause() {}
+
+  @override
+  void onResume() {}
+
+  @override
+  void onStop() {}
 }

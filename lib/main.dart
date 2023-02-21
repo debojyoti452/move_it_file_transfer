@@ -36,6 +36,7 @@ import 'src/domain/routes/app_routes.dart';
 import 'src/presentation/screens/home/home_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(BaseApp());
 }
 

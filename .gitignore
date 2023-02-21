@@ -48,3 +48,5 @@ app.*.map.json
 lib/generated_plugin_registrant.dart
 
 pubspec.lock
+
+*.old.dart

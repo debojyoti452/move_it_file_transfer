@@ -1,7 +1,20 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
-abstract class BaseStateWrapper<T extends StatefulWidget> extends State<T>
-    with WidgetsBindingObserver {
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+
+enum PlatformType {
+  android,
+  iOS,
+  windows,
+  linux,
+  macOS,
+  fuchsia,
+  unknown,
+}
+
+abstract class BaseStateWrapper<T extends StatefulWidget>
+    extends State<T> with WidgetsBindingObserver {
   void onInit();
 
   void onStop();
@@ -14,10 +27,17 @@ abstract class BaseStateWrapper<T extends StatefulWidget> extends State<T>
 
   void onDispose();
 
-  Widget onBuild(BuildContext context);
+  Widget onBuild(
+    BuildContext context,
+    Constraints constraints,
+    PlatformType platform,
+  );
+
+  late PlatformType platform;
 
   @override
   void initState() {
+    platform = getCurrentPlatform();
     WidgetsBinding.instance.addObserver(this);
     super.initState();
     onInit();
@@ -25,7 +45,19 @@ abstract class BaseStateWrapper<T extends StatefulWidget> extends State<T>
 
   @override
   Widget build(BuildContext context) {
-    return onBuild(context);
+    if (platform == PlatformType.unknown) {
+      return const Center(
+        child: Text('Unknown Platform'),
+      );
+    } else {
+      return LayoutBuilder(builder: (context, constraints) {
+        return onBuild(
+          context,
+          constraints,
+          platform,
+        );
+      });
+    }
   }
 
   @override
@@ -51,5 +83,23 @@ abstract class BaseStateWrapper<T extends StatefulWidget> extends State<T>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  PlatformType getCurrentPlatform() {
+    if (Platform.isAndroid) {
+      return PlatformType.android;
+    } else if (Platform.isIOS) {
+      return PlatformType.iOS;
+    } else if (Platform.isFuchsia) {
+      return PlatformType.fuchsia;
+    } else if (Platform.isLinux) {
+      return PlatformType.linux;
+    } else if (Platform.isMacOS) {
+      return PlatformType.macOS;
+    } else if (Platform.isWindows) {
+      return PlatformType.windows;
+    } else {
+      return PlatformType.unknown;
+    }
   }
 }
