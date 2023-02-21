@@ -26,10 +26,13 @@
  *
  */
 
+import 'dart:io';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:window_size/window_size.dart';
 
 import 'src/data/constants/app_constants.dart';
 import 'src/domain/routes/app_routes.dart';
@@ -38,6 +41,11 @@ import 'src/presentation/screens/home/home_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    setWindowTitle(AppConstants.appName);
+    setWindowMinSize(const Size(800, 600));
+    setWindowMaxSize(const Size(800, 600));
+  }
   runApp(BaseApp());
 }
 

@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   move_db
+  window_size
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

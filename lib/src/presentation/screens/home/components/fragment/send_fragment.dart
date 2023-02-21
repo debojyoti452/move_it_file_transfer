@@ -27,6 +27,12 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../../../domain/global/secure_state_wrapper.dart';
+import '../../../../../domain/themes/color_constants.dart';
+import '../../../../widgets/dx_nearby_view.dart';
 
 class SendFragment extends StatefulWidget {
   static const String id = 'SEND_FRAGMENT';
@@ -37,12 +43,68 @@ class SendFragment extends StatefulWidget {
   _SendFragmentState createState() => _SendFragmentState();
 }
 
-class _SendFragmentState extends State<SendFragment> {
+class _SendFragmentState extends BaseStateWrapper<SendFragment> {
   @override
-  Widget build(BuildContext context) {
+  void onInit() {}
+
+  @override
+  Widget onBuild(
+    BuildContext context,
+    Constraints constraints,
+    PlatformType platform,
+  ) {
     return Container(
-        child: const Center(
-      child: Text('Send Fragment'),
-    ));
+      padding: EdgeInsets.symmetric(
+        horizontal: 14.w,
+        vertical: 14.h,
+      ),
+      child: Column(
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text.rich(
+              TextSpan(
+                text: 'See devices in your radar nearby\n',
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineMedium
+                    ?.copyWith(
+                      color: ColorConstants.BLACK,
+                      fontWeight: FontWeight.w500,
+                    ),
+                children: [
+                  TextSpan(
+                    text: 'Make sure all devices are in same WiFi',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 100.h,
+          ),
+          SizedBox(
+            height: 200.h,
+            child: const DxNearbyView(),
+          ),
+        ],
+      ),
+    );
   }
+
+  @override
+  void onDestroy() {}
+
+  @override
+  void onDispose() {}
+
+  @override
+  void onPause() {}
+
+  @override
+  void onResume() {}
+
+  @override
+  void onStop() {}
 }

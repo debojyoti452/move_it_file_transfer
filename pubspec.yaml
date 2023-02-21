@@ -31,6 +31,10 @@ dependencies:
       ref: main
   move_db:
     path: ./move_db
+  window_size:
+    git:
+      url: https://github.com/google/flutter-desktop-embedding
+      path: plugins/window_size
 
 dev_dependencies:
   flutter_test:

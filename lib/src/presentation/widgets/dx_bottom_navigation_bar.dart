@@ -70,67 +70,64 @@ class _DxBottomNavigationBarState
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        height: 60.h,
-        margin: EdgeInsets.symmetric(
-          horizontal: 20.w,
-          vertical: 14.h,
-        ),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(30.r),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 2,
-              blurRadius: 7,
-              offset:
-                  const Offset(0, 3), // changes position of shadow
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(
-            _tabs.length,
-            (index) => _itemBuilder(context, index),
-          ),
-        ),
+    return Container(
+      height: 60.h,
+      margin: EdgeInsets.symmetric(
+        horizontal: 20.w,
+        vertical: 14.h,
       ),
-    );
-  }
-
-  Widget _itemBuilder(BuildContext context, int index) {
-    return InkWell(
-      onTap: () {
-        widget.onTabSelected(index);
-        _onItemTapped(index);
-      },
-      child: Material(
-        color: Colors.transparent,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              _tabs[index],
-              size: 22.w,
-              color: _selectedIndex == index
-                  ? Theme.of(context).colorScheme.secondary
-                  : Theme.of(context).disabledColor,
-            ),
-            SizedBox(height: 1.h),
-            Text(
-              BottomTabEnum.values[index].value,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 7,
+            offset: const Offset(0, 3), // changes position of shadow
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: List.generate(
+          _tabs.length,
+          (index) => InkWell(
+            onTap: () {
+              widget.onTabSelected(index);
+              _onItemTapped(index);
+            },
+            child: Material(
+              color: Colors.transparent,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    _tabs[index],
                     color: _selectedIndex == index
                         ? Theme.of(context).colorScheme.secondary
                         : Theme.of(context).disabledColor,
                   ),
+                  SizedBox(height: 1.h),
+                  Text(
+                    BottomTabEnum.values[index].value,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w500,
+                          color: _selectedIndex == index
+                              ? Theme.of(context)
+                                  .colorScheme
+                                  .secondary
+                              : Theme.of(context).disabledColor,
+                        ),
+                  ),
+                ],
+              ),
             ),
-          ],
+          ),
         ),
       ),
     );
