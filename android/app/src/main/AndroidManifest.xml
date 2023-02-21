@@ -29,7 +29,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.swing.movefileshare.move_app_fileshare">
    <application
-        android:label="move_app_fileshare"
+        android:label="Move"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -33,6 +33,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'src/data/constants/app_constants.dart';
 import 'src/domain/routes/app_routes.dart';
+import 'src/domain/themes/color_constants.dart';
 import 'src/presentation/screens/home/home_screen.dart';
 
 void main() {
@@ -56,8 +57,30 @@ class BaseApp extends StatelessWidget {
         return MaterialApp(
           title: AppConstants.appName,
           theme: ThemeData(
-            primarySwatch: Colors.blue,
+            primaryColor: const Color(0xff000000),
             textTheme: GoogleFonts.montserratTextTheme(),
+            primaryTextTheme: GoogleFonts.montserratTextTheme(),
+            primaryIconTheme: const IconThemeData(
+              color: ColorConstants.PRIMARY_TEXT,
+            ),
+            iconTheme: const IconThemeData(
+              color: ColorConstants.PRIMARY_TEXT,
+            ),
+            colorScheme: ColorScheme.fromSwatch(
+                primarySwatch: const MaterialColor(4280395775, {
+              50: Color(0xfff2f2f2),
+              100: Color(0xffe6e6e6),
+              200: Color(0xffcccccc),
+              300: Color(0xffb3b3b3),
+              400: Color(0xff999999),
+              500: Color(0xff808080),
+              600: Color(0xff666666),
+              700: Color(0xff4d4d4d),
+              800: Color(0xff333333),
+              900: Color(0xff1a1a1a)
+            })).copyWith(
+              secondary: ColorConstants.PRIMARY_BLUE,
+            ),
           ),
           onGenerateRoute: AppRoutes.onGenerateRoute,
           builder: (context, children) {

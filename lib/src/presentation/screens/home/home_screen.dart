@@ -30,6 +30,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import '../../../domain/global/secure_state_wrapper.dart';
+import '../../widgets/dx_bottom_navigation_bar.dart';
+import 'components/fragment/profile_fragment.dart';
+import 'components/fragment/receive_fragment.dart';
+import 'components/fragment/send_fragment.dart';
+
+enum BottomTabEnum {
+  send('Send'),
+  receive('Receive'),
+  profile('Profile');
+
+  final String value;
+
+  const BottomTabEnum(this.value);
+}
 
 class HomeScreen extends StatefulWidget {
   static const String id = 'HOME_SCREEN';
@@ -41,8 +55,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
+  final int _selectedIndex = 0;
+  late PageController _pageController;
+
   @override
-  void onInit() {}
+  void onInit() {
+    initialize();
+  }
+
+  void initialize() {
+    _pageController = PageController(
+      initialPage: _selectedIndex,
+    );
+  }
 
   @override
   Widget onBuild(
@@ -51,11 +76,27 @@ class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
     PlatformType platform,
   ) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home Screen'),
+      body: SafeArea(
+        child: PageView(
+          controller: _pageController,
+          children: [
+            const SendFragment(),
+            const ReceiveFragment(),
+            const ProfileFragment(),
+          ],
+          physics: const NeverScrollableScrollPhysics(),
+        ),
       ),
-      body: Center(
-        child: Text('Home Screen ${platform.name}'),
+      bottomNavigationBar: DxBottomNavigationBar(
+        onTabSelected: (item) {
+          _pageController.animateToPage(
+            item,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.ease,
+          );
+          debugPrint('index: $item');
+        },
+        currentIndex: _selectedIndex,
       ),
     );
   }
