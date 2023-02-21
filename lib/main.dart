@@ -26,25 +26,48 @@
  *
  */
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:move_app_fileshare/src/presentation/screens/home_screen.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import 'src/data/constants/app_constants.dart';
+import 'src/domain/routes/app_routes.dart';
+import 'src/presentation/screens/home/home_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(BaseApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class BaseApp extends StatelessWidget {
+  BaseApp({super.key});
+
+  final botToastBuilder = BotToastInit();
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const HomeScreen(),
+    return ScreenUtilInit(
+      designSize: const Size(375, 812),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MaterialApp(
+          title: AppConstants.appName,
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+            textTheme: GoogleFonts.montserratTextTheme(),
+          ),
+          onGenerateRoute: AppRoutes.onGenerateRoute,
+          builder: (context, children) {
+            children = botToastBuilder(context, children);
+            return children;
+          },
+          navigatorObservers: [BotToastNavigatorObserver()],
+          home: child,
+        );
+      },
+      child: const HomeScreen(),
     );
   }
 }

@@ -26,22 +26,20 @@
  *
  */
 
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter/material.dart';
 
-import 'client_model.dart';
-import 'file_model.dart';
+class StartScreen extends StatefulWidget {
+  static const id = 'START_SCREEN';
 
-part 'move_send_model.freezed.dart';
-part 'move_send_model.g.dart';
+  const StartScreen({Key? key}) : super(key: key);
 
-@freezed
-class MoveSendModel with _$MoveSendModel {
-  @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
-  const factory MoveSendModel({
-    @JsonKey(name: 'client_data') ClientModel? clientData,
-    @JsonKey(name: 'file_list') List<FileModel>? fileDataList,
-  }) = _MoveSendModel;
+  @override
+  _StartScreenState createState() => _StartScreenState();
+}
 
-  factory MoveSendModel.fromJson(Map<String, dynamic> json) =>
-      _$MoveSendModelFromJson(json);
+class _StartScreenState extends State<StartScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
 }

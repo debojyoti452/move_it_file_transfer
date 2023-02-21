@@ -31,11 +31,13 @@ import 'dart:developer';
 
 import 'package:dx_http/dx_http.dart';
 import 'package:flutter/material.dart';
-import 'package:move_app_fileshare/src/data/model/client_model.dart';
-import 'package:move_app_fileshare/src/domain/core/move_server_service.dart';
-import 'package:move_app_fileshare/src/domain/services/send_receive_service.dart';
+
+import '../../../data/model/client_model.dart';
+import '../../../domain/core/move_server_service.dart';
 
 class HomeScreen extends StatefulWidget {
+  static const id = 'HOME_SCREEN';
+
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
@@ -43,7 +45,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final SendReceiverService _sendReceiverService = SendReceiverService();
+  // final SendReceiverService _sendReceiverService = SendReceiverService();
   final baseUrl = 'https://reqres.in/api/';
   final MoveServerService _moveServerService = MoveServerService();
   final DxHttp _dxHttp = DxHttp();
