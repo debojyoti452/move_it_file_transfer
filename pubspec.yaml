@@ -25,6 +25,8 @@ dependencies:
     git:
       url: https://github.com/debojyoti452/dxhttp.git
       ref: main
+  move_db:
+    path: ./move_db
 
 dev_dependencies:
   flutter_test:

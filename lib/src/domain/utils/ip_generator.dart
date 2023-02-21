@@ -63,7 +63,7 @@ mixin IpGenerator {
 
   /// generate list of ip address with port
   static Future<List<NetworkAddressModel>> generateListOfLocalIp() async {
-    return List.generate(255, (index) {
+    return List.generate(256, (index) {
       return NetworkAddressModel(
         address: 'http://192.168.0.$index:$_port',
         host: '192.168.0.$index',

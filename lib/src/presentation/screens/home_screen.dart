@@ -26,6 +26,7 @@
  *
  */
 
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:dx_http/dx_http.dart';
@@ -69,8 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ipAddress: '2565413',
                 token: '123456',
               );
-              event.response.write(clientModel.toJson());
-              event.response.write('Data Saved');
+              event.response.write(jsonEncode(clientModel.toJson()));
               event.response.close();
               break;
             case '/getData':

@@ -69,6 +69,11 @@ class MoveServerService extends _MoveServerInterface {
       _internetAddress.port!,
     );
     _server?.autoCompress = true;
+    _server?.defaultResponseHeaders.add('Access-Control-Allow-Origin', '*');
+    _server?.defaultResponseHeaders
+        .add('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    _server?.defaultResponseHeaders
+        .add('content-type', 'application/json; charset=UTF-8');
   }
 
   @override
@@ -109,37 +114,70 @@ class MoveServerService extends _MoveServerInterface {
   void _nearbyClient() async {
     var clients = <ClientModel>[];
     var ipList = await IpGenerator.generateListOfLocalIp();
-    for (var address in ipList) {
-      var isAvailable = await _isReceiverAvailable(address);
-      log('Is Available: $isAvailable address: ${address.address}');
-      if (isAvailable) {
-        log('Address: ${address.address}');
-        var client = await _dxHttp.get(
-          '${address.address}/data',
-        );
-        log('Client: $client');
-        clients.add(ClientModel.fromJson(jsonDecode(jsonEncode(client.data))));
-        _nearbyStreamController.sink.add(clients);
+    var ownIp = await IpGenerator.getOwnLocalIpWithPort();
+    var dividedIpList = _divideIpList(ipList);
+
+    // run in parallel to check the availability of the receiver
+    for (var ip in dividedIpList) {
+      await Future.wait(ip.map((e) async {
+        var isAvailable = await _isReceiverAvailable(e, ownIp);
+        if (isAvailable) {
+          var client = await _dxHttp.get(
+            '${e.address}/data',
+          );
+          clients.add(ClientModel.fromJson(jsonDecode(client.data)));
+          _nearbyStreamController.sink.add(clients);
+        }
+      }));
+    }
+  }
+
+  /// Divide the list into 30 parts
+  List<List<NetworkAddressModel>> _divideIpList(
+      List<NetworkAddressModel> ipList) {
+    var dividedList = <List<NetworkAddressModel>>[];
+    var temp = <NetworkAddressModel>[];
+    for (var i = 0; i < ipList.length; i++) {
+      temp.add(ipList[i]);
+      if (i % 30 == 0) {
+        dividedList.add(temp);
+        temp = <NetworkAddressModel>[];
       }
     }
+    return dividedList;
   }
 
   /// Check whether any receiver is available
   Future<bool> _isReceiverAvailable(
     NetworkAddressModel addressModel,
+    NetworkAddressModel ownAddressModel,
   ) async {
-    try {
-      var socket = await Socket.connect(
-        addressModel.host,
-        addressModel.port!,
-        timeout: const Duration(seconds: 5),
-      );
-      log('Socket: $socket');
-      socket.destroy();
-      return true;
-    } catch (e) {
-      log('Error: $e');
+    if (_isSameIp(addressModel.host!, ownAddressModel.host!)) {
       return false;
+    } else {
+      try {
+        var socket = await Socket.connect(
+          addressModel.host,
+          addressModel.port!,
+          timeout: const Duration(seconds: 5),
+        );
+        log('Socket: $socket');
+        socket.destroy();
+        return true;
+      } catch (e) {
+        log('Error: $e');
+        return false;
+      }
     }
+  }
+
+  // check two ip address are same or not
+  bool _isSameIp(String host, String ownHost) {
+    var hostList = host.split('.').join();
+    var ownHostList = ownHost.split('.').join();
+    if (hostList == ownHostList) {
+      return true;
+    }
+    return false;
   }
 }

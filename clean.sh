@@ -26,4 +26,4 @@
 #  */
 #
 
-cd scripts && ./init.sh && cd ..
+cd scripts && ./init.sh && cd .. && cd move_db && flutter clean && flutter pub get && cd ..

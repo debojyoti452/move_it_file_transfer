@@ -37,8 +37,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SendReceiverService {
   late HttpServer _server;
-  final Future<SharedPreferences> _prefs =
-      SharedPreferences.getInstance();
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   final _dxHttp = DxHttp();
 
   void createServer() async {
@@ -54,8 +53,7 @@ class SendReceiverService {
         case '/data':
           // post data
 
-          var response =
-              await event.asyncMap((element) async {
+          var response = await event.asyncMap((element) async {
             // convert utf8list to string
             var data = utf8.decode(element);
             return data;
@@ -67,8 +65,8 @@ class SendReceiverService {
           break;
         case '/getData':
           var data = await _readItFromFile();
-          event.response.writeln(
-              'Received request ${event.method}: ${event.uri.path}');
+          event.response
+              .writeln('Received request ${event.method}: ${event.uri.path}');
           event.response.writeln(data);
           event.response.close();
           break;
@@ -96,8 +94,7 @@ class SendReceiverService {
       'prof': 'Developer'
     };
     // send data
-    var url =
-        'http://${_server.address.host}:${_server.port}/data';
+    var url = 'http://${_server.address.host}:${_server.port}/data';
     var response = await _dxHttp.post(
       url,
       params: dataMap,
@@ -119,14 +116,12 @@ class SendReceiverService {
   /// dio download
   void download() async {
     var url = Uri.parse('http://');
-    var savePath =
-        'C:\\Users\\Debojyoti Singha\\Downloads\\';
+    var savePath = 'C:\\Users\\Debojyoti Singha\\Downloads\\';
     var fileName = 'test.txt';
     var dio = Dio();
     try {
-      await dio
-          .download(url.toString(), savePath + fileName,
-              onReceiveProgress: (received, total) {
+      await dio.download(url.toString(), savePath + fileName,
+          onReceiveProgress: (received, total) {
         if (total != -1) {
           log('${(received / total * 100).toStringAsFixed(0)}%');
         }
@@ -141,8 +136,7 @@ class SendReceiverService {
     var interfaces = await NetworkInterface.list();
     for (var interface in interfaces) {
       for (var networkAddress in interface.addresses) {
-        if (networkAddress.type ==
-                InternetAddressType.IPv4 &&
+        if (networkAddress.type == InternetAddressType.IPv4 &&
             networkAddress.address.startsWith('192.168')) {
           ip.add(networkAddress.address);
         }
