@@ -49,12 +49,14 @@ class _DxNearbyViewState extends State<DxNearbyView>
   late AnimationController _controller2;
 
   Future<ui.Image> _loadImage() async {
-    ByteData bd = await rootBundle.load(AssetsConstants.logoPng);
-    final Uint8List bytes = Uint8List.view(bd.buffer);
+    ByteData byteData =
+        await rootBundle.load(AssetsConstants.logoPng);
+    final Uint8List bytes = Uint8List.view(byteData.buffer);
     final ui.Codec codec = await ui.instantiateImageCodec(
       bytes,
       targetHeight: 54,
       targetWidth: 54,
+      allowUpscaling: true,
     );
     final ui.Image image = (await codec.getNextFrame()).image;
     return image;
@@ -143,8 +145,11 @@ class _DxNearbyViewPainter extends CustomPainter {
       ..color = const Color(0xFFAC7FFF)
       ..isAntiAlias = true,
     Paint()
-      ..color = const Color(0xFFE94458)
+      ..color = const Color(0xFFC08C00)
       ..isAntiAlias = true,
+    Paint()
+      ..color = const Color(0xFFE94458)
+      ..isAntiAlias = true
   ];
 
   _DxNearbyViewPainter({
@@ -159,13 +164,13 @@ class _DxNearbyViewPainter extends CustomPainter {
     canvas.drawImage(
       image,
       Offset(size.width / 2 - 27, size.height / 2 - 27),
-      Paint(),
+      Paint()..isAntiAlias = true,
     );
     drawAxis(value, canvas, 50, _planetPaints[0]);
-    drawAxis(value1, canvas, 80, _planetPaints[2]);
-    drawAxis(value2, canvas, 110, _planetPaints[1]);
+    drawAxis(value1, canvas, 80, _planetPaints[1]);
+    drawAxis(value2, canvas, 110, _planetPaints[2]);
     drawAxis(value1, canvas, 140, _planetPaints[3]);
-    drawAxis(value, canvas, 170, _planetPaints[1]);
+    drawAxis(value, canvas, 170, _planetPaints[4]);
   }
 
   drawAxis(
@@ -174,6 +179,13 @@ class _DxNearbyViewPainter extends CustomPainter {
     double radius,
     Paint paint,
   ) {
+    final maskedPaint = Paint()
+      ..color = paint.color
+      ..style = PaintingStyle.fill
+      ..maskFilter = const MaskFilter.blur(
+        BlurStyle.normal,
+        10,
+      );
     var firstAxis = getCirclePath(radius);
     canvas.drawPath(firstAxis, _axisPaint);
     ui.PathMetrics pathMetrics = firstAxis.computeMetrics();
@@ -186,7 +198,16 @@ class _DxNearbyViewPainter extends CustomPainter {
         var metric = extractPath.computeMetrics().first;
         final offset =
             metric.getTangentForOffset(metric.length)?.position;
-        canvas.drawCircle(offset!, 5.2, paint);
+
+        if (offset == null) return;
+
+        canvas.drawCircle(
+          offset,
+          10,
+          maskedPaint,
+        );
+
+        canvas.drawCircle(offset, 5.2, paint);
       } catch (e) {
         log(e.toString());
       }
