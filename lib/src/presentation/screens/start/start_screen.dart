@@ -27,6 +27,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:move_db/move_db.dart';
 
 class StartScreen extends StatefulWidget {
   static const id = 'START_SCREEN';
@@ -38,8 +39,76 @@ class StartScreen extends StatefulWidget {
 }
 
 class _StartScreenState extends State<StartScreen> {
+  late MoveDb moveDb;
+
+  @override
+  void initState() {
+    moveDb = MoveDb()..initialize();
+    super.initState();
+  }
+
+  void insertData() async {
+    final data = {
+      'name': 'Debojyoti Singha',
+      'email': 'deb@swing.com',
+    };
+
+    final result = await moveDb.insert(data);
+    debugPrint('Insert Result: $result');
+  }
+
+  void updateData() async {
+    final data = {
+      'name': 'Ananya Singha',
+      'email': 'ananya@swing',
+      'relation': 'spouse',
+      'children': [
+        {'name': 'Ananya Singha', 'age': 2},
+        {'name': 'Ananya Singha', 'age': 2},
+      ]
+    };
+
+    final result = await moveDb.update(data);
+    debugPrint('Update Result: $result');
+  }
+
+  void findData() async {
+    final result = await moveDb.find('email');
+    debugPrint('Find Result: $result');
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      body: SafeArea(
+        child: SizedBox(
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 10.0),
+              OutlinedButton(
+                  onPressed: () {
+                    insertData();
+                  },
+                  child: const Text('Insert')),
+              const SizedBox(height: 10.0),
+              OutlinedButton(
+                  onPressed: () {
+                    updateData();
+                  },
+                  child: const Text('Update')),
+              const SizedBox(height: 10.0),
+              OutlinedButton(
+                  onPressed: () {
+                    findData();
+                  },
+                  child: const Text('Find')),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -1,8 +1,3 @@
+library move_db;
 
-import 'move_db_platform_interface.dart';
-
-class MoveDb {
-  Future<String?> getPlatformVersion() {
-    return MoveDbPlatform.instance.getPlatformVersion();
-  }
-}
+export 'src/core/move_db.dart';

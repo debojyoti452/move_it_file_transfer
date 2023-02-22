@@ -144,12 +144,6 @@ class _DxNearbyViewPainter extends CustomPainter {
     Paint()
       ..color = const Color(0xFFAC7FFF)
       ..isAntiAlias = true,
-    Paint()
-      ..color = const Color(0xFFC08C00)
-      ..isAntiAlias = true,
-    Paint()
-      ..color = const Color(0xFFE94458)
-      ..isAntiAlias = true
   ];
 
   _DxNearbyViewPainter({
@@ -166,11 +160,9 @@ class _DxNearbyViewPainter extends CustomPainter {
       Offset(size.width / 2 - 27, size.height / 2 - 27),
       Paint()..isAntiAlias = true,
     );
-    drawAxis(value, canvas, 50, _planetPaints[0]);
-    drawAxis(value1, canvas, 80, _planetPaints[1]);
-    drawAxis(value2, canvas, 110, _planetPaints[2]);
-    drawAxis(value1, canvas, 140, _planetPaints[3]);
-    drawAxis(value, canvas, 170, _planetPaints[4]);
+    drawAxis(value, canvas, 55, _planetPaints[0]);
+    drawAxis(value1, canvas, 85, _planetPaints[1]);
+    drawAxis(value2, canvas, 115, _planetPaints[2]);
   }
 
   drawAxis(

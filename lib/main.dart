@@ -37,7 +37,7 @@ import 'package:window_size/window_size.dart';
 import 'src/data/constants/app_constants.dart';
 import 'src/domain/routes/app_routes.dart';
 import 'src/domain/themes/color_constants.dart';
-import 'src/presentation/screens/home/home_screen.dart';
+import 'src/presentation/screens/start/start_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -99,7 +99,7 @@ class BaseApp extends StatelessWidget {
           home: child,
         );
       },
-      child: const HomeScreen(),
+      child: const StartScreen(),
     );
   }
 }

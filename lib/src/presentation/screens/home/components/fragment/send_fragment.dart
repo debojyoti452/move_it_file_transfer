@@ -82,7 +82,7 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
             ),
           ),
           SizedBox(
-            height: 100.h,
+            height: 50.h,
           ),
           SizedBox(
             height: 200.h,
