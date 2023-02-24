@@ -27,9 +27,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:move_db/move_db.dart';
-
-import '../../../data/model/client_model.dart';
 
 class StartScreen extends StatefulWidget {
   static const id = 'START_SCREEN';
@@ -41,54 +38,11 @@ class StartScreen extends StatefulWidget {
 }
 
 class _StartScreenState extends State<StartScreen> {
-  late MoveDb moveDb;
+  TextEditingController nameController = TextEditingController();
 
   @override
   void initState() {
-    moveDb = MoveDb()..initialize();
     super.initState();
-  }
-
-  void insertData() async {
-    var clientModel = const ClientModel(
-      id: 2,
-      clientId: '62146514',
-      clientName: 'Ananya',
-      ipAddress: '2565413',
-      token: '123456',
-    );
-
-    // var clientModel2 = const ClientModel(
-    //   id: 3,
-    //   clientId: '62146514',
-    //   clientName: 'Ananya',
-    //   ipAddress: '2565413',
-    //   token: '123456',
-    // );
-
-    final result = await moveDb.insert<ClientModel>(clientModel);
-    // final result2 = await moveDb.insert<ClientModel>(clientModel2);
-    debugPrint('Insert Result: $result');
-  }
-
-  void updateData() async {
-    final data = {
-      'name': 'Ananya Singha',
-      'email': 'ananya@swing',
-      'relation': 'spouse',
-      'children': [
-        {'name': 'Ananya Singha', 'age': 2},
-        {'name': 'Ananya Singha', 'age': 2},
-      ]
-    };
-
-    final result = await moveDb.update(data);
-    debugPrint('Update Result: $result');
-  }
-
-  void findData() async {
-    final result = await moveDb.findAll();
-    debugPrint('Find Result: $result');
   }
 
   @override
@@ -102,21 +56,16 @@ class _StartScreenState extends State<StartScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 10.0),
-              OutlinedButton(
-                  onPressed: () {
-                    insertData();
-                  },
-                  child: const Text('Insert')),
+              TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Name',
+                  border: OutlineInputBorder(),
+                ),
+              ),
               const SizedBox(height: 10.0),
               OutlinedButton(
                   onPressed: () {
-                    updateData();
-                  },
-                  child: const Text('Update')),
-              const SizedBox(height: 10.0),
-              OutlinedButton(
-                  onPressed: () {
-                    findData();
+                    saveData();
                   },
                   child: const Text('Find')),
             ],
@@ -125,4 +74,6 @@ class _StartScreenState extends State<StartScreen> {
       ),
     );
   }
+
+  void saveData() {}
 }

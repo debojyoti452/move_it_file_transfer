@@ -35,6 +35,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:window_size/window_size.dart';
 
 import 'src/data/constants/app_constants.dart';
+import 'src/data/db/shared_pref.dart';
 import 'src/domain/routes/app_routes.dart';
 import 'src/domain/themes/color_constants.dart';
 import 'src/presentation/screens/start/start_screen.dart';
@@ -46,6 +47,7 @@ void main() {
     setWindowMinSize(const Size(800, 600));
     setWindowMaxSize(const Size(800, 600));
   }
+  SharedPref().init();
   runApp(BaseApp());
 }
 
