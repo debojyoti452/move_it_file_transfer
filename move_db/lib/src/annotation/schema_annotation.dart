@@ -26,31 +26,19 @@
  *
  */
 
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:move_db/move_db.dart';
+class MoveSchema {
+  final String name;
 
-part 'client_model.freezed.dart';
-part 'client_model.g.dart';
+  const MoveSchema({required this.name});
+}
 
-@freezed
-class ClientModel with _$ClientModel, MoveObject {
-  @JsonSerializable(
-      fieldRename: FieldRename.snake, explicitToJson: true)
-  const factory ClientModel({
-    @JsonKey(name: 'id') int? id,
-    @JsonKey(name: 'client_id') String? clientId,
-    @JsonKey(name: 'client_name') String? clientName,
-    @JsonKey(name: 'token') String? token,
-    @JsonKey(name: 'ip_address') String? ipAddress,
-  }) = _ClientModel;
+class Primary {
+  final String name;
+  final bool autoIncrement;
 
-  const ClientModel._();
+  const Primary({this.name = 'id', this.autoIncrement = true});
+}
 
-  factory ClientModel.fromJson(Map<String, dynamic> json) =>
-      _$ClientModelFromJson(json);
-
-  @override
-  Map<String, dynamic> toMoveMap() {
-    return toJson();
-  }
+mixin MoveObject {
+  Map<String, dynamic> toMoveMap();
 }

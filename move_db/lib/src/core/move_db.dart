@@ -26,14 +26,17 @@
  *
  */
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
+import 'package:move_db/move_db.dart';
 
 import '../utils/file_helper.dart';
 
 abstract class _IOMoveDbInterface {
   void initialize();
 
-  Future<Map<String, dynamic>> find(String key);
+  Future<Map<String, dynamic>> findById(int key);
 
   Future<Map<String, dynamic>> findAll();
 
@@ -43,7 +46,7 @@ abstract class _IOMoveDbInterface {
 
   Future<Map<String, dynamic>> getSingle();
 
-  Future<int> insert(Map<String, dynamic> data);
+  Future<int> insert<T>(T data);
 
   Future<int> update(Map<String, dynamic> data);
 
@@ -73,15 +76,19 @@ class MoveDb extends _IOMoveDbInterface {
   }
 
   @override
-  Future<Map<String, dynamic>> find(String key) {
+  Future<Map<String, dynamic>> findById(int key) {
     var bytes = _fileHelper.readAsBytesSync();
     var data = _fileHelper.serialize(bytes);
-    var result = data[key];
-    if (result != null) {
-      return Future.value(data);
+    var result = <String, dynamic>{};
+    if (data.containsKey('id')) {
+      if (data['id'] == key) {
+        result = data;
+      }
     } else {
-      return Future.value({'error': 'No data found'});
+      return Future.error(Exception('No data found'));
     }
+
+    return Future.value(result);
   }
 
   @override
@@ -106,8 +113,12 @@ class MoveDb extends _IOMoveDbInterface {
   }
 
   @override
-  Future<int> insert(Map<String, dynamic> data) async {
-    var bytes = _fileHelper.deserialize(data);
+  Future<int> insert<T>(T data) async {
+    if (data is! MoveObject) {
+      throw Exception('Data must be of type MoveObject');
+    }
+
+    var bytes = _fileHelper.deserialize(data.toMoveMap());
     if (_fileHelper.writeAsBytesSync(bytes)) {
       return 1;
     } else {
@@ -125,4 +136,12 @@ class MoveDb extends _IOMoveDbInterface {
       return 0;
     }
   }
+}
+
+class _Node {
+  _Node? next;
+  _Node? prev;
+  Map<String, dynamic>? data;
+
+  _Node({this.next, this.prev, this.data});
 }

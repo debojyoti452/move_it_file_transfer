@@ -27,6 +27,7 @@
  */
 
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -35,7 +36,7 @@ import 'package:path_provider/path_provider.dart';
 mixin _IOFileInterface {
   void initAsync();
 
-  String serialize(Uint8List bytes);
+  Map<String, dynamic> serialize(Uint8List bytes);
 
   Uint8List deserialize(Map<String, dynamic> map);
 
@@ -69,7 +70,7 @@ class FileHelper implements _IOFileInterface {
   @override
   bool writeAsBytesSync(Uint8List bytes) {
     try {
-      _file.writeAsBytesSync(bytes);
+      _file.writeAsBytesSync(bytes, mode: FileMode.append);
       return true;
     } catch (e) {
       debugPrint('FileHelper: $e');
@@ -78,7 +79,7 @@ class FileHelper implements _IOFileInterface {
   }
 
   @override
-  String serialize(Uint8List bytes) {
+  Map<String, dynamic> serialize(Uint8List bytes) {
     StringBuffer buffer = StringBuffer();
     for (int i = 0; i < bytes.length;) {
       int firstWord = (bytes[i] << 8) + bytes[i + 1];
@@ -93,7 +94,13 @@ class FileHelper implements _IOFileInterface {
         i += 2;
       }
     }
-    return buffer.toString();
+    // JsonEncoder jsonEncoder = const JsonEncoder.withIndent(' ');
+    // var encodeJson = jsonEncoder.convert(buffer.toString());
+    // JsonDecoder jsonData = const JsonDecoder();
+    // var map = jsonData.convert(encodeJson);
+    log('FileHelper: ${buffer.toString()}}');
+
+    return Map<String, dynamic>.from(jsonDecode(buffer.toString()));
   }
 
   @override

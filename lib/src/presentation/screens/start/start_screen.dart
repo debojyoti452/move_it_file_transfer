@@ -29,6 +29,8 @@
 import 'package:flutter/material.dart';
 import 'package:move_db/move_db.dart';
 
+import '../../../data/model/client_model.dart';
+
 class StartScreen extends StatefulWidget {
   static const id = 'START_SCREEN';
 
@@ -48,13 +50,25 @@ class _StartScreenState extends State<StartScreen> {
   }
 
   void insertData() async {
-    final data = {
-      'name': 'Debojyoti Singha',
-      'email': 'deb@swing.com',
-    };
+    var clientModel = const ClientModel(
+      id: 2,
+      clientId: '62146514',
+      clientName: 'Ananya',
+      ipAddress: '2565413',
+      token: '123456',
+    );
 
-    final result = await moveDb.insert(data);
-    debugPrint('Insert Result: $result');
+    var clientModel2 = const ClientModel(
+      id: 3,
+      clientId: '62146514',
+      clientName: 'Ananya',
+      ipAddress: '2565413',
+      token: '123456',
+    );
+
+    final result = await moveDb.insert<ClientModel>(clientModel);
+    final result2 = await moveDb.insert<ClientModel>(clientModel2);
+    debugPrint('Insert Result: $result $result2');
   }
 
   void updateData() async {
@@ -73,7 +87,7 @@ class _StartScreenState extends State<StartScreen> {
   }
 
   void findData() async {
-    final result = await moveDb.find('email');
+    final result = await moveDb.findById(2);
     debugPrint('Find Result: $result');
   }
 
