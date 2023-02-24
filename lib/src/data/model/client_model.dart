@@ -33,7 +33,7 @@ part 'client_model.freezed.dart';
 part 'client_model.g.dart';
 
 @freezed
-class ClientModel with _$ClientModel, MoveObject {
+class ClientModel with _$ClientModel, MoveObject<ClientModel> {
   @JsonSerializable(
       fieldRename: FieldRename.snake, explicitToJson: true)
   const factory ClientModel({
@@ -52,5 +52,17 @@ class ClientModel with _$ClientModel, MoveObject {
   @override
   Map<String, dynamic> toMoveMap() {
     return toJson();
+  }
+
+  /// Temp Solution for MoveDb
+  /// Currently MoveDb does not support schemaName using annotation
+  @override
+  String assignSchemaName() {
+    return 'client_schema';
+  }
+
+  @override
+  ClientModel fromMoveMap(Map<String, dynamic> map) {
+    return ClientModel.fromJson(map);
   }
 }

@@ -39,6 +39,10 @@ class Primary {
   const Primary({this.name = 'id', this.autoIncrement = true});
 }
 
-mixin MoveObject {
+mixin MoveObject<T> {
   Map<String, dynamic> toMoveMap();
+
+  String assignSchemaName();
+
+  T fromMoveMap(Map<String, dynamic> map);
 }

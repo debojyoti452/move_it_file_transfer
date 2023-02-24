@@ -76,9 +76,9 @@ class MoveDb extends _IOMoveDbInterface {
   }
 
   @override
-  Future<Map<String, dynamic>> findById(int key) {
+  Future<Map<String, dynamic>> findById(int key) async {
     var bytes = _fileHelper.readAsBytesSync();
-    var data = _fileHelper.serialize(bytes);
+    var data = await _fileHelper.serialize(bytes);
     var result = <String, dynamic>{};
     if (data.containsKey('id')) {
       if (data['id'] == key) {
@@ -87,14 +87,14 @@ class MoveDb extends _IOMoveDbInterface {
     } else {
       return Future.error(Exception('No data found'));
     }
-
     return Future.value(result);
   }
 
   @override
-  Future<Map<String, dynamic>> findAll() {
+  Future<Map<String, dynamic>> findAll() async {
     var bytes = _fileHelper.readAsBytesSync();
-    return Future.value(_fileHelper.serialize(bytes));
+    var serializeMap = await _fileHelper.serialize(bytes);
+    return Future.value(serializeMap);
   }
 
   @override
@@ -117,8 +117,8 @@ class MoveDb extends _IOMoveDbInterface {
     if (data is! MoveObject) {
       throw Exception('Data must be of type MoveObject');
     }
-
-    var bytes = _fileHelper.deserialize(data.toMoveMap());
+    _fileHelper.createDb(dbName: data.assignSchemaName());
+    var bytes = await _fileHelper.deserialize(data.toMoveMap());
     if (_fileHelper.writeAsBytesSync(bytes)) {
       return 1;
     } else {
@@ -128,7 +128,7 @@ class MoveDb extends _IOMoveDbInterface {
 
   @override
   Future<int> update(Map<String, dynamic> data) async {
-    var bytes = _fileHelper.deserialize(data);
+    var bytes = await _fileHelper.deserialize(data);
     debugPrint('bytes: $bytes');
     if (_fileHelper.writeAsBytesSync(bytes)) {
       return 1;
@@ -136,12 +136,4 @@ class MoveDb extends _IOMoveDbInterface {
       return 0;
     }
   }
-}
-
-class _Node {
-  _Node? next;
-  _Node? prev;
-  Map<String, dynamic>? data;
-
-  _Node({this.next, this.prev, this.data});
 }

@@ -36,9 +36,11 @@ import 'package:path_provider/path_provider.dart';
 mixin _IOFileInterface {
   void initAsync();
 
-  Map<String, dynamic> serialize(Uint8List bytes);
+  void createDb({required String dbName});
 
-  Uint8List deserialize(Map<String, dynamic> map);
+  Future<Map<String, dynamic>> serialize(Uint8List bytes);
+
+  Future<Uint8List> deserialize(Map<String, dynamic> map);
 
   Uint8List readAsBytesSync();
 
@@ -46,19 +48,26 @@ mixin _IOFileInterface {
 }
 
 class FileHelper implements _IOFileInterface {
-  final _fileName = 'move_db.move';
+  final _extension = '.move';
+  String _basePath = '';
   late File _file;
 
   @override
   void initAsync() async {
     var dir = await getApplicationDocumentsDirectory();
-    _file = File('${dir.path}/$_fileName');
+    _basePath = '${dir.path}/move_db/';
+    Directory(_basePath).createSync(recursive: true);
+  }
+
+  @override
+  void createDb({required String dbName}) async {
+    _file = File('$_basePath$dbName$_extension');
     if (!isFileExist()) {
       _file.createSync();
     }
   }
 
-  bool isFileExist() {
+  bool isFileExist({String? path}) {
     return _file.existsSync();
   }
 
@@ -70,7 +79,7 @@ class FileHelper implements _IOFileInterface {
   @override
   bool writeAsBytesSync(Uint8List bytes) {
     try {
-      _file.writeAsBytesSync(bytes, mode: FileMode.append);
+      _file.writeAsBytesSync(bytes, mode: FileMode.write);
       return true;
     } catch (e) {
       debugPrint('FileHelper: $e');
@@ -79,7 +88,7 @@ class FileHelper implements _IOFileInterface {
   }
 
   @override
-  Map<String, dynamic> serialize(Uint8List bytes) {
+  Future<Map<String, dynamic>> serialize(Uint8List bytes) {
     StringBuffer buffer = StringBuffer();
     for (int i = 0; i < bytes.length;) {
       int firstWord = (bytes[i] << 8) + bytes[i + 1];
@@ -99,13 +108,20 @@ class FileHelper implements _IOFileInterface {
     // JsonDecoder jsonData = const JsonDecoder();
     // var map = jsonData.convert(encodeJson);
     log('FileHelper: ${buffer.toString()}}');
-
-    return Map<String, dynamic>.from(jsonDecode(buffer.toString()));
+    return Future.value(
+        Map<String, dynamic>.from(jsonDecode(buffer.toString())));
   }
 
   @override
-  Uint8List deserialize(Map<String, dynamic> map) {
+  Future<Uint8List> deserialize(Map<String, dynamic> map) async {
     var jsonStr = json.encode(map);
+    // var getExistedData = readAsBytesSync();
+    // if (getExistedData.isNotEmpty) {
+    //   jsonStr = jsonStr.substring(1, jsonStr.length - 1);
+    // }
+
+    log('FileHelper: $jsonStr');
+
     var list = <int>[];
     jsonStr.toString().runes.forEach((element) {
       if (element >= 0x10000) {
