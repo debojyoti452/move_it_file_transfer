@@ -26,30 +26,31 @@
  *
  */
 
-part of 'home_cubit.dart';
+import '../core/move_server_service.dart';
 
-class HomeState extends Equatable {
-  const HomeState({
-    required this.status,
-    this.userModel,
-  });
+class MoveDI {
+  static final MoveDI _singleton = MoveDI._internal();
 
-  final AppCubitStatus status;
-  final ClientModel? userModel;
+  factory MoveDI() {
+    return _singleton;
+  }
 
-  @override
-  List<Object?> get props => [
-        status,
-        userModel,
-      ];
+  MoveDI._internal();
 
-  HomeState copyWith({
-    AppCubitStatus? status,
-    ClientModel? userModel,
-  }) {
-    return HomeState(
-      status: status ?? this.status,
-      userModel: userModel ?? this.userModel,
-    );
+  static MoveServerService? _moveServerService;
+
+  static MoveServerService get moveServerService {
+    if (_moveServerService == null) {
+      init();
+    }
+    return _moveServerService!;
+  }
+
+  static void init() {
+    _moveServerService = MoveServerService();
+  }
+
+  void dispose() {
+    _moveServerService?.dispose();
   }
 }

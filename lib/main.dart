@@ -30,25 +30,41 @@ import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:window_size/window_size.dart';
 
 import 'src/data/constants/app_constants.dart';
 import 'src/data/db/shared_pref.dart';
+import 'src/domain/di/move_di.dart';
 import 'src/domain/routes/app_routes.dart';
 import 'src/domain/themes/color_constants.dart';
-import 'src/presentation/screens/start/start_screen.dart';
+import 'src/presentation/screens/home/components/cubit/send_fragment_cubit.dart';
+import 'src/presentation/screens/home/cubit/home_cubit.dart';
+import 'src/presentation/screens/home/home_screen.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     setWindowTitle(AppConstants.appName);
     setWindowMinSize(const Size(800, 600));
     setWindowMaxSize(const Size(800, 600));
   }
-  SharedPref().init();
-  runApp(BaseApp());
+  await SharedPref.init();
+  MoveDI.init();
+
+  runApp(MultiBlocProvider(
+    providers: [
+      BlocProvider<HomeCubit>(
+        create: (context) => HomeCubit(),
+      ),
+      BlocProvider<SendFragmentCubit>(
+        create: (context) => SendFragmentCubit(),
+      ),
+    ],
+    child: BaseApp(),
+  ));
 }
 
 class BaseApp extends StatelessWidget {
@@ -101,7 +117,7 @@ class BaseApp extends StatelessWidget {
           home: child,
         );
       },
-      child: const StartScreen(),
+      child: const HomeScreen(),
     );
   }
 }

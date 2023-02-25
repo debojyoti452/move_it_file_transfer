@@ -28,11 +28,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../../domain/global/secure_state_wrapper.dart';
+import '../../../../../domain/global/base_state_wrapper.dart';
 import '../../../../../domain/themes/color_constants.dart';
 import '../../../../widgets/dx_nearby_view.dart';
+import '../cubit/send_fragment_cubit.dart';
 
 class SendFragment extends StatefulWidget {
   static const String id = 'SEND_FRAGMENT';
@@ -44,8 +46,12 @@ class SendFragment extends StatefulWidget {
 }
 
 class _SendFragmentState extends BaseStateWrapper<SendFragment> {
+  late SendFragmentCubit _cubit;
+
   @override
-  void onInit() {}
+  void onInit() {
+    _cubit = context.read<SendFragmentCubit>();
+  }
 
   @override
   Widget onBuild(

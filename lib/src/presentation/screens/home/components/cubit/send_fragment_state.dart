@@ -26,10 +26,10 @@
  *
  */
 
-part of 'home_cubit.dart';
+part of 'send_fragment_cubit.dart';
 
-class HomeState extends Equatable {
-  const HomeState({
+class SendFragmentState extends Equatable {
+  const SendFragmentState({
     required this.status,
     this.userModel,
   });
@@ -43,11 +43,11 @@ class HomeState extends Equatable {
         userModel,
       ];
 
-  HomeState copyWith({
+  SendFragmentState copyWith({
     AppCubitStatus? status,
     ClientModel? userModel,
   }) {
-    return HomeState(
+    return SendFragmentState(
       status: status ?? this.status,
       userModel: userModel ?? this.userModel,
     );

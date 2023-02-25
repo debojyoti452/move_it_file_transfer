@@ -51,6 +51,10 @@ abstract class _MoveServerInterface {
   Stream<HttpRequest>? getServerStream();
 
   void stopNearbyClientsStream();
+
+  void dispose();
+
+  Future<NetworkAddressModel> getOwnServerIpWithPort();
 }
 
 class MoveServerService extends _MoveServerInterface {
@@ -62,16 +66,18 @@ class MoveServerService extends _MoveServerInterface {
 
   @override
   void createServer() async {
-    _internetAddress = await _generateServerIp();
+    _internetAddress = await getOwnServerIpWithPort();
     log('Server IP: ${_internetAddress.host}:${_internetAddress.port}');
     _server = await HttpServer.bind(
       _internetAddress.host,
       _internetAddress.port!,
     );
     _server?.autoCompress = true;
-    _server?.defaultResponseHeaders.add('Access-Control-Allow-Origin', '*');
     _server?.defaultResponseHeaders
-        .add('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        .add('Access-Control-Allow-Origin', '*');
+    _server?.defaultResponseHeaders.add(
+        'Access-Control-Allow-Methods',
+        'GET, POST, PUT, DELETE, OPTIONS');
     _server?.defaultResponseHeaders
         .add('content-type', 'application/json; charset=UTF-8');
   }
@@ -107,7 +113,13 @@ class MoveServerService extends _MoveServerInterface {
     _nearbyStreamController.close();
   }
 
-  Future<NetworkAddressModel> _generateServerIp() async {
+  @override
+  void dispose() {
+    _nearbyStreamController.close();
+  }
+
+  @override
+  Future<NetworkAddressModel> getOwnServerIpWithPort() async {
     return await IpGenerator.getOwnLocalIpWithPort();
   }
 

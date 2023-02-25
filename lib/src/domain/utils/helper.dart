@@ -26,30 +26,10 @@
  *
  */
 
-part of 'home_cubit.dart';
+import 'dart:math';
 
-class HomeState extends Equatable {
-  const HomeState({
-    required this.status,
-    this.userModel,
-  });
-
-  final AppCubitStatus status;
-  final ClientModel? userModel;
-
-  @override
-  List<Object?> get props => [
-        status,
-        userModel,
-      ];
-
-  HomeState copyWith({
-    AppCubitStatus? status,
-    ClientModel? userModel,
-  }) {
-    return HomeState(
-      status: status ?? this.status,
-      userModel: userModel ?? this.userModel,
-    );
+mixin Helper {
+  static String generateRandomName() {
+    return 'user${Random().nextInt(100000)}';
   }
 }

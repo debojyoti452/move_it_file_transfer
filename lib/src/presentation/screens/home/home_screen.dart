@@ -28,12 +28,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../domain/global/secure_state_wrapper.dart';
+import '../../../domain/global/base_state_wrapper.dart';
 import '../../widgets/dx_bottom_navigation_bar.dart';
 import 'components/fragment/profile_fragment.dart';
 import 'components/fragment/receive_fragment.dart';
 import 'components/fragment/send_fragment.dart';
+import 'cubit/home_cubit.dart';
 
 enum BottomTabEnum {
   send('Send'),
@@ -57,9 +59,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
   final int _selectedIndex = 0;
   late PageController _pageController;
+  late HomeCubit _homeCubit;
 
   @override
   void onInit() {
+    _homeCubit = context.read<HomeCubit>();
+    _homeCubit.initialHome();
     initialize();
   }
 
@@ -75,29 +80,37 @@ class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
     Constraints constraints,
     PlatformType platform,
   ) {
-    return Scaffold(
-      body: SafeArea(
-        child: PageView(
-          controller: _pageController,
-          children: [
-            const SendFragment(),
-            const ReceiveFragment(),
-            const ProfileFragment(),
-          ],
-          physics: const NeverScrollableScrollPhysics(),
-        ),
-      ),
-      bottomNavigationBar: DxBottomNavigationBar(
-        onTabSelected: (item) {
-          _pageController.animateToPage(
-            item,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.ease,
-          );
-          debugPrint('index: $item');
-        },
-        currentIndex: _selectedIndex,
-      ),
+    return BlocConsumer<HomeCubit, HomeState>(
+      bloc: _homeCubit,
+      listener: (context, state) {
+        debugPrint('state: $state');
+      },
+      builder: (context, state) {
+        return Scaffold(
+          body: SafeArea(
+            child: PageView(
+              controller: _pageController,
+              children: [
+                const SendFragment(),
+                const ReceiveFragment(),
+                const ProfileFragment(),
+              ],
+              physics: const NeverScrollableScrollPhysics(),
+            ),
+          ),
+          bottomNavigationBar: DxBottomNavigationBar(
+            onTabSelected: (item) {
+              _pageController.animateToPage(
+                item,
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.ease,
+              );
+              debugPrint('index: $item');
+            },
+            currentIndex: _selectedIndex,
+          ),
+        );
+      },
     );
   }
 

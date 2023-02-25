@@ -31,50 +31,33 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../data/db/shared_pref.dart';
-import '../../../../data/model/client_model.dart';
-import '../../../../domain/core/move_server_service.dart';
-import '../../../../domain/di/move_di.dart';
-import '../../../../domain/global/app_cubit_status.dart';
-import '../../../../domain/utils/helper.dart';
+import '../../../../../data/db/shared_pref.dart';
+import '../../../../../data/model/client_model.dart';
+import '../../../../../domain/core/move_server_service.dart';
+import '../../../../../domain/di/move_di.dart';
+import '../../../../../domain/global/app_cubit_status.dart';
 
-part 'home_state.dart';
+part 'send_fragment_state.dart';
 
-class HomeCubit extends Cubit<HomeState> {
-  HomeCubit() : super(HomeState(status: AppCubitInitial()));
+class SendFragmentCubit extends Cubit<SendFragmentState> {
+  SendFragmentCubit()
+      : super(SendFragmentState(status: AppCubitInitial()));
 
   final MoveServerService moveServerService =
       MoveDI.moveServerService;
 
   void initialHome() async {
-    emit(HomeState(status: AppCubitLoading()));
+    emit(SendFragmentState(status: AppCubitLoading()));
     try {
       BotToast.showLoading();
       debugPrint(
-          'SendFragmentState: initialHome: start ${LocalDb.isAppOnboarded()}');
-      if (LocalDb.isAppOnboarded() == false) {
-        debugPrint(
-            'SendFragmentState: initialHome: isAppOnboarded: false');
-        var ownIp = await moveServerService.getOwnServerIpWithPort();
-        var ownName = Helper.generateRandomName();
-        var userModel = ClientModel(
-          id: 1,
-          clientId: '1',
-          clientName: ownName,
-          ipAddress: '${ownIp.host}',
-          token: 'NO_TOKEN_YET',
-        );
-        await LocalDb.setClientModel(userModel);
-        await LocalDb.setIsAppOnboarded(true);
-      }
-
-      debugPrint(
           'SendFragmentState: initialHome: end ${LocalDb.isAppOnboarded()} user: ${await LocalDb.getClientModel()}');
 
-      emit(HomeState(status: AppCubitSuccess()));
+      emit(SendFragmentState(status: AppCubitSuccess()));
     } catch (e) {
       debugPrint('SendFragmentState: initialHome: $e');
-      emit(HomeState(status: AppCubitError(message: e.toString())));
+      emit(SendFragmentState(
+          status: AppCubitError(message: e.toString())));
     } finally {
       BotToast.closeAllLoading();
     }
