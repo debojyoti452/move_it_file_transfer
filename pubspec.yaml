@@ -37,6 +37,7 @@ dependencies:
       path: plugins/window_size
   path_provider: ^2.0.13
   path: ^1.8.0
+  flutter_svg: ^2.0.2
 
 dev_dependencies:
   flutter_test:
@@ -53,3 +54,4 @@ flutter:
     - assets/
     - assets/images/
     - assets/logo/
+    - assets/devices/

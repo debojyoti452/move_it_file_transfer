@@ -30,7 +30,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../../data/constants/assets_constants.dart';
+import '../../../../../data/model/client_model.dart';
 import '../../../../../domain/global/base_state_wrapper.dart';
 import '../../../../../domain/themes/color_constants.dart';
 import '../../../../widgets/dx_nearby_view.dart';
@@ -51,6 +54,7 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
   @override
   void onInit() {
     _cubit = context.read<SendFragmentCubit>();
+    _cubit.initialize();
   }
 
   @override
@@ -59,43 +63,146 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
     Constraints constraints,
     PlatformType platform,
   ) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 14.w,
-        vertical: 14.h,
-      ),
-      child: Column(
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text.rich(
-              TextSpan(
-                text: 'See devices in your radar nearby\n',
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineMedium
-                    ?.copyWith(
-                      color: ColorConstants.BLACK,
-                      fontWeight: FontWeight.w500,
+    return BlocConsumer<SendFragmentCubit, SendFragmentState>(
+      bloc: _cubit,
+      listener: (context, state) {
+        // if (state.status is AppCubitLoading) {
+        //   BotToast.showLoading();
+        // }
+
+        // if (state.status is! AppCubitLoading) {
+        //   BotToast.closeAllLoading();
+        // }
+      },
+      builder: (context, state) {
+        return Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 14.w,
+            vertical: 14.h,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text.rich(
+                    TextSpan(
+                      text: 'See devices in your radar nearby\n',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineSmall
+                          ?.copyWith(
+                            color: ColorConstants.BLACK,
+                            fontWeight: FontWeight.bold,
+                          ),
+                      children: [
+                        TextSpan(
+                          text:
+                              'Make sure all devices are in same WiFi\n',
+                          style:
+                              Theme.of(context).textTheme.bodySmall,
+                        ),
+                        TextSpan(
+                          text:
+                              'Name: ${state.userModel.clientName ?? ''}\n',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(
+                                color: ColorConstants.PRIMARY_BLUE,
+                              ),
+                        ),
+                      ],
                     ),
-                children: [
-                  TextSpan(
-                    text: 'Make sure all devices are in same WiFi',
-                    style: Theme.of(context).textTheme.bodySmall,
                   ),
-                ],
-              ),
+                ),
+                SizedBox(
+                  height: 50.h,
+                ),
+                SizedBox(
+                  height: 200.h,
+                  child: const DxNearbyView(),
+                ),
+                SizedBox(
+                  height: 50.h,
+                ),
+                Row(
+                  children: [
+                    const Expanded(
+                      child: Text('All devices in your radar'),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        _cubit.searchNearbyDevices();
+                      },
+                      padding: EdgeInsets.zero,
+                      icon: const Icon(
+                        Icons.refresh,
+                        color: ColorConstants.BLACK,
+                      ),
+                    ),
+                  ],
+                ),
+                _allDeviceListView(
+                    nearbyClients: state.nearbyClients),
+              ],
             ),
           ),
-          SizedBox(
-            height: 50.h,
+        );
+      },
+    );
+  }
+
+  Widget _allDeviceListView({
+    required List<ClientModel> nearbyClients,
+  }) {
+    return ListView.builder(
+      itemCount: nearbyClients.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        return Container(
+          margin: EdgeInsets.only(
+            bottom: 10.h,
           ),
-          SizedBox(
-            height: 200.h,
-            child: const DxNearbyView(),
+          padding: EdgeInsets.symmetric(
+            horizontal: 10.w,
+            vertical: 10.h,
           ),
-        ],
-      ),
+          decoration: BoxDecoration(
+            color: ColorConstants.GREY_DARK,
+            borderRadius: BorderRadius.circular(4.r),
+          ),
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                _getIconByPlatform(
+                  nearbyClients[index].platform ?? '',
+                ),
+                width: 40.w,
+              ),
+              SizedBox(
+                width: 10.w,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${nearbyClients[index].clientName}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    Text(
+                      '${nearbyClients[index].platform}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -103,7 +210,9 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
   void onDestroy() {}
 
   @override
-  void onDispose() {}
+  void onDispose() {
+    _cubit.dispose();
+  }
 
   @override
   void onPause() {}
@@ -113,4 +222,13 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
 
   @override
   void onStop() {}
+
+  String _getIconByPlatform(String platform) {
+    var platformType = PlatformType.values.firstWhere(
+      (element) => element.toString().split('.').last == platform,
+      orElse: () => PlatformType.unknown,
+    );
+    return AssetsConstants.deviceIconMap[platformType.name] ??
+        AssetsConstants.logo;
+  }
 }

@@ -26,35 +26,10 @@
  *
  */
 
-part of 'send_fragment_cubit.dart';
-
-class SendFragmentState extends Equatable {
-  const SendFragmentState({
-    required this.status,
-    required this.userModel,
-    required this.nearbyClients,
-  });
-
-  final AppCubitStatus status;
-  final ClientModel userModel;
-  final List<ClientModel> nearbyClients;
-
-  @override
-  List<Object?> get props => [
-        status,
-        userModel,
-        nearbyClients,
-      ];
-
-  SendFragmentState copyWith({
-    AppCubitStatus? status,
-    ClientModel? userModel,
-    List<ClientModel>? nearbyClients,
-  }) {
-    return SendFragmentState(
-      status: status ?? this.status,
-      userModel: userModel ?? this.userModel,
-      nearbyClients: nearbyClients ?? this.nearbyClients,
-    );
-  }
+mixin Endpoints {
+  static const String REQUEST_CONNECTION = '/request_connection';
+  static const String ACCEPT_CONNECTION = '/accept_connection';
+  static const String SEARCH_NEARBY_CLIENTS =
+      '/search_nearby_clients';
+  static const String SEND_FILE = '/send_file';
 }

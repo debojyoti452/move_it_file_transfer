@@ -26,6 +26,9 @@
  *
  */
 
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
@@ -36,6 +39,7 @@ import '../../../../data/model/client_model.dart';
 import '../../../../domain/core/move_server_service.dart';
 import '../../../../domain/di/move_di.dart';
 import '../../../../domain/global/app_cubit_status.dart';
+import '../../../../domain/routes/endpoints.dart';
 import '../../../../domain/utils/helper.dart';
 
 part 'home_state.dart';
@@ -52,31 +56,62 @@ class HomeCubit extends Cubit<HomeState> {
       BotToast.showLoading();
       debugPrint(
           'SendFragmentState: initialHome: start ${LocalDb.isAppOnboarded()}');
-      if (LocalDb.isAppOnboarded() == false) {
-        debugPrint(
-            'SendFragmentState: initialHome: isAppOnboarded: false');
-        var ownIp = await moveServerService.getOwnServerIpWithPort();
-        var ownName = Helper.generateRandomName();
-        var userModel = ClientModel(
-          id: 1,
-          clientId: '1',
-          clientName: ownName,
-          ipAddress: '${ownIp.host}',
-          token: 'NO_TOKEN_YET',
-        );
-        await LocalDb.setClientModel(userModel);
-        await LocalDb.setIsAppOnboarded(true);
-      }
+      var ownIp = await moveServerService.getOwnServerIpWithPort();
+      var ownName = Helper.generateRandomName();
+      var userModel = ClientModel(
+        id: 1,
+        clientId: '1',
+        clientName: ownName,
+        ipAddress: '${ownIp.host}',
+        token: 'NO_TOKEN_YET',
+        platform: Platform.operatingSystem,
+      );
+      await LocalDb.setUserData(userModel);
+      await LocalDb.setIsAppOnboarded(true);
 
       debugPrint(
-          'SendFragmentState: initialHome: end ${LocalDb.isAppOnboarded()} user: ${await LocalDb.getClientModel()}');
+          'SendFragmentState: initialHome: end ${LocalDb.isAppOnboarded()} user: ${await LocalDb.getUserData()}');
 
+      moveServerService.createServer();
       emit(HomeState(status: AppCubitSuccess()));
     } catch (e) {
       debugPrint('SendFragmentState: initialHome: $e');
       emit(HomeState(status: AppCubitError(message: e.toString())));
     } finally {
       BotToast.closeAllLoading();
+      debugPrint('SendFragmentState: initialHome: finally');
+      Future.delayed(const Duration(seconds: 2), () {
+        runServerStream();
+      });
     }
+  }
+
+  void runServerStream() async {
+    moveServerService.getServerStream()?.listen((request) async {
+      debugPrint(
+          'SendFragmentState: serverStream: ${request.requestedUri.path}');
+      switch (request.requestedUri.path) {
+        case Endpoints.REQUEST_CONNECTION:
+          var myUserData = await LocalDb.getUserData();
+          request.response.write(jsonEncode(myUserData.toJson()));
+          request.response.close();
+          break;
+
+        case Endpoints.ACCEPT_CONNECTION:
+          debugPrint(
+              'SendFragmentState: serverStream: ACCEPT_CONNECTION: ${request.requestedUri.queryParameters}');
+          break;
+
+        case Endpoints.SEARCH_NEARBY_CLIENTS:
+          debugPrint(
+              'SendFragmentState: serverStream: SEARCH_NEARBY_CLIENTS: ${request.requestedUri.queryParameters}');
+          break;
+
+        case Endpoints.SEND_FILE:
+          debugPrint(
+              'SendFragmentState: serverStream: SEND_FILE: ${request.requestedUri.queryParameters}');
+          break;
+      }
+    });
   }
 }

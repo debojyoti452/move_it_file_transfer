@@ -42,6 +42,7 @@ class ClientModel with _$ClientModel, MoveObject<ClientModel> {
     @JsonKey(name: 'client_name') String? clientName,
     @JsonKey(name: 'token') String? token,
     @JsonKey(name: 'ip_address') String? ipAddress,
+    @JsonKey(name: 'platform') String? platform,
   }) = _ClientModel;
 
   const ClientModel._();

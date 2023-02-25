@@ -32,15 +32,15 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dx_http/dx_http.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../data/model/client_model.dart';
 import '../../data/model/network_address_model.dart';
+import '../routes/endpoints.dart';
 import '../utils/ip_generator.dart';
 
 abstract class _MoveServerInterface {
   void createServer();
-
-  void startServer();
 
   void stopServer();
 
@@ -66,6 +66,9 @@ class MoveServerService extends _MoveServerInterface {
 
   @override
   void createServer() async {
+    if (_server != null) {
+      return;
+    }
     _internetAddress = await getOwnServerIpWithPort();
     log('Server IP: ${_internetAddress.host}:${_internetAddress.port}');
     _server = await HttpServer.bind(
@@ -87,11 +90,11 @@ class MoveServerService extends _MoveServerInterface {
     if (_server == null) {
       log('Server is null');
     }
+    // Future.delayed(const Duration(seconds: 2), () {
+    //   log('Server Initialization Delay: $_server');
+    // });
     return _server?.asBroadcastStream();
   }
-
-  @override
-  void startServer() {}
 
   @override
   void stopServer() {
@@ -104,7 +107,7 @@ class MoveServerService extends _MoveServerInterface {
 
   @override
   Stream<List<ClientModel>> nearbyClients() {
-    _nearbyClient();
+    _nearbyClient('nearby');
     return _nearbyStreamController.stream.asBroadcastStream();
   }
 
@@ -123,7 +126,7 @@ class MoveServerService extends _MoveServerInterface {
     return await IpGenerator.getOwnLocalIpWithPort();
   }
 
-  void _nearbyClient() async {
+  void _nearbyClient(String args) async {
     var clients = <ClientModel>[];
     var ipList = await IpGenerator.generateListOfLocalIp();
     var ownIp = await IpGenerator.getOwnLocalIpWithPort();
@@ -134,8 +137,10 @@ class MoveServerService extends _MoveServerInterface {
       await Future.wait(ip.map((e) async {
         var isAvailable = await _isReceiverAvailable(e, ownIp);
         if (isAvailable) {
+          debugPrint(
+              'Receiver is available: ${e.address}${Endpoints.REQUEST_CONNECTION}');
           var client = await _dxHttp.get(
-            '${e.address}/data',
+            '${e.address}${Endpoints.REQUEST_CONNECTION}',
           );
           clients.add(ClientModel.fromJson(jsonDecode(client.data)));
           _nearbyStreamController.sink.add(clients);
@@ -164,22 +169,26 @@ class MoveServerService extends _MoveServerInterface {
     NetworkAddressModel addressModel,
     NetworkAddressModel ownAddressModel,
   ) async {
-    if (_isSameIp(addressModel.host!, ownAddressModel.host!)) {
-      return false;
-    } else {
-      try {
-        var socket = await Socket.connect(
-          addressModel.host,
-          addressModel.port!,
-          timeout: const Duration(seconds: 5),
-        );
-        log('Socket: $socket');
-        socket.destroy();
-        return true;
-      } catch (e) {
-        log('Error: $e');
+    try {
+      if (_isSameIp(addressModel.host!, ownAddressModel.host!)) {
         return false;
+      } else {
+        try {
+          var socket = await Socket.connect(
+            addressModel.host,
+            addressModel.port!,
+            timeout: const Duration(seconds: 5),
+          );
+          socket.destroy();
+          return true;
+        } catch (e) {
+          // log('Error: $e');
+          return false;
+        }
       }
+    } catch (e) {
+      // log('Error: $e');
+      return false;
     }
   }
 

@@ -41,25 +41,61 @@ part 'send_fragment_state.dart';
 
 class SendFragmentCubit extends Cubit<SendFragmentState> {
   SendFragmentCubit()
-      : super(SendFragmentState(status: AppCubitInitial()));
+      : super(SendFragmentState(
+          status: AppCubitInitial(),
+          nearbyClients: [],
+          userModel: const ClientModel(),
+        ));
 
   final MoveServerService moveServerService =
       MoveDI.moveServerService;
 
-  void initialHome() async {
-    emit(SendFragmentState(status: AppCubitLoading()));
+  void initialize() async {
+    emit(state.copyWith(status: AppCubitLoading()));
     try {
       BotToast.showLoading();
       debugPrint(
-          'SendFragmentState: initialHome: end ${LocalDb.isAppOnboarded()} user: ${await LocalDb.getClientModel()}');
+          'SendFragmentState: initialHome: end ${LocalDb.isAppOnboarded()} user: ${await LocalDb.getUserData()}');
 
-      emit(SendFragmentState(status: AppCubitSuccess()));
+      if (LocalDb.isAppOnboarded() == true) {
+        emit(state.copyWith(userModel: await LocalDb.getUserData()));
+      }
+      emit(state.copyWith(status: AppCubitSuccess()));
     } catch (e) {
       debugPrint('SendFragmentState: initialHome: $e');
-      emit(SendFragmentState(
+      emit(state.copyWith(
           status: AppCubitError(message: e.toString())));
     } finally {
       BotToast.closeAllLoading();
     }
+  }
+
+  void searchNearbyDevices() async {
+    try {
+      BotToast.showLoading();
+      emit(state.copyWith(status: AppCubitLoading()));
+      moveServerService.nearbyClients().listen((event) {
+        debugPrint(
+            'SendFragmentState: serverStream: nearbyClients: $event');
+        var nearbyClients = state.nearbyClients;
+        for (var element in event) {
+          if (nearbyClients.contains(element) == false) {
+            nearbyClients.add(element);
+          }
+        }
+        emit(state.copyWith(
+            nearbyClients: nearbyClients, status: AppCubitSuccess()));
+      });
+    } catch (e) {
+      debugPrint('SendFragmentState: serverStream: $e');
+      emit(state.copyWith(
+          status: AppCubitError(message: e.toString())));
+    } finally {
+      BotToast.closeAllLoading();
+    }
+  }
+
+  void dispose() {
+    moveServerService.dispose();
   }
 }

@@ -104,7 +104,7 @@ class LocalDb {
     return await SharedPref.set<bool>('isAppOnboarded', value);
   }
 
-  static Future<ClientModel> getClientModel() async {
+  static Future<ClientModel> getUserData() async {
     var sharedModel = SharedPref.get<String>(
       'clientModel',
       defaultValue: NOT_FOUND,
@@ -115,7 +115,7 @@ class LocalDb {
         : ClientModel.fromJson(jsonDecode(sharedModel ?? ''));
   }
 
-  static Future<bool> setClientModel(ClientModel value) async {
+  static Future<bool> setUserData(ClientModel value) async {
     return SharedPref.set<String>(
         'clientModel', jsonEncode(value.toJson()));
   }
