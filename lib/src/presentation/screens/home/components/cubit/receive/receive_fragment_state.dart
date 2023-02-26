@@ -26,47 +26,35 @@
  *
  */
 
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:move_db/move_db.dart';
+part of 'receive_fragment_cubit.dart';
 
-part 'client_model.freezed.dart';
-part 'client_model.g.dart';
+class ReceiveFragmentState extends Equatable {
+  const ReceiveFragmentState({
+    required this.status,
+    required this.userModel,
+    required this.requestList,
+  });
 
-@freezed
-class ClientModel with _$ClientModel, MoveObject<ClientModel> {
-  @JsonSerializable(
-      fieldRename: FieldRename.snake, explicitToJson: true)
-  const factory ClientModel({
-    @JsonKey(name: 'id') int? id,
-    @JsonKey(name: 'client_id') String? clientId,
-    @JsonKey(name: 'client_name') String? clientName,
-    @JsonKey(name: 'token') String? token,
-    @JsonKey(name: 'ip_address') String? ipAddress,
-    @JsonKey(name: 'connect_url') String? connectUrl,
-    @JsonKey(name: 'platform') String? platform,
-    @JsonKey(name: 'is_connected', defaultValue: false)
-        bool? isConnected,
-  }) = _ClientModel;
-
-  const ClientModel._();
-
-  factory ClientModel.fromJson(Map<String, dynamic> json) =>
-      _$ClientModelFromJson(json);
+  final AppCubitStatus status;
+  final ClientModel userModel;
+  final List<ConnectRequest> requestList;
 
   @override
-  Map<String, dynamic> toMoveMap() {
-    return toJson();
-  }
+  List<Object> get props => [
+        status,
+        userModel,
+        requestList,
+      ];
 
-  /// Temp Solution for MoveDb
-  /// Currently MoveDb does not support schemaName using annotation
-  @override
-  String assignSchemaName() {
-    return 'client_schema';
-  }
-
-  @override
-  ClientModel fromMoveMap(Map<String, dynamic> map) {
-    return ClientModel.fromJson(map);
+  ReceiveFragmentState copyWith({
+    AppCubitStatus? status,
+    ClientModel? userModel,
+    List<ConnectRequest>? requestList,
+  }) {
+    return ReceiveFragmentState(
+      status: status ?? this.status,
+      userModel: userModel ?? this.userModel,
+      requestList: requestList ?? this.requestList,
+    );
   }
 }

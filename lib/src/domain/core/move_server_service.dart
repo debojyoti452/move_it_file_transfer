@@ -35,6 +35,7 @@ import 'package:dx_http/dx_http.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../data/model/client_model.dart';
+import '../../data/model/connect_model.dart';
 import '../../data/model/network_address_model.dart';
 import '../routes/endpoints.dart';
 import '../utils/ip_generator.dart';
@@ -55,6 +56,14 @@ abstract class _MoveServerInterface {
   void dispose();
 
   Future<NetworkAddressModel> getOwnServerIpWithPort();
+
+  Future<bool> sendRequestToDevice({
+    required ConnectRequest connectRequest,
+  });
+
+  Future<bool> acceptConnectionRequest({
+    required ConnectRequest connectRequest,
+  });
 }
 
 class MoveServerService extends _MoveServerInterface {
@@ -104,8 +113,48 @@ class MoveServerService extends _MoveServerInterface {
 
   @override
   Stream<List<ClientModel>> nearbyClients() {
-    _nearbyClient('nearby');
+    _nearbyClient();
     return _nearbyStreamController.stream.asBroadcastStream();
+  }
+
+  @override
+  Future<bool> sendRequestToDevice({
+    required ConnectRequest connectRequest,
+  }) {
+    try {
+      return _dxHttp
+          .post(
+              '${connectRequest.toData?.connectUrl}${Endpoints.REQUEST_CONNECTION}',
+              params: connectRequest.toJson())
+          .then((value) {
+        return Future.value(true);
+      });
+    } catch (e) {
+      return Future.value(false);
+    }
+  }
+
+  @override
+  Future<bool> acceptConnectionRequest({
+    required ConnectRequest connectRequest,
+  }) {
+    try {
+      var response = ConnectResponse(
+        fromIp: connectRequest.fromIp,
+        toIp: connectRequest.toIp,
+        acceptedStatus: true,
+      );
+
+      return _dxHttp
+          .post(
+              '${connectRequest.fromData?.connectUrl}${Endpoints.ACCEPT_CONNECTION}',
+              params: response.toJson())
+          .then((value) {
+        return Future.value(true);
+      });
+    } catch (e) {
+      return Future.value(false);
+    }
   }
 
   @override
@@ -123,7 +172,7 @@ class MoveServerService extends _MoveServerInterface {
     return await IpGenerator.getOwnLocalIpWithPort();
   }
 
-  void _nearbyClient(String args) async {
+  void _nearbyClient() async {
     var clients = <ClientModel>[];
     var ipList = await IpGenerator.generateListOfLocalIp();
     var ownIp = await IpGenerator.getOwnLocalIpWithPort();
@@ -135,9 +184,9 @@ class MoveServerService extends _MoveServerInterface {
         var isAvailable = await _isReceiverAvailable(e, ownIp);
         if (isAvailable) {
           debugPrint(
-              'Receiver is available: ${e.address}${Endpoints.REQUEST_CONNECTION}');
+              'Receiver is available: ${e.address}${Endpoints.SEARCH_NEARBY_CLIENTS}');
           var client = await _dxHttp.get(
-            '${e.address}${Endpoints.REQUEST_CONNECTION}',
+            '${e.address}${Endpoints.SEARCH_NEARBY_CLIENTS}',
           );
           clients.add(ClientModel.fromJson(jsonDecode(client.data)));
           _nearbyStreamController.sink.add(clients);

@@ -32,13 +32,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../../data/constants/assets_constants.dart';
 import '../../../../../data/model/client_model.dart';
 import '../../../../../domain/global/app_cubit_status.dart';
 import '../../../../../domain/global/base_state_wrapper.dart';
 import '../../../../../domain/themes/color_constants.dart';
+import '../../../../../domain/utils/helper.dart';
 import '../../../../widgets/dx_nearby_view.dart';
-import '../cubit/send_fragment_cubit.dart';
+import '../cubit/send/send_fragment_cubit.dart';
 
 class SendFragment extends StatefulWidget {
   static const String id = 'SEND_FRAGMENT';
@@ -74,7 +74,6 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
         // if (state.status is! AppCubitLoading) {
         //   BotToast.closeAllLoading();
         // }
-        debugPrint('SendFragmentState: $state');
       },
       builder: (context, state) {
         return Container(
@@ -190,48 +189,68 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
-        return Container(
-          margin: EdgeInsets.only(
-            bottom: 10.h,
-          ),
-          padding: EdgeInsets.symmetric(
-            horizontal: 10.w,
-            vertical: 10.h,
-          ),
-          decoration: BoxDecoration(
-            color: ColorConstants.GREY_DARK,
-            borderRadius: BorderRadius.circular(4.r),
-          ),
-          child: Row(
-            children: [
-              SvgPicture.asset(
-                _getIconByPlatform(
-                  nearbyClients[index].platform ?? '',
+        return InkWell(
+          onTap: () {
+            _cubit.sendRequestToDevice(
+              clientModel: nearbyClients[index],
+            );
+          },
+          child: Container(
+            margin: EdgeInsets.only(
+              bottom: 10.h,
+            ),
+            padding: EdgeInsets.symmetric(
+              horizontal: 10.w,
+              vertical: 10.h,
+            ),
+            decoration: BoxDecoration(
+              color: ColorConstants.GREY_DARK,
+              borderRadius: BorderRadius.circular(4.r),
+            ),
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  Helper.getIconByPlatform(
+                    nearbyClients[index].platform ?? '',
+                  ),
+                  width: 40.w,
                 ),
-                width: 40.w,
-              ),
-              SizedBox(
-                width: 10.w,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${nearbyClients[index].clientName}',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    Text(
-                      '${nearbyClients[index].platform}',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
+                SizedBox(
+                  width: 10.w,
                 ),
-              ),
-            ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${nearbyClients[index].clientName}',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      Text(
+                        '${nearbyClients[index].platform}',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      _connectedStatusView(
+                          (nearbyClients[index].isConnected ??
+                              false)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
+    );
+  }
+
+  Widget _connectedStatusView(bool isConnected) {
+    return Text(
+      isConnected ? 'Connected' : 'Not connected',
+      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: isConnected ? Colors.green : Colors.red,
+          ),
     );
   }
 
@@ -251,13 +270,4 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
 
   @override
   void onStop() {}
-
-  String _getIconByPlatform(String platform) {
-    var platformType = PlatformType.values.firstWhere(
-      (element) => element.toString().split('.').last == platform,
-      orElse: () => PlatformType.unknown,
-    );
-    return AssetsConstants.deviceIconMap[platformType.name] ??
-        AssetsConstants.logo;
-  }
 }

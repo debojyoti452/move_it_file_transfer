@@ -40,7 +40,8 @@ import 'src/data/db/shared_pref.dart';
 import 'src/domain/di/move_di.dart';
 import 'src/domain/routes/app_routes.dart';
 import 'src/domain/themes/color_constants.dart';
-import 'src/presentation/screens/home/components/cubit/send_fragment_cubit.dart';
+import 'src/presentation/screens/home/components/cubit/receive/receive_fragment_cubit.dart';
+import 'src/presentation/screens/home/components/cubit/send/send_fragment_cubit.dart';
 import 'src/presentation/screens/home/cubit/home_cubit.dart';
 import 'src/presentation/screens/home/home_screen.dart';
 
@@ -61,6 +62,9 @@ Future<void> main() async {
       ),
       BlocProvider<SendFragmentCubit>(
         create: (context) => SendFragmentCubit(),
+      ),
+      BlocProvider<ReceiveFragmentCubit>(
+        create: (context) => ReceiveFragmentCubit(),
       ),
     ],
     child: BaseApp(),

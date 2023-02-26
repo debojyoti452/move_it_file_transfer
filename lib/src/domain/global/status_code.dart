@@ -26,47 +26,10 @@
  *
  */
 
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:move_db/move_db.dart';
-
-part 'client_model.freezed.dart';
-part 'client_model.g.dart';
-
-@freezed
-class ClientModel with _$ClientModel, MoveObject<ClientModel> {
-  @JsonSerializable(
-      fieldRename: FieldRename.snake, explicitToJson: true)
-  const factory ClientModel({
-    @JsonKey(name: 'id') int? id,
-    @JsonKey(name: 'client_id') String? clientId,
-    @JsonKey(name: 'client_name') String? clientName,
-    @JsonKey(name: 'token') String? token,
-    @JsonKey(name: 'ip_address') String? ipAddress,
-    @JsonKey(name: 'connect_url') String? connectUrl,
-    @JsonKey(name: 'platform') String? platform,
-    @JsonKey(name: 'is_connected', defaultValue: false)
-        bool? isConnected,
-  }) = _ClientModel;
-
-  const ClientModel._();
-
-  factory ClientModel.fromJson(Map<String, dynamic> json) =>
-      _$ClientModelFromJson(json);
-
-  @override
-  Map<String, dynamic> toMoveMap() {
-    return toJson();
-  }
-
-  /// Temp Solution for MoveDb
-  /// Currently MoveDb does not support schemaName using annotation
-  @override
-  String assignSchemaName() {
-    return 'client_schema';
-  }
-
-  @override
-  ClientModel fromMoveMap(Map<String, dynamic> map) {
-    return ClientModel.fromJson(map);
-  }
+mixin StatusCode {
+  static const int NEW_CONNECTION_REQUEST = 900;
+  static const int NEW_CONNECTION_ACCEPTED = 901;
+  static const int NEW_CONNECTION_REJECTED = 902;
+  static const int NEW_FILE_REQUEST = 903;
+  static const int NEW_FILE_ACCEPTED = 904;
 }

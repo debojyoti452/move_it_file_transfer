@@ -30,8 +30,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../domain/global/app_cubit_status.dart';
 import '../../../domain/global/base_state_wrapper.dart';
+import '../../../domain/global/status_code.dart';
 import '../../widgets/dx_bottom_navigation_bar.dart';
+import 'components/cubit/receive/receive_fragment_cubit.dart';
 import 'components/fragment/profile_fragment.dart';
 import 'components/fragment/receive_fragment.dart';
 import 'components/fragment/send_fragment.dart';
@@ -83,7 +86,17 @@ class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
     return BlocConsumer<HomeCubit, HomeState>(
       bloc: _homeCubit,
       listener: (context, state) {
-        debugPrint('state: $state');
+        debugPrint('state: ${state.connectRequestList}');
+        if (state.status is AppCubitSuccess) {
+          if ((state.status as AppCubitSuccess).code ==
+              StatusCode.NEW_CONNECTION_REQUEST) {
+            if (state.connectRequestList?.isNotEmpty ?? false) {
+              context.read<ReceiveFragmentCubit>().updateRequestList(
+                    state.connectRequestList ?? [],
+                  );
+            }
+          }
+        }
       },
       builder: (context, state) {
         return Scaffold(

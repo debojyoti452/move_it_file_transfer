@@ -28,8 +28,20 @@
 
 import 'dart:math';
 
+import '../../data/constants/assets_constants.dart';
+import '../global/base_state_wrapper.dart';
+
 mixin Helper {
   static String generateRandomName() {
     return 'user${Random().nextInt(100000)}';
+  }
+
+  static String getIconByPlatform(String platform) {
+    var platformType = PlatformType.values.firstWhere(
+      (element) => element.toString().split('.').last == platform,
+      orElse: () => PlatformType.unknown,
+    );
+    return AssetsConstants.deviceIconMap[platformType.name] ??
+        AssetsConstants.logo;
   }
 }

@@ -27,46 +27,35 @@
  */
 
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:move_db/move_db.dart';
 
-part 'client_model.freezed.dart';
-part 'client_model.g.dart';
+import 'client_model.dart';
+
+part 'connect_model.freezed.dart';
+part 'connect_model.g.dart';
 
 @freezed
-class ClientModel with _$ClientModel, MoveObject<ClientModel> {
+class ConnectRequest with _$ConnectRequest {
+  const factory ConnectRequest({
+    @JsonKey(name: 'from_ip') String? fromIp,
+    @JsonKey(name: 'to_ip') String? toIp,
+    @JsonKey(name: 'from_data') ClientModel? fromData,
+    @JsonKey(name: 'to_data') ClientModel? toData,
+  }) = _ConnectRequest;
+
+  factory ConnectRequest.fromJson(Map<String, dynamic> json) =>
+      _$ConnectRequestFromJson(json);
+}
+
+@freezed
+class ConnectResponse with _$ConnectResponse {
   @JsonSerializable(
       fieldRename: FieldRename.snake, explicitToJson: true)
-  const factory ClientModel({
-    @JsonKey(name: 'id') int? id,
-    @JsonKey(name: 'client_id') String? clientId,
-    @JsonKey(name: 'client_name') String? clientName,
-    @JsonKey(name: 'token') String? token,
-    @JsonKey(name: 'ip_address') String? ipAddress,
-    @JsonKey(name: 'connect_url') String? connectUrl,
-    @JsonKey(name: 'platform') String? platform,
-    @JsonKey(name: 'is_connected', defaultValue: false)
-        bool? isConnected,
-  }) = _ClientModel;
+  const factory ConnectResponse({
+    @JsonKey(name: 'from_ip') String? fromIp,
+    @JsonKey(name: 'to_ip') String? toIp,
+    @JsonKey(name: 'acceptedStatus') bool? acceptedStatus,
+  }) = _ConnectResponse;
 
-  const ClientModel._();
-
-  factory ClientModel.fromJson(Map<String, dynamic> json) =>
-      _$ClientModelFromJson(json);
-
-  @override
-  Map<String, dynamic> toMoveMap() {
-    return toJson();
-  }
-
-  /// Temp Solution for MoveDb
-  /// Currently MoveDb does not support schemaName using annotation
-  @override
-  String assignSchemaName() {
-    return 'client_schema';
-  }
-
-  @override
-  ClientModel fromMoveMap(Map<String, dynamic> map) {
-    return ClientModel.fromJson(map);
-  }
+  factory ConnectResponse.fromJson(Map<String, dynamic> json) =>
+      _$ConnectResponseFromJson(json);
 }

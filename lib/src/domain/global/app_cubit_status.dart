@@ -6,8 +6,9 @@ class AppCubitLoading extends AppCubitStatus {}
 
 class AppCubitSuccess extends AppCubitStatus {
   final String message;
+  final int code;
 
-  AppCubitSuccess({this.message = ''});
+  AppCubitSuccess({this.message = '', this.code = 452});
 }
 
 class AppCubitError extends AppCubitStatus {

@@ -26,6 +26,13 @@
  *
  */
 
+mixin Methods {
+  static const String GET = 'GET';
+  static const String POST = 'POST';
+  static const String PUT = 'PUT';
+  static const String DELETE = 'DELETE';
+}
+
 mixin Endpoints {
   static const String REQUEST_CONNECTION = '/request_connection';
   static const String ACCEPT_CONNECTION = '/accept_connection';

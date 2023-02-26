@@ -36,16 +36,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../data/db/shared_pref.dart';
 import '../../../../data/model/client_model.dart';
+import '../../../../data/model/connect_model.dart';
 import '../../../../domain/core/move_server_service.dart';
 import '../../../../domain/di/move_di.dart';
 import '../../../../domain/global/app_cubit_status.dart';
+import '../../../../domain/global/status_code.dart';
 import '../../../../domain/routes/endpoints.dart';
 import '../../../../domain/utils/helper.dart';
 
 part 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  HomeCubit() : super(HomeState(status: AppCubitInitial()));
+  HomeCubit()
+      : super(HomeState(
+          status: AppCubitInitial(),
+          connectRequestList: [],
+          userModel: const ClientModel(),
+        ));
 
   final MoveServerService moveServerService =
       MoveDI.moveServerService;
@@ -59,6 +66,7 @@ class HomeCubit extends Cubit<HomeState> {
         var userData = await LocalDb.getUserData();
         var updatedData = userData.copyWith(
           ipAddress: '${ownIp.host}',
+          connectUrl: 'http://${ownIp.host}:${ownIp.port}',
           platform: Platform.operatingSystem,
         );
         await LocalDb.setUserData(updatedData);
@@ -69,6 +77,7 @@ class HomeCubit extends Cubit<HomeState> {
           clientId: '1',
           clientName: ownName,
           ipAddress: '${ownIp.host}',
+          connectUrl: 'http://${ownIp.host}:${ownIp.port}',
           token: 'NO_TOKEN_YET',
           platform: Platform.operatingSystem,
         );
@@ -90,23 +99,33 @@ class HomeCubit extends Cubit<HomeState> {
 
   void runServerStream() async {
     moveServerService.getServerStream()?.listen((request) async {
-      debugPrint(
-          'SendFragmentState: serverStream: ${request.requestedUri.path}');
+      debugPrint('Requested URI: ${request.requestedUri.path}');
       switch (request.requestedUri.path) {
         case Endpoints.REQUEST_CONNECTION:
-          var myUserData = await LocalDb.getUserData();
-          request.response.write(jsonEncode(myUserData.toJson()));
-          request.response.close();
+          if (request.method == Methods.POST) {
+            var body = await utf8.decoder.bind(request).join();
+            var data = jsonDecode(body);
+            debugPrint('REQUEST_CONNECTION: $data');
+            updateConnectRequestModel(ConnectRequest.fromJson(data));
+            request.response.write(data);
+            request.response.close();
+          }
           break;
 
         case Endpoints.ACCEPT_CONNECTION:
-          debugPrint(
-              'SendFragmentState: serverStream: ACCEPT_CONNECTION: ${request.requestedUri.queryParameters}');
+          if (request.method == Methods.POST) {
+            var body = await utf8.decoder.bind(request).join();
+            var data = jsonDecode(body);
+            debugPrint('ACCEPT_CONNECTION: $data');
+            request.response.write(data);
+            request.response.close();
+          }
           break;
 
         case Endpoints.SEARCH_NEARBY_CLIENTS:
-          debugPrint(
-              'SendFragmentState: serverStream: SEARCH_NEARBY_CLIENTS: ${request.requestedUri.queryParameters}');
+          var myUserData = await LocalDb.getUserData();
+          request.response.write(jsonEncode(myUserData.toJson()));
+          request.response.close();
           break;
 
         case Endpoints.SEND_FILE:
@@ -115,5 +134,35 @@ class HomeCubit extends Cubit<HomeState> {
           break;
       }
     });
+  }
+
+  /// Update the accept request list
+  void updateAcceptRequestModel(ConnectRequest model) {
+    emit(state.copyWith(status: AppCubitLoading()));
+    var connectList = state.connectRequestList ?? [];
+    if (connectList.contains(model) == false) {
+      connectList.add(model);
+    }
+    emit(state.copyWith(
+      connectRequestList: connectList,
+      status: AppCubitSuccess(
+        code: StatusCode.NEW_CONNECTION_ACCEPTED,
+      ),
+    ));
+  }
+
+  /// Update the connect request list
+  void updateConnectRequestModel(ConnectRequest model) {
+    emit(state.copyWith(status: AppCubitLoading()));
+    var connectList = state.connectRequestList ?? [];
+    if (connectList.contains(model) == false) {
+      connectList.add(model);
+    }
+    emit(state.copyWith(
+      connectRequestList: connectList,
+      status: AppCubitSuccess(
+        code: StatusCode.NEW_CONNECTION_REQUEST,
+      ),
+    ));
   }
 }

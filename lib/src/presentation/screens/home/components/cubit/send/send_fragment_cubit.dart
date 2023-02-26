@@ -33,11 +33,12 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../data/db/shared_pref.dart';
-import '../../../../../data/model/client_model.dart';
-import '../../../../../domain/core/move_server_service.dart';
-import '../../../../../domain/di/move_di.dart';
-import '../../../../../domain/global/app_cubit_status.dart';
+import '../../../../../../data/db/shared_pref.dart';
+import '../../../../../../data/model/client_model.dart';
+import '../../../../../../data/model/connect_model.dart';
+import '../../../../../../domain/core/move_server_service.dart';
+import '../../../../../../domain/di/move_di.dart';
+import '../../../../../../domain/global/app_cubit_status.dart';
 
 part 'send_fragment_state.dart';
 
@@ -141,6 +142,30 @@ class SendFragmentCubit extends Cubit<SendFragmentState> {
     moveServerService.dispose();
     receivePort.close();
     searchAlgoIsolate?.kill(priority: Isolate.immediate);
+  }
+
+  void sendRequestToDevice({
+    required ClientModel clientModel,
+  }) {
+    try {
+      BotToast.showLoading();
+      emit(state.copyWith(status: AppCubitLoading()));
+      var userModel = state.userModel;
+      moveServerService.sendRequestToDevice(
+        connectRequest: ConnectRequest(
+          fromData: userModel,
+          toData: clientModel,
+          fromIp: userModel.ipAddress,
+          toIp: clientModel.ipAddress,
+        ),
+      );
+
+      emit(state.copyWith(status: AppCubitSuccess()));
+    } catch (e) {
+      debugPrint('SendFragmentState: sendDataToDevice: $e');
+    } finally {
+      BotToast.closeAllLoading();
+    }
   }
 }
 
