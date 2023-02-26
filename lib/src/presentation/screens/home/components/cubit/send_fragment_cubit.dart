@@ -26,6 +26,8 @@
  *
  */
 
+import 'dart:isolate';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
@@ -49,6 +51,8 @@ class SendFragmentCubit extends Cubit<SendFragmentState> {
 
   final MoveServerService moveServerService =
       MoveDI.moveServerService;
+  ReceivePort receivePort = ReceivePort();
+  Isolate? searchAlgoIsolate;
 
   void initialize() async {
     emit(state.copyWith(status: AppCubitLoading()));
@@ -71,31 +75,78 @@ class SendFragmentCubit extends Cubit<SendFragmentState> {
   }
 
   void searchNearbyDevices() async {
+    if (state.status is AppCubitLoading) {
+      return;
+    }
     try {
       BotToast.showLoading();
       emit(state.copyWith(status: AppCubitLoading()));
-      moveServerService.nearbyClients().listen((event) {
-        debugPrint(
-            'SendFragmentState: serverStream: nearbyClients: $event');
-        var nearbyClients = state.nearbyClients;
-        for (var element in event) {
+
+      var nearbyClients = state.nearbyClients;
+      final BgMethodModel args = BgMethodModel(
+        sendPort: receivePort.sendPort,
+        dataList: nearbyClients,
+      );
+
+      /// Spawn the isolate
+      searchAlgoIsolate =
+          await Isolate.spawn(_computeSearchDeviceInBg, args);
+
+      /// Listen to the stream of messages from the isolate
+      receivePort.asBroadcastStream().listen((message) {
+        if (message is! List<ClientModel>) {
+          return;
+        }
+
+        for (var element in message) {
           if (nearbyClients.contains(element) == false) {
             nearbyClients.add(element);
           }
         }
         emit(state.copyWith(
-            nearbyClients: nearbyClients, status: AppCubitSuccess()));
-      });
+          nearbyClients: nearbyClients,
+          status: AppCubitSuccess(),
+        ));
+      }, onDone: () {
+        debugPrint('SendFragmentState: searchNearbyDevices: onDone');
+      }, onError: (e) {
+        debugPrint('SendFragmentState: searchNearbyDevices: $e');
+      }, cancelOnError: true);
     } catch (e) {
       debugPrint('SendFragmentState: serverStream: $e');
       emit(state.copyWith(
-          status: AppCubitError(message: e.toString())));
+        status: AppCubitError(message: e.toString()),
+      ));
     } finally {
       BotToast.closeAllLoading();
+      // dispose();
     }
+  }
+
+  static void _computeSearchDeviceInBg(
+    BgMethodModel args,
+  ) {
+    var nearbyClients = args.dataList;
+    MoveDI.moveServerService.nearbyClients().listen((event) {
+      for (var element in event) {
+        if (nearbyClients.contains(element) == false) {
+          nearbyClients.add(element);
+        }
+      }
+      args.sendPort?.send(nearbyClients);
+    });
   }
 
   void dispose() {
     moveServerService.dispose();
+    receivePort.close();
+    searchAlgoIsolate?.kill(priority: Isolate.immediate);
   }
+}
+
+class BgMethodModel {
+  final List<ClientModel> dataList;
+  final SendPort? sendPort;
+
+  BgMethodModel({required this.dataList, required this.sendPort});
 }

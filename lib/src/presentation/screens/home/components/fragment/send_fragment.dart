@@ -34,6 +34,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../../data/constants/assets_constants.dart';
 import '../../../../../data/model/client_model.dart';
+import '../../../../../domain/global/app_cubit_status.dart';
 import '../../../../../domain/global/base_state_wrapper.dart';
 import '../../../../../domain/themes/color_constants.dart';
 import '../../../../widgets/dx_nearby_view.dart';
@@ -73,6 +74,7 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
         // if (state.status is! AppCubitLoading) {
         //   BotToast.closeAllLoading();
         // }
+        debugPrint('SendFragmentState: $state');
       },
       builder: (context, state) {
         return Container(
@@ -144,7 +146,9 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
                   ],
                 ),
                 _allDeviceListView(
-                    nearbyClients: state.nearbyClients),
+                  nearbyClients: state.nearbyClients,
+                  state: state,
+                ),
               ],
             ),
           ),
@@ -155,7 +159,32 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
 
   Widget _allDeviceListView({
     required List<ClientModel> nearbyClients,
+    required SendFragmentState state,
   }) {
+    if (state.status is AppCubitLoading) {
+      return Container(
+        margin: EdgeInsets.only(
+          top: 90.h,
+        ),
+        child: CircularProgressIndicator(
+          color: ColorConstants.BLACK,
+          strokeWidth: 2.w,
+        ),
+      );
+    }
+    if (nearbyClients.isEmpty) {
+      return Container(
+        margin: EdgeInsets.only(
+          top: 90.h,
+        ),
+        child: Text(
+          'No device found.',
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+      );
+    }
     return ListView.builder(
       itemCount: nearbyClients.length,
       shrinkWrap: true,

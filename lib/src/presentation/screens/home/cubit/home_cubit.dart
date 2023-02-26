@@ -54,24 +54,27 @@ class HomeCubit extends Cubit<HomeState> {
     emit(HomeState(status: AppCubitLoading()));
     try {
       BotToast.showLoading();
-      debugPrint(
-          'SendFragmentState: initialHome: start ${LocalDb.isAppOnboarded()}');
       var ownIp = await moveServerService.getOwnServerIpWithPort();
-      var ownName = Helper.generateRandomName();
-      var userModel = ClientModel(
-        id: 1,
-        clientId: '1',
-        clientName: ownName,
-        ipAddress: '${ownIp.host}',
-        token: 'NO_TOKEN_YET',
-        platform: Platform.operatingSystem,
-      );
-      await LocalDb.setUserData(userModel);
-      await LocalDb.setIsAppOnboarded(true);
-
-      debugPrint(
-          'SendFragmentState: initialHome: end ${LocalDb.isAppOnboarded()} user: ${await LocalDb.getUserData()}');
-
+      if (LocalDb.isAppOnboarded()) {
+        var userData = await LocalDb.getUserData();
+        var updatedData = userData.copyWith(
+          ipAddress: '${ownIp.host}',
+          platform: Platform.operatingSystem,
+        );
+        await LocalDb.setUserData(updatedData);
+      } else {
+        var ownName = Helper.generateRandomName();
+        var userModel = ClientModel(
+          id: 1,
+          clientId: '1',
+          clientName: ownName,
+          ipAddress: '${ownIp.host}',
+          token: 'NO_TOKEN_YET',
+          platform: Platform.operatingSystem,
+        );
+        await LocalDb.setUserData(userModel);
+        await LocalDb.setIsAppOnboarded(true);
+      }
       moveServerService.createServer();
       emit(HomeState(status: AppCubitSuccess()));
     } catch (e) {
@@ -79,7 +82,6 @@ class HomeCubit extends Cubit<HomeState> {
       emit(HomeState(status: AppCubitError(message: e.toString())));
     } finally {
       BotToast.closeAllLoading();
-      debugPrint('SendFragmentState: initialHome: finally');
       Future.delayed(const Duration(seconds: 2), () {
         runServerStream();
       });

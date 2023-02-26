@@ -90,9 +90,6 @@ class MoveServerService extends _MoveServerInterface {
     if (_server == null) {
       log('Server is null');
     }
-    // Future.delayed(const Duration(seconds: 2), () {
-    //   log('Server Initialization Delay: $_server');
-    // });
     return _server?.asBroadcastStream();
   }
 
@@ -147,6 +144,7 @@ class MoveServerService extends _MoveServerInterface {
         }
       }));
     }
+    _nearbyStreamController.sink.done;
   }
 
   /// Divide the list into 30 parts
@@ -182,7 +180,7 @@ class MoveServerService extends _MoveServerInterface {
           socket.destroy();
           return true;
         } catch (e) {
-          // log('Error: $e');
+          log('Error: $e');
           return false;
         }
       }
