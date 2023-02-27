@@ -26,22 +26,20 @@
  *
  */
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/material.dart';
 
-abstract class BaseCubitWrapper<T> extends Cubit<T> {
-  BaseCubitWrapper(T state) : super(state);
+class ReceiveFileScreen extends StatefulWidget {
+  static const id = 'RECEIVE_FILE_SCREEN';
 
-  void initialize();
+  const ReceiveFileScreen({Key? key}) : super(key: key);
 
-  void dispose();
+  @override
+  _ReceiveFileScreenState createState() => _ReceiveFileScreenState();
+}
 
-  void emitState(T state) {
-    emit(state);
-  }
-
-  void emitError(T state, Object error) {
-    debugPrint(error.toString());
-    emit(state);
+class _ReceiveFileScreenState extends State<ReceiveFileScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../presentation/screens/home/home_screen.dart';
 import '../../presentation/screens/start/start_screen.dart';
+import '../../presentation/screens/transfer/receive_file_screen.dart';
+import '../../presentation/screens/transfer/send_file_screen.dart';
 
 class AppRoutes {
   static Route<T> onGenerateRoute<T>(RouteSettings settings) {
@@ -15,6 +17,18 @@ class AppRoutes {
       case StartScreen.id:
         return _SlideAnimator(
           builder: (_) => const StartScreen(),
+          settings: settings,
+        );
+
+      case SendFileScreen.id:
+        return _SlideAnimator(
+          builder: (_) => const SendFileScreen(),
+          settings: settings,
+        );
+
+      case ReceiveFileScreen.id:
+        return _SlideAnimator(
+          builder: (_) => const ReceiveFileScreen(),
           settings: settings,
         );
 

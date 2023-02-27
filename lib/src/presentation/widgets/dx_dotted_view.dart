@@ -26,22 +26,44 @@
  *
  */
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/material.dart';
 
-abstract class BaseCubitWrapper<T> extends Cubit<T> {
-  BaseCubitWrapper(T state) : super(state);
+import '../../domain/themes/color_constants.dart';
 
-  void initialize();
+class DxDottedView extends StatelessWidget {
+  const DxDottedView({
+    Key? key,
+    this.height = 1,
+    this.color = ColorConstants.BLACK,
+  }) : super(key: key);
+  final double height;
+  final Color color;
 
-  void dispose();
-
-  void emitState(T state) {
-    emit(state);
-  }
-
-  void emitError(T state, Object error) {
-    debugPrint(error.toString());
-    emit(state);
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (
+        BuildContext context,
+        BoxConstraints constraints,
+      ) {
+        final boxWidth = constraints.constrainWidth();
+        const dashWidth = 10.0;
+        final dashHeight = height;
+        final dashCount = (boxWidth / (2 * dashWidth)).floor();
+        return Flex(
+          children: List.generate(dashCount, (_) {
+            return SizedBox(
+              width: dashWidth,
+              height: dashHeight,
+              child: DecoratedBox(
+                decoration: BoxDecoration(color: color),
+              ),
+            );
+          }),
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          direction: Axis.horizontal,
+        );
+      },
+    );
   }
 }

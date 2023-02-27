@@ -27,7 +27,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/model/connect_model.dart';
@@ -82,7 +81,7 @@ class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
   @override
   Widget onBuild(
     BuildContext context,
-    Constraints constraints,
+    BoxConstraints constraints,
     PlatformType platform,
   ) {
     return BlocConsumer<HomeCubit, HomeState>(

@@ -27,7 +27,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -61,7 +60,7 @@ class _ReceiveFragmentState
   @override
   Widget onBuild(
     BuildContext context,
-    Constraints constraints,
+    BoxConstraints constraints,
     PlatformType platform,
   ) {
     return BlocConsumer<ReceiveFragmentCubit, ReceiveFragmentState>(

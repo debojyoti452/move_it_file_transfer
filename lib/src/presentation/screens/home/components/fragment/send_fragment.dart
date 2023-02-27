@@ -26,19 +26,20 @@
  *
  */
 
-import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../../data/model/client_model.dart';
+import '../../../../../data/model/connect_model.dart';
 import '../../../../../domain/global/app_cubit_status.dart';
 import '../../../../../domain/global/base_state_wrapper.dart';
 import '../../../../../domain/themes/color_constants.dart';
 import '../../../../../domain/utils/helper.dart';
 import '../../../../widgets/dx_nearby_view.dart';
+import '../../../transfer/cubit/transfer_cubit.dart';
+import '../../../transfer/send_file_screen.dart';
 import '../cubit/send/send_fragment_cubit.dart';
 
 class SendFragment extends StatefulWidget {
@@ -62,7 +63,7 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
   @override
   Widget onBuild(
     BuildContext context,
-    Constraints constraints,
+    BoxConstraints constraints,
     PlatformType platform,
   ) {
     return BlocConsumer<SendFragmentCubit, SendFragmentState>(
@@ -197,7 +198,22 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
                 clientModel: nearbyClients[index],
               );
             } else {
-              BotToast.showText(text: 'Already connected');
+              try {
+                var client = nearbyClients[index];
+                var connectModel = ConnectRequest(
+                  fromIp: client.ipAddress,
+                  toIp: state.userModel.ipAddress,
+                  fromData: state.userModel,
+                  toData: client,
+                );
+                context
+                    .read<TransferCubit>()
+                    .updateConnectRequest(connectModel);
+              } catch (e) {
+                debugPrint(e.toString());
+              } finally {
+                Navigator.pushNamed(context, SendFileScreen.id);
+              }
             }
           },
           child: Container(

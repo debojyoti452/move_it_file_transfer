@@ -26,22 +26,35 @@
  *
  */
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+part of 'transfer_cubit.dart';
 
-abstract class BaseCubitWrapper<T> extends Cubit<T> {
-  BaseCubitWrapper(T state) : super(state);
+class TransferState extends Equatable {
+  const TransferState({
+    required this.status,
+    this.connectRequest,
+    required this.selectedFileList,
+  });
 
-  void initialize();
+  final AppCubitStatus status;
+  final ConnectRequest? connectRequest;
+  final List<File> selectedFileList;
 
-  void dispose();
+  @override
+  List<Object?> get props => [
+        status,
+        connectRequest,
+        selectedFileList,
+      ];
 
-  void emitState(T state) {
-    emit(state);
-  }
-
-  void emitError(T state, Object error) {
-    debugPrint(error.toString());
-    emit(state);
+  TransferState copyWith({
+    AppCubitStatus? status,
+    ConnectRequest? connectRequest,
+    List<File>? selectedFileList,
+  }) {
+    return TransferState(
+      status: status ?? this.status,
+      connectRequest: connectRequest ?? this.connectRequest,
+      selectedFileList: selectedFileList ?? this.selectedFileList,
+    );
   }
 }

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 enum PlatformType {
   android,
@@ -29,7 +28,7 @@ abstract class BaseStateWrapper<T extends StatefulWidget>
 
   Widget onBuild(
     BuildContext context,
-    Constraints constraints,
+    BoxConstraints constraints,
     PlatformType platform,
   );
 
@@ -50,7 +49,8 @@ abstract class BaseStateWrapper<T extends StatefulWidget>
         child: Text('Unknown Platform'),
       );
     } else {
-      return LayoutBuilder(builder: (context, constraints) {
+      return LayoutBuilder(
+          builder: (context, BoxConstraints constraints) {
         return onBuild(
           context,
           constraints,
