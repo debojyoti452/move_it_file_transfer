@@ -434,7 +434,9 @@ class _ReceiveFragmentState
   void onDestroy() {}
 
   @override
-  void onDispose() {}
+  void onDispose() {
+    _cubit.dispose();
+  }
 
   @override
   void onPause() {}

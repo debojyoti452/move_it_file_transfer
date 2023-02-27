@@ -29,7 +29,6 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../../data/db/shared_pref.dart';
 import '../../../../../../data/model/client_model.dart';
@@ -37,10 +36,12 @@ import '../../../../../../data/model/connect_model.dart';
 import '../../../../../../domain/core/move_server_service.dart';
 import '../../../../../../domain/di/move_di.dart';
 import '../../../../../../domain/global/app_cubit_status.dart';
+import '../../../../../../domain/global/base_cubit_wrapper.dart';
 
 part 'receive_fragment_state.dart';
 
-class ReceiveFragmentCubit extends Cubit<ReceiveFragmentState> {
+class ReceiveFragmentCubit
+    extends BaseCubitWrapper<ReceiveFragmentState> {
   ReceiveFragmentCubit()
       : super(ReceiveFragmentState(
           status: AppCubitInitial(),
@@ -52,16 +53,17 @@ class ReceiveFragmentCubit extends Cubit<ReceiveFragmentState> {
   final MoveServerService _moveServerService =
       MoveDI.moveServerService;
 
+  @override
   void initialize() async {
     try {
       BotToast.showLoading();
-      emit(state.copyWith(status: AppCubitLoading()));
+      emitState(state.copyWith(status: AppCubitLoading()));
       var userModel = await LocalDb.getUserData();
-      emit(state.copyWith(
+      emitState(state.copyWith(
           status: AppCubitSuccess(), userModel: userModel));
     } catch (e) {
       debugPrint(e.toString());
-      emit(state.copyWith(
+      emitState(state.copyWith(
           status: AppCubitError(message: e.toString())));
     } finally {
       BotToast.closeAllLoading();
@@ -70,18 +72,22 @@ class ReceiveFragmentCubit extends Cubit<ReceiveFragmentState> {
 
   /// update requested list
   void updateRequestList(List<ConnectRequest> requestList) {
-    emit(state.copyWith(requestList: requestList));
+    emitState(state.copyWith(requestList: requestList));
   }
 
   void rejectRequest(ConnectRequest item) {
     try {
       BotToast.showLoading();
-      emit(state.copyWith(status: AppCubitLoading()));
-      emit(state.copyWith(
-          status: AppCubitSuccess(), requestList: state.requestList));
+      emitState(state.copyWith(status: AppCubitLoading()));
+      var requestedList = state.requestList.toList();
+      requestedList.remove(item);
+      emitState(state.copyWith(
+        status: AppCubitSuccess(),
+        requestList: state.requestList,
+      ));
     } catch (e) {
       debugPrint(e.toString());
-      emit(state.copyWith(
+      emitState(state.copyWith(
           status: AppCubitError(message: e.toString())));
     } finally {
       BotToast.closeAllLoading();
@@ -91,7 +97,7 @@ class ReceiveFragmentCubit extends Cubit<ReceiveFragmentState> {
   void acceptRequest(ConnectRequest item) async {
     try {
       BotToast.showLoading();
-      emit(state.copyWith(status: AppCubitLoading()));
+      emitState(state.copyWith(status: AppCubitLoading()));
       var response = await _moveServerService.acceptConnectionRequest(
           connectRequest: item);
       if (response == true) {
@@ -99,27 +105,35 @@ class ReceiveFragmentCubit extends Cubit<ReceiveFragmentState> {
         var requestedList = state.requestList.toList();
         var itemFromData = item.fromData?.copyWith(isConnected: true);
 
-        acceptedList.add(itemFromData ?? const ClientModel());
+        if (acceptedList.any((element) =>
+                element.ipAddress == item.fromData?.ipAddress) ==
+            false) {
+          acceptedList.add(itemFromData ?? const ClientModel());
+        }
+
         requestedList.remove(item);
 
-        emit(state.copyWith(
+        emitState(state.copyWith(
           status: AppCubitSuccess(),
           requestList: requestedList,
           acceptedList: acceptedList,
         ));
       } else {
-        emit(state.copyWith(
+        emitState(state.copyWith(
           status: AppCubitError(message: 'Request Not Accepted.'),
         ));
       }
-      emit(state.copyWith(
+      emitState(state.copyWith(
           status: AppCubitSuccess(), requestList: state.requestList));
     } catch (e) {
       debugPrint(e.toString());
-      emit(state.copyWith(
+      emitState(state.copyWith(
           status: AppCubitError(message: e.toString())));
     } finally {
       BotToast.closeAllLoading();
     }
   }
+
+  @override
+  void dispose() {}
 }

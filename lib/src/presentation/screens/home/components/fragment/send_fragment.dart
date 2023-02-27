@@ -26,6 +26,7 @@
  *
  */
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -191,9 +192,13 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
       itemBuilder: (context, index) {
         return InkWell(
           onTap: () {
-            _cubit.sendRequestToDevice(
-              clientModel: nearbyClients[index],
-            );
+            if (nearbyClients[index].isConnected == false) {
+              _cubit.sendRequestToDevice(
+                clientModel: nearbyClients[index],
+              );
+            } else {
+              BotToast.showText(text: 'Already connected');
+            }
           },
           child: Container(
             margin: EdgeInsets.only(
