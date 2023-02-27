@@ -38,5 +38,5 @@ mixin Endpoints {
   static const String ACCEPT_CONNECTION = '/accept_connection';
   static const String SEARCH_NEARBY_CLIENTS =
       '/search_nearby_clients';
-  static const String SEND_FILE = '/send_file';
+  static const String TRANSFER_FILE = '/send_file';
 }

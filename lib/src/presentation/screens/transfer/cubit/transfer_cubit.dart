@@ -26,6 +26,7 @@
  *
  */
 
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
@@ -33,6 +34,8 @@ import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
 
 import '../../../../data/model/connect_model.dart';
+import '../../../../domain/core/move_server_service.dart';
+import '../../../../domain/di/move_di.dart';
 import '../../../../domain/global/app_cubit_status.dart';
 import '../../../../domain/global/base_cubit_wrapper.dart';
 
@@ -44,6 +47,9 @@ class TransferCubit extends BaseCubitWrapper<TransferState> {
           status: AppCubitInitial(),
           selectedFileList: [],
         ));
+
+  final MoveServerService moveServerService =
+      MoveDI.moveServerService;
 
   @override
   void initialize() {
@@ -62,6 +68,36 @@ class TransferCubit extends BaseCubitWrapper<TransferState> {
 
   void updateConnectRequest(ConnectRequest connectRequest) {
     emitState(state.copyWith(connectRequest: connectRequest));
+  }
+
+  void sendFile() async {
+    try {
+      emitState(state.copyWith(
+        status: AppCubitLoading(),
+      ));
+
+      var clientModel = state.connectRequest!.toData;
+      var userModel = state.connectRequest!.fromData;
+      var files = state.selectedFileList;
+      moveServerService.sendFileToDeviceWithProgress(
+        files: files,
+        clientModel: clientModel!,
+        onProgress: (value) {
+          log('Progress: $value');
+        },
+        onTotalProgress: (value) {},
+        userModel: userModel!,
+      );
+
+      emitState(state.copyWith(
+        status: AppCubitSuccess(),
+      ));
+    } catch (e) {
+      emitError(
+          state.copyWith(status: AppCubitError(message: 'Error')), e);
+    } finally {
+      BotToast.showText(text: 'File sent');
+    }
   }
 
   void openFileExplorer() async {

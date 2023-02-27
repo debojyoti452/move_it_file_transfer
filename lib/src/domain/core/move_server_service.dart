@@ -31,8 +31,10 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:dx_http/dx_http.dart';
 import 'package:flutter/foundation.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../data/model/client_model.dart';
 import '../../data/model/connect_model.dart';
@@ -63,6 +65,22 @@ abstract class _MoveServerInterface {
 
   Future<bool> acceptConnectionRequest({
     required ConnectRequest connectRequest,
+  });
+
+  Future<bool> sendFileToDeviceWithProgress({
+    required List<File> files,
+    required ClientModel clientModel,
+    required Function(int) onProgress,
+    required Function(int) onTotalProgress,
+    required ClientModel userModel,
+  });
+
+  Future<bool> receiveFileFromDeviceWithProgress({
+    required String urlPath,
+    required ClientModel clientModel,
+    required Function(int) onProgress,
+    required Function(int) onTotalProgress,
+    required ClientModel userModel,
   });
 }
 
@@ -115,6 +133,75 @@ class MoveServerService extends _MoveServerInterface {
   Stream<List<ClientModel>> nearbyClients() {
     _nearbyClient();
     return _nearbyStreamController.stream.asBroadcastStream();
+  }
+
+  @override
+  Future<bool> receiveFileFromDeviceWithProgress({
+    required String urlPath,
+    required ClientModel clientModel,
+    required Function(int) onProgress,
+    required Function(int) onTotalProgress,
+    required ClientModel userModel,
+  }) async {
+    try {
+      Directory appDocDir = await getApplicationDocumentsDirectory();
+      String basePath = '${appDocDir.path}/move_download/';
+      Directory(basePath).createSync(recursive: true);
+
+      var response = await Dio().download(
+        '${clientModel.connectUrl}${Endpoints.TRANSFER_FILE}',
+        basePath,
+        onReceiveProgress: (int sent, int total) {
+          onProgress(sent);
+          onTotalProgress(total);
+        },
+      );
+      return Future.value(response.statusCode == 200);
+    } catch (e) {
+      debugPrint(e.toString());
+      return Future.value(false);
+    }
+  }
+
+  @override
+  Future<bool> sendFileToDeviceWithProgress({
+    required List<File> files,
+    required ClientModel clientModel,
+    required Function(int) onProgress,
+    required Function(int) onTotalProgress,
+    required ClientModel userModel,
+  }) async {
+    try {
+      var filesToSend = <MultipartFile>[];
+      for (var element in files) {
+        if (element.existsSync()) {
+          filesToSend.add(await MultipartFile.fromFile(element.path,
+              filename: element.path.split('/').last));
+        }
+      }
+      if (filesToSend.isEmpty) {
+        return Future.value(false);
+      }
+
+      var formData = FormData.fromMap({
+        'files': filesToSend,
+        'user': jsonEncode(userModel.toJson()),
+        'client': jsonEncode(clientModel.toJson()),
+      });
+
+      var response = await Dio().post(
+        '${clientModel.connectUrl}${Endpoints.TRANSFER_FILE}',
+        data: formData,
+        onSendProgress: (int sent, int total) {
+          onProgress(sent);
+          onTotalProgress(total);
+        },
+      );
+      return Future.value(response.statusCode == 200);
+    } catch (e) {
+      debugPrint(e.toString());
+      return Future.value(false);
+    }
   }
 
   @override

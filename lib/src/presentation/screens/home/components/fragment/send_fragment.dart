@@ -68,15 +68,7 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
   ) {
     return BlocConsumer<SendFragmentCubit, SendFragmentState>(
       bloc: _cubit,
-      listener: (context, state) {
-        // if (state.status is AppCubitLoading) {
-        //   BotToast.showLoading();
-        // }
-
-        // if (state.status is! AppCubitLoading) {
-        //   BotToast.closeAllLoading();
-        // }
-      },
+      listener: (context, state) {},
       builder: (context, state) {
         return Container(
           padding: EdgeInsets.symmetric(

@@ -119,7 +119,7 @@ class _SendFileScreenState extends BaseStateWrapper<SendFileScreen> {
                 ),
               ),
               onPressed: () {
-                // _cubit.sendFile();
+                _cubit.sendFile();
               },
               child: Text(
                 'Send',

@@ -32,10 +32,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../../data/constants/assets_constants.dart';
+import '../../../../../data/model/connect_model.dart';
 import '../../../../../domain/global/app_cubit_status.dart';
 import '../../../../../domain/global/base_state_wrapper.dart';
 import '../../../../../domain/themes/color_constants.dart';
 import '../../../../../domain/utils/helper.dart';
+import '../../../transfer/cubit/transfer_cubit.dart';
+import '../../../transfer/receive_file_screen.dart';
 import '../cubit/receive/receive_fragment_cubit.dart';
 
 class ReceiveFragment extends StatefulWidget {
@@ -205,7 +208,24 @@ class _ReceiveFragmentState
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         return InkWell(
-          onTap: () {},
+          onTap: () {
+            try {
+              var client = nearbyClients[index];
+              var connectModel = ConnectRequest(
+                fromIp: state.userModel.ipAddress,
+                toIp: client.ipAddress,
+                fromData: client,
+                toData: state.userModel,
+              );
+              context
+                  .read<TransferCubit>()
+                  .updateConnectRequest(connectModel);
+            } catch (e) {
+              debugPrint(e.toString());
+            } finally {
+              Navigator.pushNamed(context, ReceiveFileScreen.id);
+            }
+          },
           child: Container(
             margin: EdgeInsets.only(
               bottom: 10.h,

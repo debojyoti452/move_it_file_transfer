@@ -129,9 +129,30 @@ class HomeCubit extends Cubit<HomeState> {
           request.response.close();
           break;
 
-        case Endpoints.SEND_FILE:
-          debugPrint(
-              'SendFragmentState: serverStream: SEND_FILE: ${request.requestedUri.queryParameters}');
+        case Endpoints.TRANSFER_FILE:
+          if (request.method == Methods.POST) {
+            var formData = request.requestedUri.data?.contentText;
+
+            var res = await moveServerService
+                .receiveFileFromDeviceWithProgress(
+              urlPath:
+                  'http://192.168.0.201:4520/${Endpoints.TRANSFER_FILE}',
+              clientModel: const ClientModel(
+                connectUrl: 'http://192.168.0.201:4520',
+              ),
+              onProgress: (val) {
+                debugPrint('onProgress: $val');
+              },
+              onTotalProgress: (val) {
+                debugPrint('onTotalProgress: $val');
+              },
+              userModel: const ClientModel(
+                  connectUrl: 'http://192.168.0.201:4520'),
+            );
+            debugPrint('TRANSFER_FILE: $res');
+            request.response.write(jsonEncode('{status: true}'));
+            request.response.close();
+          }
           break;
       }
     });
