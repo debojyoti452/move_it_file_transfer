@@ -151,6 +151,8 @@ class MoveServerService extends _MoveServerInterface {
               params: response.toJson())
           .then((value) {
         return Future.value(true);
+      }).catchError((e) {
+        return Future.value(false);
       });
     } catch (e) {
       return Future.value(false);

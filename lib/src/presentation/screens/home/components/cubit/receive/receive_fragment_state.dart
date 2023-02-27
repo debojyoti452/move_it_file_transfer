@@ -33,28 +33,33 @@ class ReceiveFragmentState extends Equatable {
     required this.status,
     required this.userModel,
     required this.requestList,
+    required this.acceptedList,
   });
 
   final AppCubitStatus status;
   final ClientModel userModel;
   final List<ConnectRequest> requestList;
+  final List<ClientModel> acceptedList;
 
   @override
   List<Object> get props => [
         status,
         userModel,
         requestList,
+        acceptedList,
       ];
 
   ReceiveFragmentState copyWith({
     AppCubitStatus? status,
     ClientModel? userModel,
     List<ConnectRequest>? requestList,
+    List<ClientModel>? acceptedList,
   }) {
     return ReceiveFragmentState(
       status: status ?? this.status,
       userModel: userModel ?? this.userModel,
       requestList: requestList ?? this.requestList,
+      acceptedList: acceptedList ?? this.acceptedList,
     );
   }
 }

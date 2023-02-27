@@ -30,11 +30,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../data/model/connect_model.dart';
 import '../../../domain/global/app_cubit_status.dart';
 import '../../../domain/global/base_state_wrapper.dart';
 import '../../../domain/global/status_code.dart';
 import '../../widgets/dx_bottom_navigation_bar.dart';
 import 'components/cubit/receive/receive_fragment_cubit.dart';
+import 'components/cubit/send/send_fragment_cubit.dart';
 import 'components/fragment/profile_fragment.dart';
 import 'components/fragment/receive_fragment.dart';
 import 'components/fragment/send_fragment.dart';
@@ -93,6 +95,18 @@ class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
             if (state.connectRequestList?.isNotEmpty ?? false) {
               context.read<ReceiveFragmentCubit>().updateRequestList(
                     state.connectRequestList ?? [],
+                  );
+            }
+          }
+
+          if ((state.status as AppCubitSuccess).code ==
+              StatusCode.NEW_CONNECTION_ACCEPTED) {
+            if (state.connectRequestList?.isNotEmpty ?? false) {
+              context
+                  .read<SendFragmentCubit>()
+                  .updateAcceptedRequestClient(
+                    model: state.acceptedClientModel ??
+                        const ConnectRequest(),
                   );
             }
           }

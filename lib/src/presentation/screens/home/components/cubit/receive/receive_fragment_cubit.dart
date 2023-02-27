@@ -46,6 +46,7 @@ class ReceiveFragmentCubit extends Cubit<ReceiveFragmentState> {
           status: AppCubitInitial(),
           userModel: const ClientModel(),
           requestList: const [],
+          acceptedList: const [],
         ));
 
   final MoveServerService _moveServerService =
@@ -87,12 +88,30 @@ class ReceiveFragmentCubit extends Cubit<ReceiveFragmentState> {
     }
   }
 
-  void acceptRequest(ConnectRequest item) {
+  void acceptRequest(ConnectRequest item) async {
     try {
       BotToast.showLoading();
       emit(state.copyWith(status: AppCubitLoading()));
-      _moveServerService.acceptConnectionRequest(
+      var response = await _moveServerService.acceptConnectionRequest(
           connectRequest: item);
+      if (response == true) {
+        var acceptedList = state.acceptedList.toList();
+        var requestedList = state.requestList.toList();
+        var itemFromData = item.fromData?.copyWith(isConnected: true);
+
+        acceptedList.add(itemFromData ?? const ClientModel());
+        requestedList.remove(item);
+
+        emit(state.copyWith(
+          status: AppCubitSuccess(),
+          requestList: requestedList,
+          acceptedList: acceptedList,
+        ));
+      } else {
+        emit(state.copyWith(
+          status: AppCubitError(message: 'Request Not Accepted.'),
+        ));
+      }
       emit(state.copyWith(
           status: AppCubitSuccess(), requestList: state.requestList));
     } catch (e) {

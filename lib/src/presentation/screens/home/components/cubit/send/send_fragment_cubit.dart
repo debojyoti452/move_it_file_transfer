@@ -167,6 +167,34 @@ class SendFragmentCubit extends Cubit<SendFragmentState> {
       BotToast.closeAllLoading();
     }
   }
+
+  void updateAcceptedRequestClient({required ConnectRequest model}) {
+    try {
+      BotToast.showLoading();
+      emit(state.copyWith(status: AppCubitLoading()));
+      var dataList = state.nearbyClients;
+      var nearbyClients = dataList.firstWhere(
+          (element) => element.ipAddress == model.toIp,
+          orElse: () => const ClientModel());
+      dataList
+          .removeWhere((element) => element.ipAddress == model.toIp);
+
+      var updatedNearbyClient = nearbyClients.copyWith(
+        isConnected: true,
+      );
+      dataList.add(updatedNearbyClient);
+      emit(state.copyWith(
+          nearbyClients: dataList, status: AppCubitSuccess()));
+    } catch (e) {
+      debugPrint(
+          'SendFragmentState: updateAcceptedRequestClient: $e');
+      emit(state.copyWith(
+        status: AppCubitError(message: e.toString()),
+      ));
+    } finally {
+      BotToast.closeAllLoading();
+    }
+  }
 }
 
 class BgMethodModel {

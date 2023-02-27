@@ -33,6 +33,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../../data/constants/assets_constants.dart';
+import '../../../../../domain/global/app_cubit_status.dart';
 import '../../../../../domain/global/base_state_wrapper.dart';
 import '../../../../../domain/themes/color_constants.dart';
 import '../../../../../domain/utils/helper.dart';
@@ -119,6 +120,35 @@ class _ReceiveFragmentState
                     children: [
                       Expanded(
                         child: Text(
+                          'Accepted List',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        padding: EdgeInsets.zero,
+                        icon: const Icon(
+                          Icons.refresh,
+                          color: ColorConstants.BLACK,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                _acceptedListWidget(state),
+                Container(
+                  padding: EdgeInsets.only(
+                    left: 8.w,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
                           'Request List',
                           style: Theme.of(context)
                               .textTheme
@@ -140,6 +170,84 @@ class _ReceiveFragmentState
                   ),
                 ),
                 _requestedListWidget(state),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _acceptedListWidget(ReceiveFragmentState state) {
+    if (state.status is AppCubitLoading) {
+      return Container(
+        margin: EdgeInsets.only(
+          top: 90.h,
+        ),
+        child: CircularProgressIndicator(
+          color: ColorConstants.BLACK,
+          strokeWidth: 2.w,
+        ),
+      );
+    }
+    var nearbyClients = state.acceptedList;
+    if (nearbyClients.isEmpty) {
+      return Container(
+        margin: EdgeInsets.only(bottom: 20.h),
+        child: Text(
+          'No Accepted List found',
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+      );
+    }
+    return ListView.builder(
+      itemCount: nearbyClients.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        return InkWell(
+          onTap: () {},
+          child: Container(
+            margin: EdgeInsets.only(
+              bottom: 10.h,
+            ),
+            padding: EdgeInsets.symmetric(
+              horizontal: 10.w,
+              vertical: 10.h,
+            ),
+            decoration: BoxDecoration(
+              color: ColorConstants.GREY_DARK,
+              borderRadius: BorderRadius.circular(4.r),
+            ),
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  Helper.getIconByPlatform(
+                    nearbyClients[index].platform ?? '',
+                  ),
+                  width: 40.w,
+                ),
+                SizedBox(
+                  width: 10.w,
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${nearbyClients[index].clientName}',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      Text(
+                        '${nearbyClients[index].platform}',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      _connectedStatusView(
+                          (nearbyClients[index].isConnected ??
+                              false)),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -309,6 +417,16 @@ class _ReceiveFragmentState
           );
         },
       ),
+    );
+  }
+
+  Widget _connectedStatusView(bool isConnected) {
+    return Text(
+      isConnected ? 'Accepted' : 'Re-Connect',
+      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: isConnected ? Colors.green : Colors.red,
+          ),
     );
   }
 

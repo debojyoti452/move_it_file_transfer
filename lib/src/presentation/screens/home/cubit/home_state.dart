@@ -33,29 +33,35 @@ class HomeState extends Equatable {
     required this.status,
     this.userModel,
     this.connectRequestList,
+    this.acceptedClientModel,
   });
 
   final AppCubitStatus status;
   final ClientModel? userModel;
   final List<ConnectRequest>? connectRequestList;
+  final ConnectRequest? acceptedClientModel;
 
   @override
   List<Object?> get props => [
         status,
         userModel,
         connectRequestList,
+        acceptedClientModel,
       ];
 
   HomeState copyWith({
     AppCubitStatus? status,
     ClientModel? userModel,
     List<ConnectRequest>? connectRequestList,
+    ConnectRequest? acceptedClientModel,
   }) {
     return HomeState(
       status: status ?? this.status,
       userModel: userModel ?? this.userModel,
       connectRequestList:
           connectRequestList ?? this.connectRequestList,
+      acceptedClientModel:
+          acceptedClientModel ?? this.acceptedClientModel,
     );
   }
 }

@@ -117,6 +117,7 @@ class HomeCubit extends Cubit<HomeState> {
             var body = await utf8.decoder.bind(request).join();
             var data = jsonDecode(body);
             debugPrint('ACCEPT_CONNECTION: $data');
+            updateAcceptRequestModel(ConnectRequest.fromJson(data));
             request.response.write(data);
             request.response.close();
           }
@@ -145,6 +146,7 @@ class HomeCubit extends Cubit<HomeState> {
     }
     emit(state.copyWith(
       connectRequestList: connectList,
+      acceptedClientModel: model,
       status: AppCubitSuccess(
         code: StatusCode.NEW_CONNECTION_ACCEPTED,
       ),
