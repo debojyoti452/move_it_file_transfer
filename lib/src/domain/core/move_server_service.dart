@@ -69,18 +69,14 @@ abstract class _MoveServerInterface {
 
   Future<bool> sendFileToDeviceWithProgress({
     required List<File> files,
-    required ClientModel clientModel,
     required Function(int) onProgress,
-    required Function(int) onTotalProgress,
+    required ClientModel clientModel,
     required ClientModel userModel,
   });
 
   Future<bool> receiveFileFromDeviceWithProgress({
     required String urlPath,
-    required ClientModel clientModel,
     required Function(int) onProgress,
-    required Function(int) onTotalProgress,
-    required ClientModel userModel,
   });
 }
 
@@ -138,10 +134,7 @@ class MoveServerService extends _MoveServerInterface {
   @override
   Future<bool> receiveFileFromDeviceWithProgress({
     required String urlPath,
-    required ClientModel clientModel,
     required Function(int) onProgress,
-    required Function(int) onTotalProgress,
-    required ClientModel userModel,
   }) async {
     try {
       Directory appDocDir = await getApplicationDocumentsDirectory();
@@ -149,12 +142,17 @@ class MoveServerService extends _MoveServerInterface {
       Directory(basePath).createSync(recursive: true);
 
       var response = await Dio().download(
-        '${clientModel.connectUrl}${Endpoints.TRANSFER_FILE}',
+        urlPath,
         basePath,
         onReceiveProgress: (int sent, int total) {
-          onProgress(sent);
-          onTotalProgress(total);
+          var percentage = (sent / total) * 100;
+          onProgress(percentage.toInt());
         },
+        options: Options(
+          headers: {
+            HttpHeaders.acceptEncodingHeader: '*'
+          }, // Disable gzip
+        ),
       );
       return Future.value(response.statusCode == 200);
     } catch (e) {
@@ -168,7 +166,6 @@ class MoveServerService extends _MoveServerInterface {
     required List<File> files,
     required ClientModel clientModel,
     required Function(int) onProgress,
-    required Function(int) onTotalProgress,
     required ClientModel userModel,
   }) async {
     try {
@@ -193,8 +190,9 @@ class MoveServerService extends _MoveServerInterface {
         '${clientModel.connectUrl}${Endpoints.TRANSFER_FILE}',
         data: formData,
         onSendProgress: (int sent, int total) {
-          onProgress(sent);
-          onTotalProgress(total);
+          /// convert to percentage
+          var percentage = (sent / total) * 100;
+          onProgress(percentage.toInt());
         },
       );
       return Future.value(response.statusCode == 200);

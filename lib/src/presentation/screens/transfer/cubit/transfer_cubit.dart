@@ -85,7 +85,6 @@ class TransferCubit extends BaseCubitWrapper<TransferState> {
         onProgress: (value) {
           log('Progress: $value');
         },
-        onTotalProgress: (value) {},
         userModel: userModel!,
       );
 

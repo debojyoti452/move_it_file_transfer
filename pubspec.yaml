@@ -38,6 +38,7 @@ dependencies:
   path_provider: ^2.0.13
   path: ^1.8.0
   flutter_svg: ^2.0.2
+  mime: ^1.0.4
 
 dev_dependencies:
   flutter_test:
