@@ -32,4 +32,5 @@ mixin StatusCode {
   static const int NEW_CONNECTION_REJECTED = 902;
   static const int NEW_FILE_REQUEST = 903;
   static const int NEW_FILE_ACCEPTED = 904;
+  static const int NEW_FILE_RECEIVER = 905;
 }

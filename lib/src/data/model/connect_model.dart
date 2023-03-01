@@ -48,8 +48,7 @@ class ConnectRequest with _$ConnectRequest {
 
 @freezed
 class ConnectResponse with _$ConnectResponse {
-  @JsonSerializable(
-      fieldRename: FieldRename.snake, explicitToJson: true)
+  @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
   const factory ConnectResponse({
     @JsonKey(name: 'from_ip') String? fromIp,
     @JsonKey(name: 'to_ip') String? toIp,
@@ -58,4 +57,15 @@ class ConnectResponse with _$ConnectResponse {
 
   factory ConnectResponse.fromJson(Map<String, dynamic> json) =>
       _$ConnectResponseFromJson(json);
+}
+
+@freezed
+class TransferModel with _$TransferModel {
+  const factory TransferModel({
+    @JsonKey(name: 'send_model') ClientModel? sendModel,
+    @JsonKey(name: 'receiver_model') ClientModel? receiverModel,
+  }) = _TransferModel;
+
+  factory TransferModel.fromJson(Map<String, dynamic> json) =>
+      _$TransferModelFromJson(json);
 }

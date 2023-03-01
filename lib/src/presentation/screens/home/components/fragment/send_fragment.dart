@@ -184,7 +184,7 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         return InkWell(
-          onTap: () {
+          onTap: () async {
             if (nearbyClients[index].isConnected == false) {
               _cubit.sendRequestToDevice(
                 clientModel: nearbyClients[index],

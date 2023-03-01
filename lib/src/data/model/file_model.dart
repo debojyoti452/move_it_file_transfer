@@ -26,22 +26,48 @@
  *
  */
 
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'dart:io';
 
-part 'file_model.freezed.dart';
-part 'file_model.g.dart';
+import 'package:equatable/equatable.dart';
 
-@freezed
-class FileModel with _$FileModel {
-  @JsonSerializable(
-      fieldRename: FieldRename.snake, explicitToJson: true)
-  const factory FileModel({
-    @JsonKey(name: 'file_name') String? fileName,
-    @JsonKey(name: 'file_data') List<int>? fileData,
-    @JsonKey(name: 'file_size') int? fileSize,
-    @JsonKey(name: 'file_type') String? fileExtension,
-  }) = _FileModel;
+class FileModel extends Equatable {
+  final String fileName;
+  final File fileStream;
+  final int? fileSize;
+  final String? fileExtension;
+  final bool? isAlreadySend;
 
-  factory FileModel.fromJson(Map<String, dynamic> json) =>
-      _$FileModelFromJson(json);
+  FileModel({
+    required this.fileName,
+    required this.fileStream,
+    this.fileSize,
+    this.fileExtension,
+    this.isAlreadySend,
+  });
+
+  /// copyWith
+  FileModel copyWith({
+    String? fileName,
+    File? fileStream,
+    int? fileSize,
+    String? fileExtension,
+    bool? isAlreadySend,
+  }) {
+    return FileModel(
+      fileName: fileName ?? this.fileName,
+      fileStream: fileStream ?? this.fileStream,
+      fileSize: fileSize ?? this.fileSize,
+      fileExtension: fileExtension ?? this.fileExtension,
+      isAlreadySend: isAlreadySend ?? this.isAlreadySend,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+        fileName,
+        fileStream,
+        fileSize,
+        fileExtension,
+        isAlreadySend,
+      ];
 }

@@ -34,12 +34,11 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mime/mime.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../../../../data/db/shared_pref.dart';
 import '../../../../data/model/client_model.dart';
 import '../../../../data/model/connect_model.dart';
+import '../../../../data/model/file_model.dart';
 import '../../../../domain/core/move_server_service.dart';
 import '../../../../domain/di/move_di.dart';
 import '../../../../domain/global/app_cubit_status.dart';
@@ -55,10 +54,10 @@ class HomeCubit extends Cubit<HomeState> {
           status: AppCubitInitial(),
           connectRequestList: [],
           userModel: const ClientModel(),
+          fileModelList: [],
         ));
 
-  final MoveServerService moveServerService =
-      MoveDI.moveServerService;
+  final MoveServerService moveServerService = MoveDI.moveServerService;
 
   void initialHome() async {
     emit(HomeState(status: AppCubitLoading()));
@@ -134,130 +133,29 @@ class HomeCubit extends Cubit<HomeState> {
 
         case Endpoints.TRANSFER_FILE:
           if (request.method == Methods.POST) {
-            // var stream = request
-            //     .transform(StreamTransformer.fromBind((p0) => p0));
-            // stream.listen((event) {
-            //   debugPrint('event: $event');
-            //
-            // });
-
-            // var stream = request.transform(
-            //     StreamTransformer.fromHandlers(handleData:
-            //         (Uint8List data, EventSink<Uint8List> sink) {
-            //   debugPrint('data: $data');
-            //   sink.add(data);
-            // }));
-
-            // var streamController = StreamController<Uint8List>();
-            // var stream =
-            //     request.transform(StreamTransformer.fromHandlers(
-            //   handleData:
-            //       (Uint8List data, EventSink<Uint8List> sink) {
-            //     debugPrint('data: $data');
-            //     sink.add(data);
-            //   },
-            // ));
-            // streamController.addStream(stream);
-
-            // stream.listen((event) {
-            //   debugPrint('event: $event');
-            //
-            //   /// convert Uint8List to String
-            //   var str = String.fromCharCodes(event);
-            //   debugPrint('str: $str');
-            // });
-            //
-            // debugPrint('stream: $stream');
-
-            // var stream =
-            //     request.transform(StreamTransformer.fromHandlers(
-            //   handleData: (
-            //     Uint8List data,
-            //     EventSink<Uint8List> sink,
-            //   ) {
-            //     sink.add(data);
-            //   },
-            // ));
-            //
-            // stream.listen((event) {
-            //   debugPrint('event: $event');
-            //
-            //   /// convert Uint8List to FormData
-            //   try {
-            //     /// convert Uint8List to String
-            //     var str = String.fromCharCodes(event);
-            //   } catch (e) {
-            //     debugPrint('formData: $e');
-            //   }
-            // });
-
-            /// pass stream to http request response
-
-            // /// pass stream to http request response
-            // request.response.addStream(stream).then((value) async {
-            //   value as HttpResponse;
-            //   debugPrint('whenComplete value: ${value.statusCode}');
-            //
-            //   request.response
-            //       .write(jsonEncode({'status': 'success'}));
-            //
-            //   var res = await moveServerService
-            //       .receiveFileFromDeviceWithProgress(
-            //     urlPath:
-            //         'http://192.168.0.201:4520/${Endpoints.TRANSFER_FILE}',
-            //     clientModel: const ClientModel(
-            //       connectUrl: 'http://192.168.0.201:4520',
-            //     ),
-            //     onProgress: (val) {
-            //       debugPrint('onProgress: $val');
-            //     },
-            //     onTotalProgress: (val) {
-            //       debugPrint('onTotalProgress: $val');
-            //     },
-            //     userModel: const ClientModel(
-            //         connectUrl: 'http://192.168.0.201:4520'),
-            //   );
-            //   debugPrint('TRANSFER_FILE: $res');
-            //
-            //   request.response.close();
-            // });
-
-            List<int> dataBytes = [];
-            Directory appDocDir =
-                await getApplicationDocumentsDirectory();
-            String basePath = '${appDocDir.path}/move_download/';
-            Directory(basePath).createSync(recursive: true);
-
-            await for (var data in request) {
-              dataBytes.addAll(data);
-            }
-
-            String? boundary =
-                request.headers.contentType?.parameters['boundary'];
-            final transformer = MimeMultipartTransformer(boundary!);
-
-            final bodyStream = Stream.fromIterable([dataBytes]);
-            final parts = await transformer.bind(bodyStream).toList();
-            var uploadDirectory = basePath;
-
-            for (var part in parts) {
-              debugPrint('part: ${part.headers}');
-              final contentDisposition =
-                  part.headers['content-disposition'];
-              final filename = RegExp(r'filename="([^"]*)"')
-                  .firstMatch(contentDisposition!)
-                  ?.group(1);
-              final content = await part.toList();
-
-              debugPrint('filename: $filename');
-
-              await File('$uploadDirectory/$filename')
-                  .writeAsBytes(content[0]);
-            }
+            var response =
+                await moveServerService.receiveFileFromDeviceWithProgress(
+              request: request,
+              onProgress: (val) {},
+            );
+            updateFileTransferProgress(response);
           }
           break;
       }
     });
+  }
+
+  /// Update file transfer progress
+  void updateFileTransferProgress(List<FileModel> fileList) {
+    emit(state.copyWith(status: AppCubitLoading()));
+    var fileModelList = state.fileModelList ?? [];
+    fileModelList.addAll(fileList);
+    emit(state.copyWith(
+      fileModelList: fileList,
+      status: AppCubitSuccess(
+        code: StatusCode.NEW_FILE_RECEIVER,
+      ),
+    ));
   }
 
   /// Update the accept request list

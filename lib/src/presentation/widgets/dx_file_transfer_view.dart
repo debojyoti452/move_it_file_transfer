@@ -26,25 +26,26 @@
  *
  */
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../data/constants/assets_constants.dart';
+import '../../data/model/file_model.dart';
 import '../../domain/themes/color_constants.dart';
 
 class DxFileTransferView extends StatelessWidget {
   const DxFileTransferView({
     Key? key,
-    required this.selectedFileList,
+    required this.fileModel,
     required this.onRemoveClick,
     required this.index,
+    required this.progress,
   }) : super(key: key);
 
-  final File selectedFileList;
+  final FileModel fileModel;
   final ValueChanged<int> onRemoveClick;
   final int index;
+  final int progress;
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +76,7 @@ class DxFileTransferView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'File Name: ${selectedFileList.path.split('/').last}',
+                    'File Name: ${fileModel.fileName}',
                     style: TextStyle(
                       color: ColorConstants.PRIMARY_BLUE,
                       fontSize: 12.sp,
@@ -85,7 +86,7 @@ class DxFileTransferView extends StatelessWidget {
                     height: 5.h,
                   ),
                   Text(
-                    'File Size: ${(selectedFileList.lengthSync() / (1024 * 1024)).toStringAsFixed(2)}MB',
+                    'File Size: ${((fileModel.fileSize ?? 0) / (1024 * 1024)).toStringAsFixed(2)}MB',
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 12.sp,
@@ -95,7 +96,7 @@ class DxFileTransferView extends StatelessWidget {
                     height: 5.h,
                   ),
                   LinearProgressIndicator(
-                    value: 0.0,
+                    value: progress / 100,
                     backgroundColor: ColorConstants.GREY_DARK,
                     valueColor: const AlwaysStoppedAnimation<Color>(
                       ColorConstants.PRIMARY_BLUE,

@@ -123,10 +123,9 @@ class _SendFileScreenState extends BaseStateWrapper<SendFileScreen> {
               },
               child: Text(
                 'Send',
-                style:
-                    Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: ColorConstants.PRIMARY_BLUE,
-                        ),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: ColorConstants.PRIMARY_BLUE,
+                    ),
               ),
             ),
           ),
@@ -136,7 +135,7 @@ class _SendFileScreenState extends BaseStateWrapper<SendFileScreen> {
   }
 
   Widget _fileListView(TransferState state) {
-    if (state.selectedFileList.isEmpty) {
+    if (state.fileList.isEmpty) {
       return SizedBox(
         height: 100.h,
         child: Center(
@@ -149,26 +148,34 @@ class _SendFileScreenState extends BaseStateWrapper<SendFileScreen> {
         ),
       );
     }
-    return ListView.builder(
-      scrollDirection: Axis.vertical,
-      itemCount: state.selectedFileList.length,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemBuilder: (context, index) {
-        return DxFileTransferView(
-          selectedFileList: state.selectedFileList[index],
-          onRemoveClick: (deleteIndex) {
-            _cubit.removeFileFromQueueList(deleteIndex);
-          },
-          index: index,
-        );
-      },
-    );
+    return StreamBuilder<int>(
+        stream: _cubit.progressStreamController.stream,
+        builder: (context, snapshot) {
+          return ListView.builder(
+            scrollDirection: Axis.vertical,
+            itemCount: state.fileList.length,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              var item = state.fileList[index];
+              if (item.fileStream.existsSync() == false) {
+                return Container();
+              }
+              return DxFileTransferView(
+                progress: item.isAlreadySend == true ? 100 : snapshot.data ?? 0,
+                fileModel: item,
+                onRemoveClick: (deleteIndex) {
+                  _cubit.removeFileFromQueueList(deleteIndex);
+                },
+                index: index,
+              );
+            },
+          );
+        });
   }
 
   Widget _userItemView(ConnectRequest connectRequest) {
-    if (connectRequest.toData == null ||
-        connectRequest.fromData == null) {
+    if (connectRequest.toData == null || connectRequest.fromData == null) {
       BotToast.showText(
         text: 'Something went wrong',
       );
@@ -203,10 +210,7 @@ class _SendFileScreenState extends BaseStateWrapper<SendFileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('${userModel?.clientName} (You)',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: ColorConstants.PRIMARY_BLUE,
                             )),
                     Text(
@@ -251,10 +255,7 @@ class _SendFileScreenState extends BaseStateWrapper<SendFileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('${clientModel?.clientName}',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: ColorConstants.PRIMARY_BLUE,
                             )),
                     Text(
@@ -295,10 +296,7 @@ class _SendFileScreenState extends BaseStateWrapper<SendFileScreen> {
             children: [
               Text(
                 'Upload or Drag File Here',
-                style: Theme.of(context)
-                    .textTheme
-                    .labelMedium
-                    ?.copyWith(
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
                       color: ColorConstants.BLACK.withOpacity(0.4),
                     ),
               ),

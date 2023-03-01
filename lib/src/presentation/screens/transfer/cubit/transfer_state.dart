@@ -32,29 +32,34 @@ class TransferState extends Equatable {
   const TransferState({
     required this.status,
     this.connectRequest,
-    required this.selectedFileList,
+    required this.transferData,
+    required this.fileList,
   });
 
   final AppCubitStatus status;
   final ConnectRequest? connectRequest;
-  final List<File> selectedFileList;
+  final TransferModel transferData;
+  final List<FileModel> fileList;
 
   @override
   List<Object?> get props => [
         status,
         connectRequest,
-        selectedFileList,
+        transferData,
+        fileList,
       ];
 
   TransferState copyWith({
     AppCubitStatus? status,
     ConnectRequest? connectRequest,
-    List<File>? selectedFileList,
+    TransferModel? transferData,
+    List<FileModel>? fileList,
   }) {
     return TransferState(
       status: status ?? this.status,
       connectRequest: connectRequest ?? this.connectRequest,
-      selectedFileList: selectedFileList ?? this.selectedFileList,
+      transferData: transferData ?? this.transferData,
+      fileList: fileList ?? this.fileList,
     );
   }
 }

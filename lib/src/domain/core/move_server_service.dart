@@ -34,10 +34,12 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dx_http/dx_http.dart';
 import 'package:flutter/foundation.dart';
+import 'package:mime/mime.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../data/model/client_model.dart';
 import '../../data/model/connect_model.dart';
+import '../../data/model/file_model.dart';
 import '../../data/model/network_address_model.dart';
 import '../routes/endpoints.dart';
 import '../utils/ip_generator.dart';
@@ -67,15 +69,15 @@ abstract class _MoveServerInterface {
     required ConnectRequest connectRequest,
   });
 
-  Future<bool> sendFileToDeviceWithProgress({
-    required List<File> files,
+  Future<List<FileModel>> sendFileToDeviceWithProgress({
+    required TransferModel transferModel,
+    required List<FileModel> fileList,
     required Function(int) onProgress,
-    required ClientModel clientModel,
-    required ClientModel userModel,
   });
 
-  Future<bool> receiveFileFromDeviceWithProgress({
-    required String urlPath,
+  Future<List<FileModel>> receiveFileFromDeviceWithProgress({
+    String? savePath,
+    required HttpRequest request,
     required Function(int) onProgress,
   });
 }
@@ -99,11 +101,9 @@ class MoveServerService extends _MoveServerInterface {
       _internetAddress.port!,
     );
     _server?.autoCompress = true;
+    _server?.defaultResponseHeaders.add('Access-Control-Allow-Origin', '*');
     _server?.defaultResponseHeaders
-        .add('Access-Control-Allow-Origin', '*');
-    _server?.defaultResponseHeaders.add(
-        'Access-Control-Allow-Methods',
-        'GET, POST, PUT, DELETE, OPTIONS');
+        .add('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     _server?.defaultResponseHeaders
         .add('content-type', 'application/json; charset=UTF-8');
   }
@@ -132,62 +132,89 @@ class MoveServerService extends _MoveServerInterface {
   }
 
   @override
-  Future<bool> receiveFileFromDeviceWithProgress({
-    required String urlPath,
+  Future<List<FileModel>> receiveFileFromDeviceWithProgress({
+    String? savePath,
+    required HttpRequest request,
     required Function(int) onProgress,
   }) async {
     try {
+      List<int> dataBytes = [];
       Directory appDocDir = await getApplicationDocumentsDirectory();
-      String basePath = '${appDocDir.path}/move_download/';
+      String basePath = savePath ?? '${appDocDir.path}/move_download/';
       Directory(basePath).createSync(recursive: true);
 
-      var response = await Dio().download(
-        urlPath,
-        basePath,
-        onReceiveProgress: (int sent, int total) {
-          var percentage = (sent / total) * 100;
-          onProgress(percentage.toInt());
-        },
-        options: Options(
-          headers: {
-            HttpHeaders.acceptEncodingHeader: '*'
-          }, // Disable gzip
-        ),
-      );
-      return Future.value(response.statusCode == 200);
+      await request.forEach((element) {
+        dataBytes.addAll(element);
+      });
+
+      String? boundary = request.headers.contentType?.parameters['boundary'];
+      final transformer = MimeMultipartTransformer(boundary!);
+
+      final bodyStream = Stream.fromIterable([dataBytes]);
+      final parts = await transformer.bind(bodyStream).toList();
+      var uploadDirectory = basePath;
+      var fileList = <FileModel>[];
+      for (var part in parts) {
+        debugPrint('part: ${part.headers}');
+        final contentDisposition = part.headers['content-disposition'];
+        final filename = RegExp(r'filename="([^"]*)"')
+            .firstMatch(contentDisposition!)
+            ?.group(1);
+        final content = await part.toList();
+
+        debugPrint('filename: $filename');
+        if (filename == null) {
+          continue;
+        }
+
+        fileList.add(FileModel(
+          fileName: filename,
+          fileSize: content[0].length,
+          fileStream: File('$uploadDirectory/$filename'),
+          isAlreadySend: true,
+        ));
+
+        await File('$uploadDirectory/$filename').writeAsBytes(content[0]);
+      }
+
+      request.response.close();
+      return Future.value(fileList);
     } catch (e) {
       debugPrint(e.toString());
-      return Future.value(false);
+      return Future.value([]);
     }
   }
 
   @override
-  Future<bool> sendFileToDeviceWithProgress({
-    required List<File> files,
-    required ClientModel clientModel,
+  Future<List<FileModel>> sendFileToDeviceWithProgress({
+    required TransferModel transferModel,
+    required List<FileModel> fileList,
     required Function(int) onProgress,
-    required ClientModel userModel,
   }) async {
     try {
       var filesToSend = <MultipartFile>[];
-      for (var element in files) {
-        if (element.existsSync()) {
-          filesToSend.add(await MultipartFile.fromFile(element.path,
-              filename: element.path.split('/').last));
+      for (FileModel element in (fileList)) {
+        if (element.isAlreadySend == true) {
+          continue;
+        }
+        if (element.fileStream.existsSync()) {
+          filesToSend.add(await MultipartFile.fromFile(
+            element.fileStream.path,
+            filename: element.fileName,
+          ));
         }
       }
       if (filesToSend.isEmpty) {
-        return Future.value(false);
+        return Future.value([]);
       }
 
       var formData = FormData.fromMap({
         'files': filesToSend,
-        'user': jsonEncode(userModel.toJson()),
-        'client': jsonEncode(clientModel.toJson()),
+        'transfer_data': jsonEncode(transferModel.toJson()),
       });
 
       var response = await Dio().post(
-        '${clientModel.connectUrl}${Endpoints.TRANSFER_FILE}',
+        '${transferModel.sendModel?.connectUrl}${Endpoints.TRANSFER_FILE}',
         data: formData,
         onSendProgress: (int sent, int total) {
           /// convert to percentage
@@ -195,10 +222,18 @@ class MoveServerService extends _MoveServerInterface {
           onProgress(percentage.toInt());
         },
       );
-      return Future.value(response.statusCode == 200);
+
+      for (var element in fileList) {
+        var updatedElement = element.copyWith(isAlreadySend: true);
+        fileList[fileList.indexOf(element)] = updatedElement;
+      }
+
+      debugPrint('response: ${response.data}, updatedList: $fileList');
+
+      return Future.value(fileList);
     } catch (e) {
       debugPrint(e.toString());
-      return Future.value(false);
+      return Future.value([]);
     }
   }
 
