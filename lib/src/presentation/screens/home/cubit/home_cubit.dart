@@ -132,14 +132,12 @@ class HomeCubit extends BaseCubitWrapper<HomeState> {
         case Endpoints.TRANSFER_FILE:
           if (request.method == Methods.POST) {
             var savePath = await Helper.getDownloadPath();
-            await moveServerService.receiveFileFromDeviceWithProgress(
+            var fileList =
+                await moveServerService.receiveFileFromDeviceWithProgress(
               request: request,
               savePath: savePath,
               onProgress: (progress, total, fileModel) {
-                var downloadProgress = (progress / total) * 100;
-                debugPrint(
-                    'File Transfer Progress: $downloadProgress ${fileModel.fileName}}');
-                updateFileTransferProgress(fileModel);
+                debugPrint('File Transfer Progress: $progress/$total');
               },
               onCompleted: (status) {
                 debugPrint('File Transfer Completed: $status');
@@ -160,6 +158,7 @@ class HomeCubit extends BaseCubitWrapper<HomeState> {
                 }
               },
             );
+            updateFileTransferProgress(fileList);
           }
           break;
       }
@@ -167,10 +166,15 @@ class HomeCubit extends BaseCubitWrapper<HomeState> {
   }
 
   /// Update file transfer progress
-  void updateFileTransferProgress(FileModel fileModel) {
+  void updateFileTransferProgress(List<FileModel> fileModel) {
     emit(state.copyWith(status: AppCubitLoading()));
     var fileModelList = state.fileModelList ?? [];
-    fileModelList.add(fileModel);
+    fileModelList.addAll(fileModel);
+    // for (var element in fileModel) {
+    //   if (fileModelList.contains(element) == false) {
+    //     fileModelList.add(element);
+    //   }
+    // }
     emit(state.copyWith(
       fileModelList: fileModelList,
       status: AppCubitSuccess(

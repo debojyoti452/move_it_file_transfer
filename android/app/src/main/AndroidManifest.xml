@@ -28,6 +28,9 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.swing.movefileshare.move_app_fileshare">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    
    <application
         android:label="Move"
         android:name="${applicationName}"

@@ -74,7 +74,7 @@ abstract class _MoveServerInterface {
   Future<List<FileModel>> receiveFileFromDeviceWithProgress({
     String? savePath,
     required HttpRequest request,
-    required Function(double, double, FileModel) onProgress,
+    required Function(double, double, List<FileModel>) onProgress,
     required Function(DownloadStatus) onCompleted,
   });
 }
@@ -134,7 +134,7 @@ class MoveServerService extends _MoveServerInterface {
   Future<List<FileModel>> receiveFileFromDeviceWithProgress({
     String? savePath,
     required HttpRequest request,
-    required Function(double, double, FileModel) onProgress,
+    required Function(double, double, List<FileModel>) onProgress,
     required Function(DownloadStatus) onCompleted,
   }) async {
     try {
@@ -188,7 +188,7 @@ class MoveServerService extends _MoveServerInterface {
         onProgress(
           content[0].length.toDouble(),
           request.contentLength.toDouble(),
-          fileList.last,
+          fileList,
         );
 
         await File('$uploadDirectory/$filename').writeAsBytes(content[0]);
