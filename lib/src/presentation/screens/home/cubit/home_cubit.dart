@@ -33,7 +33,6 @@ import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../data/db/shared_pref.dart';
 import '../../../../data/model/client_model.dart';
@@ -42,25 +41,28 @@ import '../../../../data/model/file_model.dart';
 import '../../../../domain/core/move_server_service.dart';
 import '../../../../domain/di/move_di.dart';
 import '../../../../domain/global/app_cubit_status.dart';
+import '../../../../domain/global/base_cubit_wrapper.dart';
 import '../../../../domain/global/status_code.dart';
 import '../../../../domain/routes/endpoints.dart';
 import '../../../../domain/utils/helper.dart';
 
 part 'home_state.dart';
 
-class HomeCubit extends Cubit<HomeState> {
+class HomeCubit extends BaseCubitWrapper<HomeState> {
   HomeCubit()
       : super(HomeState(
           status: AppCubitInitial(),
           connectRequestList: [],
           userModel: const ClientModel(),
           fileModelList: [],
+          downloadStatus: DownloadStatus.initial,
         ));
 
   final MoveServerService moveServerService = MoveDI.moveServerService;
 
-  void initialHome() async {
-    emit(HomeState(status: AppCubitLoading()));
+  @override
+  void initialize() async {
+    emit(state.copyWith(status: AppCubitLoading()));
     try {
       BotToast.showLoading();
       var ownIp = await moveServerService.getOwnServerIpWithPort();
@@ -87,10 +89,10 @@ class HomeCubit extends Cubit<HomeState> {
         await LocalDb.setIsAppOnboarded(true);
       }
       moveServerService.createServer();
-      emit(HomeState(status: AppCubitSuccess()));
+      emit(state.copyWith(status: AppCubitSuccess()));
     } catch (e) {
       debugPrint('SendFragmentState: initialHome: $e');
-      emit(HomeState(status: AppCubitError(message: e.toString())));
+      emit(state.copyWith(status: AppCubitError(message: e.toString())));
     } finally {
       BotToast.closeAllLoading();
       Future.delayed(const Duration(seconds: 2), () {
@@ -133,12 +135,33 @@ class HomeCubit extends Cubit<HomeState> {
 
         case Endpoints.TRANSFER_FILE:
           if (request.method == Methods.POST) {
-            var response =
-                await moveServerService.receiveFileFromDeviceWithProgress(
+            await moveServerService.receiveFileFromDeviceWithProgress(
               request: request,
-              onProgress: (val) {},
+              onProgress: (progress, total, fileModel) {
+                var downloadProgress = (progress / total) * 100;
+                debugPrint(
+                    'File Transfer Progress: $downloadProgress ${fileModel.fileName}}');
+                updateFileTransferProgress(fileModel);
+              },
+              onCompleted: (status) {
+                debugPrint('File Transfer Completed: $status');
+                emitState(state.copyWith(downloadStatus: status));
+                switch (status) {
+                  case DownloadStatus.downloading:
+                    BotToast.showText(text: 'File Transfer Success');
+                    break;
+                  case DownloadStatus.failed:
+                    BotToast.showText(text: 'File Transfer Failed');
+                    break;
+                  case DownloadStatus.completed:
+                    BotToast.showText(text: 'File Transfer Completed');
+                    break;
+                  case DownloadStatus.initial:
+                    debugPrint('File Transfer Initial');
+                    break;
+                }
+              },
             );
-            updateFileTransferProgress(response);
           }
           break;
       }
@@ -146,12 +169,12 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   /// Update file transfer progress
-  void updateFileTransferProgress(List<FileModel> fileList) {
+  void updateFileTransferProgress(FileModel fileModel) {
     emit(state.copyWith(status: AppCubitLoading()));
     var fileModelList = state.fileModelList ?? [];
-    fileModelList.addAll(fileList);
+    fileModelList.add(fileModel);
     emit(state.copyWith(
-      fileModelList: fileList,
+      fileModelList: fileModelList,
       status: AppCubitSuccess(
         code: StatusCode.NEW_FILE_RECEIVER,
       ),
@@ -188,4 +211,7 @@ class HomeCubit extends Cubit<HomeState> {
       ),
     ));
   }
+
+  @override
+  void dispose() {}
 }

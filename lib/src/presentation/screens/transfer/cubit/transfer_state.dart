@@ -34,12 +34,14 @@ class TransferState extends Equatable {
     this.connectRequest,
     required this.transferData,
     required this.fileList,
+    required this.downloadStatus,
   });
 
   final AppCubitStatus status;
   final ConnectRequest? connectRequest;
   final TransferModel transferData;
   final List<FileModel> fileList;
+  final DownloadStatus downloadStatus;
 
   @override
   List<Object?> get props => [
@@ -47,6 +49,7 @@ class TransferState extends Equatable {
         connectRequest,
         transferData,
         fileList,
+        downloadStatus,
       ];
 
   TransferState copyWith({
@@ -54,12 +57,14 @@ class TransferState extends Equatable {
     ConnectRequest? connectRequest,
     TransferModel? transferData,
     List<FileModel>? fileList,
+    DownloadStatus? downloadStatus,
   }) {
     return TransferState(
       status: status ?? this.status,
       connectRequest: connectRequest ?? this.connectRequest,
       transferData: transferData ?? this.transferData,
       fileList: fileList ?? this.fileList,
+      downloadStatus: downloadStatus ?? this.downloadStatus,
     );
   }
 }

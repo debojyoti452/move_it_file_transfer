@@ -78,9 +78,12 @@ abstract class _MoveServerInterface {
   Future<List<FileModel>> receiveFileFromDeviceWithProgress({
     String? savePath,
     required HttpRequest request,
-    required Function(int) onProgress,
+    required Function(double, double, FileModel) onProgress,
+    required Function(DownloadStatus) onCompleted,
   });
 }
+
+enum DownloadStatus { initial, downloading, completed, failed }
 
 class MoveServerService extends _MoveServerInterface {
   late NetworkAddressModel _internetAddress;
@@ -135,10 +138,13 @@ class MoveServerService extends _MoveServerInterface {
   Future<List<FileModel>> receiveFileFromDeviceWithProgress({
     String? savePath,
     required HttpRequest request,
-    required Function(int) onProgress,
+    required Function(double, double, FileModel) onProgress,
+    required Function(DownloadStatus) onCompleted,
   }) async {
     try {
+      onCompleted(DownloadStatus.downloading);
       List<int> dataBytes = [];
+
       Directory appDocDir = await getApplicationDocumentsDirectory();
       String basePath = savePath ?? '${appDocDir.path}/move_download/';
       Directory(basePath).createSync(recursive: true);
@@ -148,12 +154,17 @@ class MoveServerService extends _MoveServerInterface {
       });
 
       String? boundary = request.headers.contentType?.parameters['boundary'];
-      final transformer = MimeMultipartTransformer(boundary!);
-
+      if (boundary == null) {
+        return [];
+      }
+      final transformer = MimeMultipartTransformer(boundary);
       final bodyStream = Stream.fromIterable([dataBytes]);
       final parts = await transformer.bind(bodyStream).toList();
       var uploadDirectory = basePath;
       var fileList = <FileModel>[];
+      debugPrint(
+          'parts: ${parts.length} || fileLength: ${request.contentLength}');
+
       for (var part in parts) {
         debugPrint('part: ${part.headers}');
         final contentDisposition = part.headers['content-disposition'];
@@ -162,10 +173,16 @@ class MoveServerService extends _MoveServerInterface {
             ?.group(1);
         final content = await part.toList();
 
-        debugPrint('filename: $filename');
+        debugPrint(
+            'parts: $part || content: ${content[0].length} || filename: $filename');
         if (filename == null) {
           continue;
         }
+
+        /// calculate download progress
+        var downloadProgress = content[0].length / request.contentLength;
+        var downPr = (downloadProgress / request.contentLength) * 100;
+        debugPrint('downloadProgress: $downPr');
 
         fileList.add(FileModel(
           fileName: filename,
@@ -174,6 +191,12 @@ class MoveServerService extends _MoveServerInterface {
           isAlreadySend: true,
         ));
 
+        onProgress(
+          content[0].length.toDouble(),
+          request.contentLength.toDouble(),
+          fileList.last,
+        );
+
         await File('$uploadDirectory/$filename').writeAsBytes(content[0]);
       }
 
@@ -181,7 +204,10 @@ class MoveServerService extends _MoveServerInterface {
       return Future.value(fileList);
     } catch (e) {
       debugPrint(e.toString());
+      onCompleted(DownloadStatus.failed);
       return Future.value([]);
+    } finally {
+      onCompleted(DownloadStatus.completed);
     }
   }
 

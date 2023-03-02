@@ -50,6 +50,7 @@ class TransferCubit extends BaseCubitWrapper<TransferState> {
           status: AppCubitInitial(),
           transferData: const TransferModel(),
           fileList: const [],
+          downloadStatus: DownloadStatus.initial,
         ));
 
   final MoveServerService moveServerService = MoveDI.moveServerService;
@@ -74,6 +75,16 @@ class TransferCubit extends BaseCubitWrapper<TransferState> {
 
   void updateConnectRequest(ConnectRequest connectRequest) {
     emitState(state.copyWith(connectRequest: connectRequest));
+  }
+
+  void updateTransferData(
+    List<FileModel> fileList,
+    DownloadStatus downloadStatus,
+  ) {
+    emitState(state.copyWith(
+      fileList: fileList,
+      downloadStatus: downloadStatus,
+    ));
   }
 
   void sendFile() async {

@@ -33,10 +33,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../data/model/connect_model.dart';
+import '../../../domain/core/move_server_service.dart';
 import '../../../domain/global/base_state_wrapper.dart';
 import '../../../domain/themes/color_constants.dart';
 import '../../../domain/utils/helper.dart';
 import '../../widgets/dx_dotted_view.dart';
+import '../../widgets/dx_file_transfer_view.dart';
 import 'cubit/transfer_cubit.dart';
 
 class ReceiveFileScreen extends StatefulWidget {
@@ -48,8 +50,7 @@ class ReceiveFileScreen extends StatefulWidget {
   _ReceiveFileScreenState createState() => _ReceiveFileScreenState();
 }
 
-class _ReceiveFileScreenState
-    extends BaseStateWrapper<ReceiveFileScreen> {
+class _ReceiveFileScreenState extends BaseStateWrapper<ReceiveFileScreen> {
   late TransferCubit _cubit;
 
   @override
@@ -92,9 +93,29 @@ class _ReceiveFileScreenState
                 SizedBox(
                   height: 10.h,
                 ),
-                SizedBox(
-                  height: 8.h,
+                LinearProgressIndicator(
+                  value: () {
+                    switch (state.downloadStatus) {
+                      case DownloadStatus.initial:
+                        return 0.0;
+                      case DownloadStatus.downloading:
+                        return null;
+                      case DownloadStatus.completed:
+                        return 100.0;
+                      case DownloadStatus.failed:
+                        return 0.0;
+                    }
+                  }(),
+                  minHeight: 8.h,
+                  backgroundColor: ColorConstants.GREY_DARK,
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    ColorConstants.PRIMARY_BLUE,
+                  ),
                 ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                _fileReceiveList(state),
               ],
             ),
           ),
@@ -103,13 +124,40 @@ class _ReceiveFileScreenState
     );
   }
 
+  Widget _fileReceiveList(TransferState state) {
+    return StreamBuilder<int>(
+        stream: _cubit.progressStreamController.stream,
+        builder: (context, snapshot) {
+          return ListView.builder(
+            scrollDirection: Axis.vertical,
+            itemCount: state.fileList.length,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              var item = state.fileList[index];
+              if (item.fileStream.existsSync() == false) {
+                return Container();
+              }
+              return DxFileTransferView(
+                progress: item.isAlreadySend == true ? 100 : snapshot.data ?? 0,
+                fileModel: item,
+                onRemoveClick: (deleteIndex) {
+                  _cubit.removeFileFromQueueList(deleteIndex);
+                },
+                index: index,
+                isRemoveButtonVisible: false,
+              );
+            },
+          );
+        });
+  }
+
   Widget _userItemView(ConnectRequest connectRequest) {
-    if (connectRequest.toData == null ||
-        connectRequest.fromData == null) {
+    if (connectRequest.toData == null || connectRequest.fromData == null) {
       BotToast.showText(
         text: 'Something went wrong',
       );
-      Navigator.pop(context);
+      // Navigator.pop(context);
     }
     var clientModel = connectRequest.toData;
     var userModel = connectRequest.fromData;
@@ -140,10 +188,7 @@ class _ReceiveFileScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('${userModel?.clientName}',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: ColorConstants.PRIMARY_BLUE,
                             )),
                     Text(
@@ -188,10 +233,7 @@ class _ReceiveFileScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('${clientModel?.clientName} (You)',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: ColorConstants.PRIMARY_BLUE,
                             )),
                     Text(

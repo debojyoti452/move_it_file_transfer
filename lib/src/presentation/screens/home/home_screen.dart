@@ -34,6 +34,7 @@ import '../../../domain/global/app_cubit_status.dart';
 import '../../../domain/global/base_state_wrapper.dart';
 import '../../../domain/global/status_code.dart';
 import '../../widgets/dx_bottom_navigation_bar.dart';
+import '../transfer/cubit/transfer_cubit.dart';
 import 'components/cubit/receive/receive_fragment_cubit.dart';
 import 'components/cubit/send/send_fragment_cubit.dart';
 import 'components/fragment/profile_fragment.dart';
@@ -68,7 +69,7 @@ class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
   @override
   void onInit() {
     _homeCubit = context.read<HomeCubit>();
-    _homeCubit.initialHome();
+    _homeCubit.initialize();
     initialize();
   }
 
@@ -101,11 +102,18 @@ class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
           if ((state.status as AppCubitSuccess).code ==
               StatusCode.NEW_CONNECTION_ACCEPTED) {
             if (state.connectRequestList?.isNotEmpty ?? false) {
-              context
-                  .read<SendFragmentCubit>()
-                  .updateAcceptedRequestClient(
-                    model: state.acceptedClientModel ??
-                        const ConnectRequest(),
+              context.read<SendFragmentCubit>().updateAcceptedRequestClient(
+                    model: state.acceptedClientModel ?? const ConnectRequest(),
+                  );
+            }
+          }
+
+          if ((state.status as AppCubitSuccess).code ==
+              StatusCode.NEW_FILE_RECEIVER) {
+            if (state.connectRequestList?.isNotEmpty ?? false) {
+              context.read<TransferCubit>().updateTransferData(
+                    state.fileModelList ?? [],
+                    state.downloadStatus,
                   );
             }
           }

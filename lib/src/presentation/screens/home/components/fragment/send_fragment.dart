@@ -83,29 +83,22 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
                   child: Text.rich(
                     TextSpan(
                       text: 'See devices in your radar nearby\n',
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineSmall
-                          ?.copyWith(
-                            color: ColorConstants.BLACK,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style:
+                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                color: ColorConstants.BLACK,
+                                fontWeight: FontWeight.bold,
+                              ),
                       children: [
                         TextSpan(
-                          text:
-                              'Make sure all devices are in same WiFi\n',
-                          style:
-                              Theme.of(context).textTheme.bodySmall,
+                          text: 'Make sure all devices are in same WiFi\n',
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
                         TextSpan(
-                          text:
-                              'Name: ${state.userModel.clientName ?? ''}\n',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(
-                                color: ColorConstants.PRIMARY_BLUE,
-                              ),
+                          text: 'Name: ${state.userModel.clientName ?? ''}\n',
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: ColorConstants.PRIMARY_BLUE,
+                                  ),
                         ),
                       ],
                     ),
@@ -128,6 +121,10 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
                     ),
                     IconButton(
                       onPressed: () {
+                        // Navigator.pushNamed(
+                        //   context,
+                        //   ReceiveFileScreen.id,
+                        // );
                         _cubit.searchNearbyDevices();
                       },
                       padding: EdgeInsets.zero,
@@ -244,8 +241,7 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       _connectedStatusView(
-                          (nearbyClients[index].isConnected ??
-                              false)),
+                          (nearbyClients[index].isConnected ?? false)),
                     ],
                   ),
                 ),

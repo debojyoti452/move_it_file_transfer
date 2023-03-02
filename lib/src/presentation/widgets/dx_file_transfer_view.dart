@@ -40,12 +40,14 @@ class DxFileTransferView extends StatelessWidget {
     required this.onRemoveClick,
     required this.index,
     required this.progress,
+    this.isRemoveButtonVisible = true,
   }) : super(key: key);
 
   final FileModel fileModel;
   final ValueChanged<int> onRemoveClick;
   final int index;
   final int progress;
+  final bool? isRemoveButtonVisible;
 
   @override
   Widget build(BuildContext context) {
@@ -106,17 +108,18 @@ class DxFileTransferView extends StatelessWidget {
                 ],
               ),
             ),
-            IconButton(
-              onPressed: () {
-                onRemoveClick(index);
-              },
-              padding: EdgeInsets.zero,
-              icon: Icon(
-                Icons.close,
-                color: Colors.red,
-                size: 15.w,
+            if (isRemoveButtonVisible ?? false)
+              IconButton(
+                onPressed: () {
+                  onRemoveClick(index);
+                },
+                padding: EdgeInsets.zero,
+                icon: Icon(
+                  Icons.close,
+                  color: Colors.red,
+                  size: 15.w,
+                ),
               ),
-            ),
           ],
         ),
       ),
