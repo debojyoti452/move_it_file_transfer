@@ -162,8 +162,6 @@ class MoveServerService extends _MoveServerInterface {
       final parts = await transformer.bind(bodyStream).toList();
       var uploadDirectory = basePath;
       var fileList = <FileModel>[];
-      debugPrint(
-          'parts: ${parts.length} || fileLength: ${request.contentLength}');
 
       for (var part in parts) {
         debugPrint('part: ${part.headers}');

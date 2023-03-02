@@ -94,9 +94,8 @@ class FileHelper implements _IOFileInterface {
       int firstWord = (bytes[i] << 8) + bytes[i + 1];
       if (0xD800 <= firstWord && firstWord <= 0xDBFF) {
         int secondWord = (bytes[i + 2] << 8) + bytes[i + 3];
-        buffer.writeCharCode(((firstWord - 0xD800) << 10) +
-            (secondWord - 0xDC00) +
-            0x10000);
+        buffer.writeCharCode(
+            ((firstWord - 0xD800) << 10) + (secondWord - 0xDC00) + 0x10000);
         i += 4;
       } else {
         buffer.writeCharCode(firstWord);

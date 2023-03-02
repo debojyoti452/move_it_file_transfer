@@ -26,7 +26,10 @@
  *
  */
 
+import 'dart:io';
 import 'dart:math';
+
+import 'package:path_provider/path_provider.dart';
 
 import '../../data/constants/assets_constants.dart';
 import '../global/base_state_wrapper.dart';
@@ -43,5 +46,21 @@ mixin Helper {
     );
     return AssetsConstants.deviceIconMap[platformType.name] ??
         AssetsConstants.logo;
+  }
+
+  static Future<String> getDownloadPath() async {
+    switch (Platform.operatingSystem) {
+      case 'android':
+        return '/storage/emulated/0/Download/';
+      case 'ios':
+        return (await getApplicationDocumentsDirectory()).path;
+      case 'windows':
+      case 'macos':
+      case 'linux':
+        return (await getDownloadsDirectory())?.path.replaceAll('\\', '/') ??
+            'No Download Directory';
+      default:
+        return '/storage/emulated/0/Download/';
+    }
   }
 }
