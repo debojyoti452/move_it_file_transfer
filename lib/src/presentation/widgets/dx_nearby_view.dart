@@ -1,26 +1,22 @@
 /*
  * *
- *  * * MIT License
+ *  * * GNU General Public License v3.0
  *  * *******************************************************************************************
  *  *  * Created By Debojyoti Singha
  *  *  * Copyright (c) 2023.
- *  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
- *  *  * of this software and associated documentation files (the "Software"), to deal
- *  *  * in the Software without restriction, including without limitation the rights
- *  *  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- *  *  * copies of the Software, and to permit persons to whom the Software is
- *  *  * furnished to do so, subject to the following conditions:
+ *  *  * This program is free software: you can redistribute it and/or modify
+ *  *  * it under the terms of the GNU General Public License as published by
+ *  *  * the Free Software Foundation, either version 3 of the License, or
+ *  *  * (at your option) any later version.
  *  *  *
- *  *  * The above copyright notice and this permission notice shall be included in all
- *  *  * copies or substantial portions of the Software.
+ *  *  * This program is distributed in the hope that it will be useful,
  *  *  *
- *  *  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *  *  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *  *  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  *  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *  *  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  *  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  *  * SOFTWARE.
+ *  *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  *  * GNU General Public License for more details.
+ *  *  *
+ *  *  * You should have received a copy of the GNU General Public License
+ *  *  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *  *  * Contact Email: support@swingtechnologies.in
  *  * ******************************************************************************************
  *
@@ -49,8 +45,7 @@ class _DxNearbyViewState extends State<DxNearbyView>
   late AnimationController _controller2;
 
   Future<ui.Image> _loadImage() async {
-    ByteData byteData =
-        await rootBundle.load(AssetsConstants.logoPng);
+    ByteData byteData = await rootBundle.load(AssetsConstants.logoPng);
     final Uint8List bytes = Uint8List.view(byteData.buffer);
     final ui.Codec codec = await ui.instantiateImageCodec(
       bytes,
@@ -189,8 +184,7 @@ class _DxNearbyViewPainter extends CustomPainter {
       if (extractPath.getBounds().isEmpty) return;
       try {
         var metric = extractPath.computeMetrics().first;
-        final offset =
-            metric.getTangentForOffset(metric.length)?.position;
+        final offset = metric.getTangentForOffset(metric.length)?.position;
 
         if (offset == null) return;
 
@@ -208,8 +202,7 @@ class _DxNearbyViewPainter extends CustomPainter {
   }
 
   Path getCirclePath(double radius) => Path()
-    ..addOval(
-        Rect.fromCircle(center: const Offset(0, 0), radius: radius));
+    ..addOval(Rect.fromCircle(center: const Offset(0, 0), radius: radius));
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {

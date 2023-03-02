@@ -1,26 +1,22 @@
 /*
  * *
- *  * * MIT License
+ *  * * GNU General Public License v3.0
  *  * *******************************************************************************************
  *  *  * Created By Debojyoti Singha
  *  *  * Copyright (c) 2023.
- *  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
- *  *  * of this software and associated documentation files (the "Software"), to deal
- *  *  * in the Software without restriction, including without limitation the rights
- *  *  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- *  *  * copies of the Software, and to permit persons to whom the Software is
- *  *  * furnished to do so, subject to the following conditions:
+ *  *  * This program is free software: you can redistribute it and/or modify
+ *  *  * it under the terms of the GNU General Public License as published by
+ *  *  * the Free Software Foundation, either version 3 of the License, or
+ *  *  * (at your option) any later version.
  *  *  *
- *  *  * The above copyright notice and this permission notice shall be included in all
- *  *  * copies or substantial portions of the Software.
+ *  *  * This program is distributed in the hope that it will be useful,
  *  *  *
- *  *  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *  *  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *  *  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  *  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *  *  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  *  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  *  * SOFTWARE.
+ *  *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  *  * GNU General Public License for more details.
+ *  *  *
+ *  *  * You should have received a copy of the GNU General Public License
+ *  *  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *  *  * Contact Email: support@swingtechnologies.in
  *  * ******************************************************************************************
  *
@@ -42,12 +38,10 @@ class DxBottomNavigationBar extends StatefulWidget {
   final int currentIndex;
 
   @override
-  State<DxBottomNavigationBar> createState() =>
-      _DxBottomNavigationBarState();
+  State<DxBottomNavigationBar> createState() => _DxBottomNavigationBarState();
 }
 
-class _DxBottomNavigationBarState
-    extends State<DxBottomNavigationBar> {
+class _DxBottomNavigationBarState extends State<DxBottomNavigationBar> {
   List<IconData> get _tabs => [
         Icons.send,
         Icons.wifi,
@@ -111,16 +105,11 @@ class _DxBottomNavigationBarState
                   SizedBox(height: 1.h),
                   Text(
                     BottomTabEnum.values[index].value,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w500,
                           color: _selectedIndex == index
-                              ? Theme.of(context)
-                                  .colorScheme
-                                  .secondary
+                              ? Theme.of(context).colorScheme.secondary
                               : Theme.of(context).disabledColor,
                         ),
                   ),

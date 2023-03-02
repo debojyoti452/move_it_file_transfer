@@ -1,26 +1,22 @@
 /*
  * *
- *  * * MIT License
+ *  * * GNU General Public License v3.0
  *  * *******************************************************************************************
  *  *  * Created By Debojyoti Singha
  *  *  * Copyright (c) 2023.
- *  *  * Permission is hereby granted, free of charge, to any person obtaining a copy
- *  *  * of this software and associated documentation files (the "Software"), to deal
- *  *  * in the Software without restriction, including without limitation the rights
- *  *  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- *  *  * copies of the Software, and to permit persons to whom the Software is
- *  *  * furnished to do so, subject to the following conditions:
+ *  *  * This program is free software: you can redistribute it and/or modify
+ *  *  * it under the terms of the GNU General Public License as published by
+ *  *  * the Free Software Foundation, either version 3 of the License, or
+ *  *  * (at your option) any later version.
  *  *  *
- *  *  * The above copyright notice and this permission notice shall be included in all
- *  *  * copies or substantial portions of the Software.
+ *  *  * This program is distributed in the hope that it will be useful,
  *  *  *
- *  *  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *  *  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *  *  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  *  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *  *  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  *  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  *  * SOFTWARE.
+ *  *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  *  * GNU General Public License for more details.
+ *  *  *
+ *  *  * You should have received a copy of the GNU General Public License
+ *  *  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *  *  * Contact Email: support@swingtechnologies.in
  *  * ******************************************************************************************
  *
@@ -50,8 +46,7 @@ class ReceiveFragment extends StatefulWidget {
   State<ReceiveFragment> createState() => _ReceiveFragmentState();
 }
 
-class _ReceiveFragmentState
-    extends BaseStateWrapper<ReceiveFragment> {
+class _ReceiveFragmentState extends BaseStateWrapper<ReceiveFragment> {
   late ReceiveFragmentCubit _cubit;
 
   @override
@@ -83,29 +78,22 @@ class _ReceiveFragmentState
                   child: Text.rich(
                     TextSpan(
                       text: 'See devices in your radar nearby\n',
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineSmall
-                          ?.copyWith(
-                            color: ColorConstants.BLACK,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style:
+                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                color: ColorConstants.BLACK,
+                                fontWeight: FontWeight.bold,
+                              ),
                       children: [
                         TextSpan(
-                          text:
-                              'Make sure all devices are in same WiFi\n',
-                          style:
-                              Theme.of(context).textTheme.bodySmall,
+                          text: 'Make sure all devices are in same WiFi\n',
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
                         TextSpan(
-                          text:
-                              'Name: ${state.userModel.clientName ?? ''}\n',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(
-                                color: ColorConstants.PRIMARY_BLUE,
-                              ),
+                          text: 'Name: ${state.userModel.clientName ?? ''}\n',
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: ColorConstants.PRIMARY_BLUE,
+                                  ),
                         ),
                       ],
                     ),
@@ -123,12 +111,10 @@ class _ReceiveFragmentState
                       Expanded(
                         child: Text(
                           'Accepted List',
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
                       ),
                       IconButton(
@@ -152,12 +138,10 @@ class _ReceiveFragmentState
                       Expanded(
                         child: Text(
                           'Request List',
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
                       ),
                       IconButton(
@@ -217,9 +201,7 @@ class _ReceiveFragmentState
                 fromData: client,
                 toData: state.userModel,
               );
-              context
-                  .read<TransferCubit>()
-                  .updateConnectRequest(connectModel);
+              context.read<TransferCubit>().updateConnectRequest(connectModel);
             } catch (e) {
               debugPrint(e.toString());
             } finally {
@@ -262,8 +244,7 @@ class _ReceiveFragmentState
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       _connectedStatusView(
-                          (nearbyClients[index].isConnected ??
-                              false)),
+                          (nearbyClients[index].isConnected ?? false)),
                     ],
                   ),
                 ),
@@ -317,10 +298,9 @@ class _ReceiveFragmentState
               children: [
                 Text(
                   'Request from',
-                  style:
-                      Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: ColorConstants.BLACK,
-                          ),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: ColorConstants.BLACK,
+                      ),
                 ),
                 SizedBox(height: 5.h),
                 Row(
@@ -330,19 +310,15 @@ class _ReceiveFragmentState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            item.fromData?.clientName ??
-                                'Debojyoti Singha',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(
-                                  color: ColorConstants.PRIMARY_BLUE,
-                                ),
+                            item.fromData?.clientName ?? 'Debojyoti Singha',
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: ColorConstants.PRIMARY_BLUE,
+                                    ),
                           ),
                           Text(
                             item.fromData?.platform ?? 'android',
-                            style:
-                                Theme.of(context).textTheme.bodySmall,
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ],
                       ),
@@ -365,12 +341,10 @@ class _ReceiveFragmentState
                         },
                         child: Text(
                           'Accept',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(
-                                color: ColorConstants.WHITE,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: ColorConstants.WHITE,
+                                  ),
                         ),
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(
@@ -386,8 +360,7 @@ class _ReceiveFragmentState
                           shape: MaterialStateProperty.all(
                             // ignore: prefer_const_constructors
                             RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(10.r),
+                              borderRadius: BorderRadius.circular(10.r),
                             ),
                           ),
                         ),
@@ -401,12 +374,10 @@ class _ReceiveFragmentState
                         },
                         child: Text(
                           'Reject',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(
-                                color: ColorConstants.PRIMARY_BLUE,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: ColorConstants.PRIMARY_BLUE,
+                                  ),
                         ),
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(
@@ -422,8 +393,7 @@ class _ReceiveFragmentState
                           shape: MaterialStateProperty.all(
                             // ignore: prefer_const_constructors
                             RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(10.r),
+                              borderRadius: BorderRadius.circular(10.r),
                             ),
                           ),
                         ),
