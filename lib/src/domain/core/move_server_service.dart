@@ -33,6 +33,7 @@ import 'package:flutter/foundation.dart';
 import 'package:mime/mime.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../data/constants/app_constants.dart';
 import '../../data/model/client_model.dart';
 import '../../data/model/connect_model.dart';
 import '../../data/model/file_model.dart';
@@ -56,6 +57,8 @@ abstract class _MoveServerInterface {
   void dispose();
 
   Future<NetworkAddressModel> getOwnServerIpWithPort();
+
+  Future<bool> isServerRunning(String ipAddress);
 
   Future<bool> sendRequestToDevice({
     required ConnectRequest connectRequest,
@@ -90,21 +93,37 @@ class MoveServerService extends _MoveServerInterface {
 
   @override
   void createServer() async {
-    if (_server != null) {
-      return;
-    }
-    _internetAddress = await getOwnServerIpWithPort();
-    log('Server IP: ${_internetAddress.host}:${_internetAddress.port}');
-    _server = await HttpServer.bind(
-      _internetAddress.host,
-      _internetAddress.port!,
-    );
-    _server?.autoCompress = true;
-    _server?.defaultResponseHeaders.add('Access-Control-Allow-Origin', '*');
-    _server?.defaultResponseHeaders
-        .add('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    _server?.defaultResponseHeaders
-        .add('content-type', 'application/json; charset=UTF-8');
+    runZonedGuarded(() async {
+      // final securityContextResult = generateSecurityContext();
+      if (_server != null) {
+        return;
+      }
+      _internetAddress = await getOwnServerIpWithPort();
+      log('Server IP: ${_internetAddress.host}:${_internetAddress.port}');
+      // _server = await HttpServer.bindSecure(
+      //   _internetAddress.host,
+      //   _internetAddress.port!,
+      //   SecurityContext()
+      //     ..usePrivateKeyBytes(securityContextResult.privateKey.codeUnits)
+      //     ..useCertificateChainBytes(
+      //         securityContextResult.certificate.codeUnits),
+      // );
+      _server = await HttpServer.bind(
+        _internetAddress.host,
+        _internetAddress.port ?? AppConstants.PORT,
+      );
+      _server?.autoCompress = true;
+      _server?.defaultResponseHeaders.add('Access-Control-Allow-Origin', '*');
+      _server?.defaultResponseHeaders.add(
+          'Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      _server?.defaultResponseHeaders
+          .add('content-type', 'application/json; charset=UTF-8');
+
+      debugPrint(
+          'Server started at ${_internetAddress.host}:${_internetAddress.port} without security context.');
+    }, (error, stack) {
+      debugPrint('Server error: $error || $stack');
+    });
   }
 
   @override
@@ -378,6 +397,23 @@ class MoveServerService extends _MoveServerInterface {
     } catch (e) {
       // log('Error: $e');
       return false;
+    }
+  }
+
+  @override
+  Future<bool> isServerRunning(String ipAddress) async {
+    try {
+      var socket = await Socket.connect(
+        ipAddress,
+        AppConstants.PORT,
+        timeout: const Duration(seconds: 5),
+      );
+      socket.destroy();
+      debugPrint('Server is running $ipAddress');
+      return Future.value(true);
+    } catch (e) {
+      debugPrint(e.toString());
+      return Future.value(false);
     }
   }
 

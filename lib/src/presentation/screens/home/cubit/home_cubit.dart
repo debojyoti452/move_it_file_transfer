@@ -30,12 +30,12 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../../../data/constants/app_constants.dart';
 import '../../../../data/db/shared_pref.dart';
 import '../../../../data/model/client_model.dart';
 import '../../../../data/model/connect_model.dart';
 import '../../../../data/model/file_model.dart';
 import '../../../../domain/core/move_server_service.dart';
-import '../../../../domain/di/move_di.dart';
 import '../../../../domain/global/app_cubit_status.dart';
 import '../../../../domain/global/base_cubit_wrapper.dart';
 import '../../../../domain/global/status_code.dart';
@@ -54,8 +54,6 @@ class HomeCubit extends BaseCubitWrapper<HomeState> {
           downloadStatus: DownloadStatus.initial,
         ));
 
-  final MoveServerService moveServerService = MoveDI.moveServerService;
-
   @override
   void initialize() async {
     emit(state.copyWith(status: AppCubitLoading()));
@@ -66,7 +64,7 @@ class HomeCubit extends BaseCubitWrapper<HomeState> {
         var userData = await LocalDb.getUserData();
         var updatedData = userData.copyWith(
           ipAddress: '${ownIp.host}',
-          connectUrl: 'http://${ownIp.host}:${ownIp.port}',
+          connectUrl: '${AppConstants.http}${ownIp.host}:${ownIp.port}',
           platform: Platform.operatingSystem,
         );
         await LocalDb.setUserData(updatedData);
@@ -77,20 +75,20 @@ class HomeCubit extends BaseCubitWrapper<HomeState> {
           clientId: '1',
           clientName: ownName,
           ipAddress: '${ownIp.host}',
-          connectUrl: 'http://${ownIp.host}:${ownIp.port}',
+          connectUrl: '${AppConstants.http}${ownIp.host}:${ownIp.port}',
           token: 'NO_TOKEN_YET',
           platform: Platform.operatingSystem,
         );
         await LocalDb.setUserData(userModel);
         await LocalDb.setIsAppOnboarded(true);
       }
-      moveServerService.createServer();
       emit(state.copyWith(status: AppCubitSuccess()));
     } catch (e) {
       debugPrint('SendFragmentState: initialHome: $e');
       emit(state.copyWith(status: AppCubitError(message: e.toString())));
     } finally {
       BotToast.closeAllLoading();
+      moveServerService.createServer();
       Future.delayed(const Duration(seconds: 2), () {
         runServerStream();
       });
@@ -124,9 +122,11 @@ class HomeCubit extends BaseCubitWrapper<HomeState> {
           break;
 
         case Endpoints.SEARCH_NEARBY_CLIENTS:
-          var myUserData = await LocalDb.getUserData();
-          request.response.write(jsonEncode(myUserData.toJson()));
-          request.response.close();
+          if (request.method == Methods.GET) {
+            var myUserData = await LocalDb.getUserData();
+            request.response.write(jsonEncode(myUserData.toJson()));
+            request.response.close();
+          }
           break;
 
         case Endpoints.TRANSFER_FILE:
@@ -212,6 +212,11 @@ class HomeCubit extends BaseCubitWrapper<HomeState> {
         code: StatusCode.NEW_CONNECTION_REQUEST,
       ),
     ));
+  }
+
+  @override
+  Future<bool> isSenderConnected(String ipAddress) async {
+    return await moveServerService.isServerRunning(ipAddress);
   }
 
   @override

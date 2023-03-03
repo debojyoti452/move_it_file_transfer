@@ -27,18 +27,17 @@ import 'dart:isolate';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../../data/db/shared_pref.dart';
 import '../../../../../../data/model/client_model.dart';
 import '../../../../../../data/model/connect_model.dart';
-import '../../../../../../domain/core/move_server_service.dart';
 import '../../../../../../domain/di/move_di.dart';
 import '../../../../../../domain/global/app_cubit_status.dart';
+import '../../../../../../domain/global/base_cubit_wrapper.dart';
 
 part 'send_fragment_state.dart';
 
-class SendFragmentCubit extends Cubit<SendFragmentState> {
+class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
   SendFragmentCubit()
       : super(SendFragmentState(
           status: AppCubitInitial(),
@@ -46,10 +45,10 @@ class SendFragmentCubit extends Cubit<SendFragmentState> {
           userModel: const ClientModel(),
         ));
 
-  final MoveServerService moveServerService = MoveDI.moveServerService;
   ReceivePort receivePort = ReceivePort();
   Isolate? searchAlgoIsolate;
 
+  @override
   void initialize() async {
     emit(state.copyWith(status: AppCubitLoading()));
     try {
@@ -135,6 +134,7 @@ class SendFragmentCubit extends Cubit<SendFragmentState> {
     });
   }
 
+  @override
   void dispose() {
     moveServerService.dispose();
     receivePort.close();
@@ -188,6 +188,11 @@ class SendFragmentCubit extends Cubit<SendFragmentState> {
     } finally {
       BotToast.closeAllLoading();
     }
+  }
+
+  @override
+  Future<bool> isSenderConnected(String ipAddress) async {
+    return await moveServerService.isServerRunning(ipAddress);
   }
 }
 

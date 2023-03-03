@@ -22,6 +22,7 @@
  *
  */
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -178,27 +179,35 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
       itemBuilder: (context, index) {
         return InkWell(
           onTap: () async {
-            if (nearbyClients[index].isConnected == false) {
-              _cubit.sendRequestToDevice(
-                clientModel: nearbyClients[index],
-              );
-            } else {
-              try {
-                var client = nearbyClients[index];
-                var connectModel = ConnectRequest(
-                  fromIp: client.ipAddress,
-                  toIp: state.userModel.ipAddress,
-                  fromData: state.userModel,
-                  toData: client,
+            if (await _cubit
+                .isSenderConnected(nearbyClients[index].ipAddress ?? 'NULL')) {
+              if (nearbyClients[index].isConnected == false) {
+                _cubit.sendRequestToDevice(
+                  clientModel: nearbyClients[index],
                 );
-                context
-                    .read<TransferCubit>()
-                    .updateConnectRequest(connectModel);
-              } catch (e) {
-                debugPrint(e.toString());
-              } finally {
-                Navigator.pushNamed(context, SendFileScreen.id);
+              } else {
+                try {
+                  var client = nearbyClients[index];
+                  var connectModel = ConnectRequest(
+                    fromIp: client.ipAddress,
+                    toIp: state.userModel.ipAddress,
+                    fromData: state.userModel,
+                    toData: client,
+                  );
+                  context
+                      .read<TransferCubit>()
+                      .updateConnectRequest(connectModel);
+                } catch (e) {
+                  debugPrint(e.toString());
+                } finally {
+                  Navigator.pushNamed(context, SendFileScreen.id);
+                }
               }
+            } else {
+              BotToast.showText(
+                text: 'Sender is Offline',
+                contentColor: Colors.red,
+              );
             }
           },
           child: Container(

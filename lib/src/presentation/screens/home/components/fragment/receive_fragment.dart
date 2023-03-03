@@ -22,6 +22,7 @@
  *
  */
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -192,20 +193,30 @@ class _ReceiveFragmentState extends BaseStateWrapper<ReceiveFragment> {
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         return InkWell(
-          onTap: () {
-            try {
-              var client = nearbyClients[index];
-              var connectModel = ConnectRequest(
-                fromIp: state.userModel.ipAddress,
-                toIp: client.ipAddress,
-                fromData: client,
-                toData: state.userModel,
+          onTap: () async {
+            if (await _cubit
+                .isSenderConnected(nearbyClients[index].ipAddress ?? 'NULL')) {
+              try {
+                var client = nearbyClients[index];
+                var connectModel = ConnectRequest(
+                  fromIp: state.userModel.ipAddress,
+                  toIp: client.ipAddress,
+                  fromData: client,
+                  toData: state.userModel,
+                );
+                context
+                    .read<TransferCubit>()
+                    .updateConnectRequest(connectModel);
+              } catch (e) {
+                debugPrint(e.toString());
+              } finally {
+                Navigator.pushNamed(context, ReceiveFileScreen.id);
+              }
+            } else {
+              BotToast.showText(
+                text: 'Sender is Offline',
+                contentColor: Colors.red,
               );
-              context.read<TransferCubit>().updateConnectRequest(connectModel);
-            } catch (e) {
-              debugPrint(e.toString());
-            } finally {
-              Navigator.pushNamed(context, ReceiveFileScreen.id);
             }
           },
           child: Container(
@@ -348,17 +359,14 @@ class _ReceiveFragmentState extends BaseStateWrapper<ReceiveFragment> {
                         ),
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(
-                            // ignore: prefer_const_constructors
                             ColorConstants.PRIMARY_BLUE,
                           ),
                           padding: MaterialStateProperty.all(
-                            // ignore: prefer_const_constructors
                             EdgeInsets.symmetric(
                               vertical: 10.h,
                             ),
                           ),
                           shape: MaterialStateProperty.all(
-                            // ignore: prefer_const_constructors
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.r),
                             ),
@@ -381,17 +389,14 @@ class _ReceiveFragmentState extends BaseStateWrapper<ReceiveFragment> {
                         ),
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(
-                            // ignore: prefer_const_constructors
                             ColorConstants.WHITE,
                           ),
                           padding: MaterialStateProperty.all(
-                            // ignore: prefer_const_constructors
                             EdgeInsets.symmetric(
                               vertical: 10.h,
                             ),
                           ),
                           shape: MaterialStateProperty.all(
-                            // ignore: prefer_const_constructors
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.r),
                             ),

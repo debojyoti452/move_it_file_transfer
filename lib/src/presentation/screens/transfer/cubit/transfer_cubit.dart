@@ -34,7 +34,6 @@ import 'package:flutter/foundation.dart';
 import '../../../../data/model/connect_model.dart';
 import '../../../../data/model/file_model.dart';
 import '../../../../domain/core/move_server_service.dart';
-import '../../../../domain/di/move_di.dart';
 import '../../../../domain/global/app_cubit_status.dart';
 import '../../../../domain/global/base_cubit_wrapper.dart';
 
@@ -49,7 +48,6 @@ class TransferCubit extends BaseCubitWrapper<TransferState> {
           downloadStatus: DownloadStatus.initial,
         ));
 
-  final MoveServerService moveServerService = MoveDI.moveServerService;
   late StreamController<int> progressStreamController;
 
   @override
@@ -180,6 +178,11 @@ class TransferCubit extends BaseCubitWrapper<TransferState> {
     emitState(state.copyWith(
       fileList: list,
     ));
+  }
+
+  @override
+  Future<bool> isSenderConnected(String ipAddress) async {
+    return await moveServerService.isServerRunning(ipAddress);
   }
 
   @override

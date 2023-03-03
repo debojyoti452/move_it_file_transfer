@@ -29,8 +29,6 @@ import 'package:flutter/foundation.dart';
 import '../../../../../../data/db/shared_pref.dart';
 import '../../../../../../data/model/client_model.dart';
 import '../../../../../../data/model/connect_model.dart';
-import '../../../../../../domain/core/move_server_service.dart';
-import '../../../../../../domain/di/move_di.dart';
 import '../../../../../../domain/global/app_cubit_status.dart';
 import '../../../../../../domain/global/base_cubit_wrapper.dart';
 
@@ -45,7 +43,7 @@ class ReceiveFragmentCubit extends BaseCubitWrapper<ReceiveFragmentState> {
           acceptedList: const [],
         ));
 
-  final MoveServerService _moveServerService = MoveDI.moveServerService;
+  // final MoveServerService _moveServerService = MoveDI.moveServerService;
 
   @override
   void initialize() async {
@@ -90,8 +88,8 @@ class ReceiveFragmentCubit extends BaseCubitWrapper<ReceiveFragmentState> {
     try {
       BotToast.showLoading();
       emitState(state.copyWith(status: AppCubitLoading()));
-      var response = await _moveServerService.acceptConnectionRequest(
-          connectRequest: item);
+      var response =
+          await moveServerService.acceptConnectionRequest(connectRequest: item);
       if (response == true) {
         var acceptedList = state.acceptedList.toList();
         var requestedList = state.requestList.toList();
@@ -123,6 +121,11 @@ class ReceiveFragmentCubit extends BaseCubitWrapper<ReceiveFragmentState> {
     } finally {
       BotToast.closeAllLoading();
     }
+  }
+
+  @override
+  Future<bool> isSenderConnected(String ipAddress) async {
+    return await moveServerService.isServerRunning(ipAddress);
   }
 
   @override

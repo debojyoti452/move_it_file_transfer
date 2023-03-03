@@ -25,8 +25,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../core/move_server_service.dart';
+import '../di/move_di.dart';
+
 abstract class BaseCubitWrapper<T> extends Cubit<T> {
   BaseCubitWrapper(T state) : super(state);
+
+  MoveServerService get moveServerService => MoveDI.moveServerService;
 
   void initialize();
 
@@ -40,4 +45,6 @@ abstract class BaseCubitWrapper<T> extends Cubit<T> {
     debugPrint(error.toString());
     emit(state);
   }
+
+  Future<bool> isSenderConnected(String ipAddress);
 }

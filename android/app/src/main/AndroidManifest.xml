@@ -30,8 +30,9 @@
     package="com.swing.movefileshare.move_app_fileshare">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    
-   <application
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
         android:label="Move"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
