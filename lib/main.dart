@@ -80,7 +80,13 @@ class BaseApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: const Size(375, 812),
+      designSize: () {
+        if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+          return const Size(1024, 768);
+        } else {
+          return const Size(360, 640);
+        }
+      }(),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {

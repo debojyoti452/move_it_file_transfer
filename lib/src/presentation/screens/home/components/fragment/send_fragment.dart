@@ -150,8 +150,67 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
       bloc: _cubit,
       listener: (context, state) {},
       builder: (context, state) {
-        return Scaffold(
-          body: Container(),
+        return Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 14.w,
+            vertical: 14.h,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text.rich(
+                    TextSpan(
+                      text: 'See devices in your radar nearby\n',
+                      style:
+                          Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                color: ColorConstants.BLACK,
+                                fontWeight: FontWeight.bold,
+                              ),
+                      children: [
+                        TextSpan(
+                          text: 'Make sure all devices are in same WiFi\n',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 50.h,
+                ),
+                SizedBox(
+                  height: 200.h,
+                  child: const DxNearbyView(),
+                ),
+                SizedBox(
+                  height: 50.h,
+                ),
+                Row(
+                  children: [
+                    const Expanded(
+                      child: Text('All devices in your radar'),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        _cubit.searchNearbyDevices();
+                      },
+                      padding: EdgeInsets.zero,
+                      icon: const Icon(
+                        Icons.refresh,
+                        color: ColorConstants.BLACK,
+                      ),
+                    ),
+                  ],
+                ),
+                _allDeviceListView(
+                  nearbyClients: state.nearbyClients,
+                  state: state,
+                ),
+              ],
+            ),
+          ),
         );
       },
     );

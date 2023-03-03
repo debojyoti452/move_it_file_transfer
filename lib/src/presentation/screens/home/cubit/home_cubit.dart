@@ -82,7 +82,10 @@ class HomeCubit extends BaseCubitWrapper<HomeState> {
         await LocalDb.setUserData(userModel);
         await LocalDb.setIsAppOnboarded(true);
       }
-      emit(state.copyWith(status: AppCubitSuccess()));
+      emit(state.copyWith(
+        status: AppCubitSuccess(),
+        userModel: await LocalDb.getUserData(),
+      ));
     } catch (e) {
       debugPrint('SendFragmentState: initialHome: $e');
       emit(state.copyWith(status: AppCubitError(message: e.toString())));

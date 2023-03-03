@@ -68,11 +68,23 @@ class _DxSidebarState extends State<DxSidebar> {
           children: [
             Padding(
               padding: EdgeInsets.symmetric(
-                horizontal: 8.w,
-                vertical: 8.h,
+                horizontal: 10.w,
               ),
               child: Text(
-                widget.userModel.clientName ?? 'No-Name',
+                'Name: ${widget.userModel.clientName ?? 'No-Name'}',
+                style: TextStyle(
+                  color: ColorConstants.PRIMARY_BLUE,
+                  fontSize: 16.sp,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                left: 12.w,
+                bottom: 16.h,
+              ),
+              child: Text(
+                widget.userModel.platform ?? 'No-Name',
                 style: TextStyle(
                   color: ColorConstants.PRIMARY_BLUE,
                   fontSize: 16.sp,
@@ -86,7 +98,7 @@ class _DxSidebarState extends State<DxSidebar> {
                 var tab = BottomTabEnum.values[index];
                 return Container(
                   margin: EdgeInsets.symmetric(
-                    horizontal: 8.w,
+                    horizontal: 20.w,
                     vertical: 8.h,
                   ),
                   decoration: BoxDecoration(

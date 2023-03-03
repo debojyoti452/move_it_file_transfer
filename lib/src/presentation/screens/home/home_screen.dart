@@ -199,10 +199,11 @@ class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
                     borderRadius: BorderRadius.circular(10.r),
                   )),
               Expanded(
-                flex: 4,
+                flex: 5,
                 child: Container(
                   child: PageView(
                     controller: _pageController,
+                    scrollDirection: Axis.vertical,
                     children: [
                       const SendFragment(),
                       const ReceiveFragment(),

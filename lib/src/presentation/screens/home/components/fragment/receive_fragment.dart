@@ -175,8 +175,93 @@ class _ReceiveFragmentState extends BaseStateWrapper<ReceiveFragment> {
       bloc: _cubit,
       listener: (context, state) {},
       builder: (context, state) {
-        return Scaffold(
-          body: Container(),
+        return Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 14.w,
+            vertical: 14.h,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text.rich(
+                    TextSpan(
+                      text: 'See devices in your radar nearby\n',
+                      style:
+                          Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                color: ColorConstants.BLACK,
+                                fontWeight: FontWeight.bold,
+                              ),
+                      children: [
+                        TextSpan(
+                          text: 'Make sure all devices are in same WiFi\n',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SvgPicture.asset(
+                  AssetsConstants.logo,
+                ),
+                Container(
+                  padding: EdgeInsets.only(
+                    left: 8.w,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Accepted List',
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        padding: EdgeInsets.zero,
+                        icon: const Icon(
+                          Icons.refresh,
+                          color: ColorConstants.BLACK,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                _acceptedListWidget(state),
+                Container(
+                  padding: EdgeInsets.only(
+                    left: 8.w,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Request List',
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        padding: EdgeInsets.zero,
+                        icon: const Icon(
+                          Icons.refresh,
+                          color: ColorConstants.BLACK,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                _requestedListWidget(state),
+              ],
+            ),
+          ),
         );
       },
     );
