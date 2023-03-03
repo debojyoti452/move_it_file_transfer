@@ -58,7 +58,7 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
   }
 
   @override
-  Widget onBuild(
+  Widget onMobile(
     BuildContext context,
     BoxConstraints constraints,
     PlatformType platform,
@@ -118,10 +118,6 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
                     ),
                     IconButton(
                       onPressed: () {
-                        // Navigator.pushNamed(
-                        //   context,
-                        //   ReceiveFileScreen.id,
-                        // );
                         _cubit.searchNearbyDevices();
                       },
                       padding: EdgeInsets.zero,
@@ -139,6 +135,23 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
               ],
             ),
           ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget onTablet(
+    BuildContext context,
+    BoxConstraints constraints,
+    PlatformType platform,
+  ) {
+    return BlocConsumer<SendFragmentCubit, SendFragmentState>(
+      bloc: _cubit,
+      listener: (context, state) {},
+      builder: (context, state) {
+        return Scaffold(
+          body: Container(),
         );
       },
     );

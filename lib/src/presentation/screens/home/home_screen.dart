@@ -24,12 +24,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../data/constants/app_constants.dart';
+import '../../../data/constants/assets_constants.dart';
+import '../../../data/model/client_model.dart';
 import '../../../data/model/connect_model.dart';
 import '../../../domain/global/app_cubit_status.dart';
 import '../../../domain/global/base_state_wrapper.dart';
 import '../../../domain/global/status_code.dart';
 import '../../widgets/dx_bottom_navigation_bar.dart';
+import '../../widgets/dx_sidebar.dart';
 import '../transfer/cubit/transfer_cubit.dart';
 import 'components/cubit/receive/receive_fragment_cubit.dart';
 import 'components/cubit/send/send_fragment_cubit.dart';
@@ -76,7 +82,7 @@ class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
   }
 
   @override
-  Widget onBuild(
+  Widget onMobile(
     BuildContext context,
     BoxConstraints constraints,
     PlatformType platform,
@@ -138,6 +144,75 @@ class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
               debugPrint('index: $item');
             },
             currentIndex: _selectedIndex,
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget onTablet(
+    BuildContext context,
+    BoxConstraints constraints,
+    PlatformType platform,
+  ) {
+    return BlocConsumer<HomeCubit, HomeState>(
+      bloc: _homeCubit,
+      listener: (context, state) {},
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Row(
+              children: [
+                SvgPicture.asset(
+                  AssetsConstants.logo,
+                  height: 30.h,
+                ),
+                SizedBox(width: 4.w),
+                Text(
+                  AppConstants.appName,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ],
+            ),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+          ),
+          body: Row(
+            children: [
+              DxSidebar(
+                userModel: state.userModel ?? const ClientModel(),
+                onTabSelected: (item) {
+                  _pageController.animateToPage(
+                    item,
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.ease,
+                  );
+                  debugPrint('index: $item');
+                },
+              ),
+              Container(
+                  width: 1.w,
+                  height: ScreenUtil().screenHeight / 1.2,
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(10.r),
+                  )),
+              Expanded(
+                flex: 4,
+                child: Container(
+                  child: PageView(
+                    controller: _pageController,
+                    children: [
+                      const SendFragment(),
+                      const ReceiveFragment(),
+                      const ProfileFragment(),
+                    ],
+                    physics: const NeverScrollableScrollPhysics(),
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },

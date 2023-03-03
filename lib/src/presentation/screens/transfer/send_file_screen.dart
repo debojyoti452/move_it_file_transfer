@@ -55,7 +55,7 @@ class _SendFileScreenState extends BaseStateWrapper<SendFileScreen> {
   }
 
   @override
-  Widget onBuild(
+  Widget onMobile(
     BuildContext context,
     BoxConstraints constraints,
     PlatformType platform,
@@ -125,6 +125,23 @@ class _SendFileScreenState extends BaseStateWrapper<SendFileScreen> {
               ),
             ),
           ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget onTablet(
+    BuildContext context,
+    BoxConstraints constraints,
+    PlatformType platform,
+  ) {
+    return BlocConsumer<TransferCubit, TransferState>(
+      bloc: _cubit,
+      listener: (context, state) {},
+      builder: (context, state) {
+        return Scaffold(
+          body: Container(),
         );
       },
     );

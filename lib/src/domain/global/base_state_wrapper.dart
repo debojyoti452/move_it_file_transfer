@@ -50,7 +50,13 @@ abstract class BaseStateWrapper<T extends StatefulWidget> extends State<T>
 
   void onDispose();
 
-  Widget onBuild(
+  Widget onMobile(
+    BuildContext context,
+    BoxConstraints constraints,
+    PlatformType platform,
+  );
+
+  Widget onTablet(
     BuildContext context,
     BoxConstraints constraints,
     PlatformType platform,
@@ -74,11 +80,28 @@ abstract class BaseStateWrapper<T extends StatefulWidget> extends State<T>
       );
     } else {
       return LayoutBuilder(builder: (context, BoxConstraints constraints) {
-        return onBuild(
-          context,
-          constraints,
-          platform,
-        );
+        switch (platform) {
+          case PlatformType.android:
+          case PlatformType.iOS:
+          case PlatformType.fuchsia:
+            return onMobile(
+              context,
+              constraints,
+              platform,
+            );
+          case PlatformType.windows:
+          case PlatformType.linux:
+          case PlatformType.macOS:
+            return onTablet(
+              context,
+              constraints,
+              platform,
+            );
+          default:
+            return const Center(
+              child: Text('Unknown Platform'),
+            );
+        }
       });
     }
   }

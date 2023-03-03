@@ -57,7 +57,7 @@ class _ReceiveFragmentState extends BaseStateWrapper<ReceiveFragment> {
   }
 
   @override
-  Widget onBuild(
+  Widget onMobile(
     BuildContext context,
     BoxConstraints constraints,
     PlatformType platform,
@@ -160,6 +160,23 @@ class _ReceiveFragmentState extends BaseStateWrapper<ReceiveFragment> {
               ],
             ),
           ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget onTablet(
+    BuildContext context,
+    BoxConstraints constraints,
+    PlatformType platform,
+  ) {
+    return BlocConsumer<ReceiveFragmentCubit, ReceiveFragmentState>(
+      bloc: _cubit,
+      listener: (context, state) {},
+      builder: (context, state) {
+        return Scaffold(
+          body: Container(),
         );
       },
     );
