@@ -90,7 +90,7 @@ class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
     return BlocConsumer<HomeCubit, HomeState>(
       bloc: _homeCubit,
       listener: (context, state) {
-        debugPrint('state: ${state.connectRequestList}');
+        logger('state: ${state.connectRequestList}');
         if (state.status is AppCubitSuccess) {
           if ((state.status as AppCubitSuccess).code ==
               StatusCode.NEW_CONNECTION_REQUEST) {
@@ -158,7 +158,38 @@ class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
   ) {
     return BlocConsumer<HomeCubit, HomeState>(
       bloc: _homeCubit,
-      listener: (context, state) {},
+      listener: (context, state) {
+        logger('state: ${state.connectRequestList}');
+        if (state.status is AppCubitSuccess) {
+          if ((state.status as AppCubitSuccess).code ==
+              StatusCode.NEW_CONNECTION_REQUEST) {
+            if (state.connectRequestList?.isNotEmpty ?? false) {
+              context.read<ReceiveFragmentCubit>().updateRequestList(
+                    state.connectRequestList ?? [],
+                  );
+            }
+          }
+
+          if ((state.status as AppCubitSuccess).code ==
+              StatusCode.NEW_CONNECTION_ACCEPTED) {
+            if (state.connectRequestList?.isNotEmpty ?? false) {
+              context.read<SendFragmentCubit>().updateAcceptedRequestClient(
+                    model: state.acceptedClientModel ?? const ConnectRequest(),
+                  );
+            }
+          }
+
+          if ((state.status as AppCubitSuccess).code ==
+              StatusCode.NEW_FILE_RECEIVER) {
+            if (state.connectRequestList?.isNotEmpty ?? false) {
+              context.read<TransferCubit>().updateTransferData(
+                    state.fileModelList ?? [],
+                    state.downloadStatus,
+                  );
+            }
+          }
+        }
+      },
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(

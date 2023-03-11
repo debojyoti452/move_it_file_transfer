@@ -141,7 +141,66 @@ class _SendFileScreenState extends BaseStateWrapper<SendFileScreen> {
       listener: (context, state) {},
       builder: (context, state) {
         return Scaffold(
-          body: Container(),
+          appBar: AppBar(
+            title: Text(
+              'Send File',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            elevation: 0,
+            backgroundColor: Colors.white,
+          ),
+          body: Container(
+            height: constraints.maxHeight,
+            padding: EdgeInsets.symmetric(
+              horizontal: 20.w,
+            ),
+            child: ListView(
+              physics: const BouncingScrollPhysics(),
+              children: [
+                _userItemView(
+                  state.connectRequest ?? const ConnectRequest(),
+                ),
+                const DxDottedView(),
+                SizedBox(
+                  height: 10.h,
+                ),
+                _addFileButton(
+                  onAddFileClick: () {
+                    _cubit.openFileExplorer();
+                  },
+                ),
+                SizedBox(
+                  height: 8.h,
+                ),
+                _fileListView(state),
+              ],
+            ),
+          ),
+          bottomNavigationBar: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: 20.w,
+              vertical: 10.h,
+            ),
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(
+                  color: ColorConstants.PRIMARY_BLUE,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.r),
+                ),
+              ),
+              onPressed: () {
+                _cubit.sendFile();
+              },
+              child: Text(
+                'Send',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: ColorConstants.PRIMARY_BLUE,
+                    ),
+              ),
+            ),
+          ),
         );
       },
     );

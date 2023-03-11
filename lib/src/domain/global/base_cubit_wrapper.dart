@@ -47,4 +47,8 @@ abstract class BaseCubitWrapper<T> extends Cubit<T> {
   }
 
   Future<bool> isSenderConnected(String ipAddress);
+
+  void logger(String message) {
+    debugPrint('[$runtimeType] $message');
+  }
 }

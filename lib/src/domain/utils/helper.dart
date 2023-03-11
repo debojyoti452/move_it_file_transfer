@@ -25,6 +25,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../data/constants/assets_constants.dart';
@@ -47,7 +48,7 @@ mixin Helper {
   static Future<String> getDownloadPath() async {
     switch (Platform.operatingSystem) {
       case 'android':
-        return '/storage/emulated/0/Download/';
+        return await getAndroidDownloadPath();
       case 'ios':
         return (await getApplicationDocumentsDirectory()).path;
       case 'windows':
@@ -56,7 +57,24 @@ mixin Helper {
         return (await getDownloadsDirectory())?.path.replaceAll('\\', '/') ??
             'No Download Directory';
       default:
-        return '/storage/emulated/0/Download/';
+        return await getDownloadPath();
     }
+  }
+
+  static Future<String> getAndroidDownloadPath() async {
+    Directory? directory;
+    try {
+      if (Platform.isIOS) {
+        directory = await getApplicationDocumentsDirectory();
+      } else {
+        directory = Directory('/storage/emulated/0/Download');
+        if (!await directory.exists()) {
+          directory = await getExternalStorageDirectory();
+        }
+      }
+    } catch (err, stack) {
+      debugPrint('Cannot get download folder path $err $stack');
+    }
+    return directory?.path ?? '/storage/emulated/0/Download';
   }
 }

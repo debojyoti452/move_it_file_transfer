@@ -159,7 +159,55 @@ class _ReceiveFileScreenState extends BaseStateWrapper<ReceiveFileScreen> {
       listener: (context, state) {},
       builder: (context, state) {
         return Scaffold(
-          body: Container(),
+          appBar: AppBar(
+            title: Text(
+              'Receive File',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            elevation: 0,
+            backgroundColor: Colors.white,
+          ),
+          body: Container(
+            height: constraints.maxHeight,
+            padding: EdgeInsets.symmetric(
+              horizontal: 20.w,
+            ),
+            child: ListView(
+              physics: const BouncingScrollPhysics(),
+              children: [
+                _userItemView(
+                  state.connectRequest ?? const ConnectRequest(),
+                ),
+                const DxDottedView(),
+                SizedBox(
+                  height: 10.h,
+                ),
+                LinearProgressIndicator(
+                  value: () {
+                    switch (state.downloadStatus) {
+                      case DownloadStatus.initial:
+                        return 0.0;
+                      case DownloadStatus.downloading:
+                        return null;
+                      case DownloadStatus.completed:
+                        return 100.0;
+                      case DownloadStatus.failed:
+                        return 0.0;
+                    }
+                  }(),
+                  minHeight: 8.h,
+                  backgroundColor: ColorConstants.GREY_DARK,
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    ColorConstants.PRIMARY_BLUE,
+                  ),
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                _fileReceiveList(state),
+              ],
+            ),
+          ),
         );
       },
     );

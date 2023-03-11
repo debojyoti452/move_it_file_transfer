@@ -148,4 +148,8 @@ abstract class BaseStateWrapper<T extends StatefulWidget> extends State<T>
       return PlatformType.unknown;
     }
   }
+
+  void logger(var message) {
+    debugPrint('[$runtimeType] $message');
+  }
 }

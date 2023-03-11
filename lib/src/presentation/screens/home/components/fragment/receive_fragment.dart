@@ -173,7 +173,9 @@ class _ReceiveFragmentState extends BaseStateWrapper<ReceiveFragment> {
   ) {
     return BlocConsumer<ReceiveFragmentCubit, ReceiveFragmentState>(
       bloc: _cubit,
-      listener: (context, state) {},
+      listener: (context, state) {
+        logger(state);
+      },
       builder: (context, state) {
         return Container(
           padding: EdgeInsets.symmetric(
