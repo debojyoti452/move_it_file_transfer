@@ -21,34 +21,40 @@
  *  * ******************************************************************************************
  *
  */
+import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/services.dart';
 
-import '../core/move_server_service.dart';
-import '../di/move_di.dart';
+class NativeConstant {
+  static const String CHANNEL = 'com.swing.moveit/native_call';
 
-abstract class BaseCubitWrapper<T> extends Cubit<T> {
-  BaseCubitWrapper(T state) : super(state);
+  /// Methods
+  static const String getDownloadPath = 'getDownloadPath';
+  static const String saveFileMethod = 'saveFileMethod';
+}
 
-  MoveServerService get moveServerService => MoveDI.moveServerService;
+class NativeCalls {
+  static const MethodChannel _channel = MethodChannel(NativeConstant.CHANNEL);
 
-  void initialize();
-
-  void dispose();
-
-  void emitState(T state) {
-    emit(state);
+  static Future<String> getDownloadPath() async {
+    final String result =
+        await _channel.invokeMethod(NativeConstant.getDownloadPath);
+    log('getDownloadPath: $result');
+    return result;
   }
 
-  void emitError(T state, Object error) {
-    debugPrint(error.toString());
-    emit(state);
-  }
-
-  Future<bool> isSenderConnected(String ipAddress);
-
-  void logger(dynamic message) {
-    debugPrint('[$runtimeType] $message');
+  static Future<bool> saveFileMethod({
+    required String fileName,
+    required String fileExtension,
+    required String filePath,
+  }) async {
+    final bool result = await _channel
+        .invokeMethod(NativeConstant.saveFileMethod, <String, dynamic>{
+      'fileName': fileName,
+      'fileExtension': fileExtension,
+      'filePath': filePath,
+    });
+    log('getDownloadPath: $result');
+    return result;
   }
 }

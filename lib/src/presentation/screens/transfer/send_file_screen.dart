@@ -35,6 +35,7 @@ import '../../../domain/utils/helper.dart';
 import '../../widgets/dx_dotted_view.dart';
 import '../../widgets/dx_file_transfer_view.dart';
 import 'cubit/transfer_cubit.dart';
+import 'receive_file_screen.dart';
 
 class SendFileScreen extends StatefulWidget {
   static const id = 'SEND_FILE_SCREEN';
@@ -72,6 +73,17 @@ class _SendFileScreenState extends BaseStateWrapper<SendFileScreen> {
             ),
             elevation: 0,
             backgroundColor: Colors.white,
+            actions: [
+              IconButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, ReceiveFileScreen.id);
+                },
+                icon: const Icon(
+                  Icons.call_received,
+                  color: ColorConstants.BLACK,
+                ),
+              ),
+            ],
           ),
           body: Container(
             height: constraints.maxHeight,
@@ -148,6 +160,17 @@ class _SendFileScreenState extends BaseStateWrapper<SendFileScreen> {
             ),
             elevation: 0,
             backgroundColor: Colors.white,
+            actions: [
+              IconButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, ReceiveFileScreen.id);
+                },
+                icon: const Icon(
+                  Icons.call_received,
+                  color: ColorConstants.BLACK,
+                ),
+              ),
+            ],
           ),
           body: Container(
             height: constraints.maxHeight,
@@ -253,8 +276,8 @@ class _SendFileScreenState extends BaseStateWrapper<SendFileScreen> {
       );
       Navigator.pop(context);
     }
-    var clientModel = connectRequest.toData;
-    var userModel = connectRequest.fromData;
+    var clientModel = connectRequest.fromData;
+    var userModel = connectRequest.toData;
     return Column(
       children: [
         Container(

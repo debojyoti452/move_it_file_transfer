@@ -30,6 +30,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../data/constants/assets_constants.dart';
 import '../global/base_state_wrapper.dart';
+import '../native/native_calls.dart';
 
 mixin Helper {
   static String generateRandomName() {
@@ -67,10 +68,12 @@ mixin Helper {
       if (Platform.isIOS) {
         directory = await getApplicationDocumentsDirectory();
       } else {
-        directory = Directory('/storage/emulated/0/Download');
-        if (!await directory.exists()) {
-          directory = await getExternalStorageDirectory();
-        }
+        var downloadPath = await NativeCalls.getDownloadPath();
+        // directory = Directory(downloadPath);
+        // if (!await directory.exists()) {
+        //   directory = await getExternalStorageDirectory();
+        // }
+        directory = Directory(downloadPath);
       }
     } catch (err, stack) {
       debugPrint('Cannot get download folder path $err $stack');

@@ -391,6 +391,10 @@ class _ReceiveFragmentState extends BaseStateWrapper<ReceiveFragment> {
         itemCount: state.requestList.length,
         itemBuilder: (context, index) {
           var item = state.requestList[index];
+          if (state.acceptedList
+              .any((element) => element.ipAddress == item.fromIp)) {
+            return Container();
+          }
           return Container(
             margin: EdgeInsets.only(bottom: 10.h),
             padding: EdgeInsets.symmetric(

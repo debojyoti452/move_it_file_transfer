@@ -22,33 +22,12 @@
  *
  */
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+package com.swing.movefileshare.move_app_fileshare.constants
 
-import '../core/move_server_service.dart';
-import '../di/move_di.dart';
+object Constants {
+    const val CHANNEL = "com.swing.moveit/native_call"
 
-abstract class BaseCubitWrapper<T> extends Cubit<T> {
-  BaseCubitWrapper(T state) : super(state);
-
-  MoveServerService get moveServerService => MoveDI.moveServerService;
-
-  void initialize();
-
-  void dispose();
-
-  void emitState(T state) {
-    emit(state);
-  }
-
-  void emitError(T state, Object error) {
-    debugPrint(error.toString());
-    emit(state);
-  }
-
-  Future<bool> isSenderConnected(String ipAddress);
-
-  void logger(dynamic message) {
-    debugPrint('[$runtimeType] $message');
-  }
+    /// MethodChannel Constants
+    const val getDownloadPath = "getDownloadPath"
+    const val saveFileMethod = "saveFileMethod"
 }

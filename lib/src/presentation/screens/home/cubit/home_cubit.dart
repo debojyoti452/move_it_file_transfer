@@ -135,6 +135,7 @@ class HomeCubit extends BaseCubitWrapper<HomeState> {
         case Endpoints.TRANSFER_FILE:
           if (request.method == Methods.POST) {
             var savePath = await Helper.getDownloadPath();
+            logger('Save Path: $savePath');
             var fileList =
                 await moveServerService.receiveFileFromDeviceWithProgress(
               request: request,

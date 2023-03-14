@@ -36,6 +36,7 @@ import '../../../domain/utils/helper.dart';
 import '../../widgets/dx_dotted_view.dart';
 import '../../widgets/dx_file_transfer_view.dart';
 import 'cubit/transfer_cubit.dart';
+import 'send_file_screen.dart';
 
 class ReceiveFileScreen extends StatefulWidget {
   static const id = 'RECEIVE_FILE_SCREEN';
@@ -73,6 +74,17 @@ class _ReceiveFileScreenState extends BaseStateWrapper<ReceiveFileScreen> {
             ),
             elevation: 0,
             backgroundColor: Colors.white,
+            actions: [
+              IconButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, SendFileScreen.id);
+                },
+                icon: const Icon(
+                  Icons.upload,
+                  color: ColorConstants.BLACK,
+                ),
+              ),
+            ],
           ),
           body: Container(
             height: constraints.maxHeight,
@@ -166,6 +178,17 @@ class _ReceiveFileScreenState extends BaseStateWrapper<ReceiveFileScreen> {
             ),
             elevation: 0,
             backgroundColor: Colors.white,
+            actions: [
+              IconButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, SendFileScreen.id);
+                },
+                icon: const Icon(
+                  Icons.upload,
+                  color: ColorConstants.BLACK,
+                ),
+              ),
+            ],
           ),
           body: Container(
             height: constraints.maxHeight,

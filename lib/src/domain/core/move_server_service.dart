@@ -38,6 +38,7 @@ import '../../data/model/client_model.dart';
 import '../../data/model/connect_model.dart';
 import '../../data/model/file_model.dart';
 import '../../data/model/network_address_model.dart';
+import '../native/native_calls.dart';
 import '../routes/endpoints.dart';
 import '../utils/ip_generator.dart';
 
@@ -209,8 +210,16 @@ class MoveServerService extends _MoveServerInterface {
           request.contentLength.toDouble(),
           fileList,
         );
+        log('extension: ${filename.split('.').last} || size: ${content[0].length} || path: $uploadDirectory');
+        var tempFile =
+            await File('$uploadDirectory/$filename').writeAsBytes(content[0]);
+        debugPrint('tempFile: ${tempFile.path}');
 
-        await File('$uploadDirectory/$filename').writeAsBytes(content[0]);
+        NativeCalls.saveFileMethod(
+          fileName: filename,
+          fileExtension: filename.split('.').last,
+          filePath: tempFile.path,
+        );
       }
 
       request.response.close();
