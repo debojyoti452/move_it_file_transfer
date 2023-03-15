@@ -95,6 +95,9 @@ class HomeCubit extends BaseCubitWrapper<HomeState> {
       Future.delayed(const Duration(seconds: 2), () {
         runServerStream();
       });
+      if (await isStoragePermissionGranted() == false) {
+        await requestStoragePermission();
+      }
     }
   }
 

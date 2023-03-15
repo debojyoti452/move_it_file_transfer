@@ -31,6 +31,8 @@ class NativeConstant {
   /// Methods
   static const String getDownloadPath = 'getDownloadPath';
   static const String saveFileMethod = 'saveFileMethod';
+  static const String requestStoragePermission = 'requestStoragePermission';
+  static const String isStoragePermissionGranted = 'isStoragePermissionGranted';
 }
 
 class NativeCalls {
@@ -55,6 +57,20 @@ class NativeCalls {
       'filePath': filePath,
     });
     log('getDownloadPath: $result');
+    return result;
+  }
+
+  static Future<bool> requestStoragePermission() async {
+    final bool result =
+        await _channel.invokeMethod(NativeConstant.requestStoragePermission);
+    log('requestStoragePermission: $result');
+    return result;
+  }
+
+  static Future<bool> isStoragePermissionGranted() async {
+    final bool result =
+        await _channel.invokeMethod(NativeConstant.isStoragePermissionGranted);
+    log('isStoragePermissionGranted: $result');
     return result;
   }
 }

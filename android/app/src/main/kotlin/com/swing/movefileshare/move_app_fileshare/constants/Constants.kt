@@ -30,4 +30,6 @@ object Constants {
     /// MethodChannel Constants
     const val getDownloadPath = "getDownloadPath"
     const val saveFileMethod = "saveFileMethod"
+    const val isStoragePermissionGranted = "isStoragePermissionGranted"
+    const val requestStoragePermission = "requestStoragePermission"
 }

@@ -211,7 +211,7 @@ class _ReceiveFileScreenState extends BaseStateWrapper<ReceiveFileScreen> {
                       case DownloadStatus.initial:
                         return 0.0;
                       case DownloadStatus.downloading:
-                        return null;
+                        return 50.0;
                       case DownloadStatus.completed:
                         return 100.0;
                       case DownloadStatus.failed:

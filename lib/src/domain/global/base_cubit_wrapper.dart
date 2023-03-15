@@ -27,6 +27,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../core/move_server_service.dart';
 import '../di/move_di.dart';
+import '../native/native_calls.dart';
 
 abstract class BaseCubitWrapper<T> extends Cubit<T> {
   BaseCubitWrapper(T state) : super(state);
@@ -50,5 +51,13 @@ abstract class BaseCubitWrapper<T> extends Cubit<T> {
 
   void logger(dynamic message) {
     debugPrint('[$runtimeType] $message');
+  }
+
+  Future<bool> isStoragePermissionGranted() async {
+    return await NativeCalls.isStoragePermissionGranted();
+  }
+
+  Future<bool> requestStoragePermission() async {
+    return await NativeCalls.requestStoragePermission();
   }
 }
