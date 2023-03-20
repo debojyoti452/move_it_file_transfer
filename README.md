@@ -2,6 +2,10 @@
 
 ### AirDrop for all Platform (Windows, Linux, Mac, Android, iOS)
 
+## Description
+MoveIt is a File Sharing App for all Platform (Windows, Linux, Mac, Android, iOS). It can be used as a replacement for AirDrop. 
+A lot of people are using AirDrop to share files between their devices. But, AirDrop is only available for Mac and iOS. So, I created MoveIt to share files between all devices.
+
 ## How to use
 
 
@@ -16,3 +20,6 @@ Requirements: Windows 10
 In release mode, add sqlite3.dll in same folder as your executable.
 
 sqfliteFfiInit is provided as an implementation reference for loading the sqlite library. Please look at sqlite3 if you want to override the behavior.
+
+## Privacy Notice
+https://4shorturl.app/hm117

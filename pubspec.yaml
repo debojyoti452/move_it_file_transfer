@@ -59,9 +59,11 @@ flutter:
     - assets/logo/
     - assets/devices/
 msix_config:
-  display_name: Move It
-  publisher_display_name: Debojyoti Singha
-  identity_name: com.swing.moveit
+  display_name: MoveIt - File Transfer On Go
+  publisher_display_name: Swing Technologies
+  publisher: CN=AF7C9BDF-5025-4580-9A16-A24A634A4A9B
+  identity_name: 41817SwingTechnologies.MoveIt-FileTransferOnGo
   msix_version: 1.0.0.0
   logo_path: assets/logo/icon-512-maskable.png
   capabilities: internetClient, internetServer
+  store: true
