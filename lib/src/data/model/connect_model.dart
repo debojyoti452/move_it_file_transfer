@@ -32,10 +32,10 @@ part 'connect_model.g.dart';
 @freezed
 class ConnectRequest with _$ConnectRequest {
   const factory ConnectRequest({
-    @JsonKey(name: 'from_ip') String? fromIp,
-    @JsonKey(name: 'to_ip') String? toIp,
-    @JsonKey(name: 'from_data') ClientModel? fromData,
-    @JsonKey(name: 'to_data') ClientModel? toData,
+    @JsonKey(name: 'from_ip') String? senderIp,
+    @JsonKey(name: 'to_ip') String? receiverIp,
+    @JsonKey(name: 'from_data') ClientModel? senderModel,
+    @JsonKey(name: 'to_data') ClientModel? receiverModel,
   }) = _ConnectRequest;
 
   factory ConnectRequest.fromJson(Map<String, dynamic> json) =>
@@ -46,8 +46,8 @@ class ConnectRequest with _$ConnectRequest {
 class ConnectResponse with _$ConnectResponse {
   @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
   const factory ConnectResponse({
-    @JsonKey(name: 'from_ip') String? fromIp,
-    @JsonKey(name: 'to_ip') String? toIp,
+    @JsonKey(name: 'from_ip') String? senderIp,
+    @JsonKey(name: 'to_ip') String? receiverIp,
     @JsonKey(name: 'acceptedStatus') bool? acceptedStatus,
   }) = _ConnectResponse;
 
@@ -58,7 +58,7 @@ class ConnectResponse with _$ConnectResponse {
 @freezed
 class TransferModel with _$TransferModel {
   const factory TransferModel({
-    @JsonKey(name: 'send_model') ClientModel? sendModel,
+    @JsonKey(name: 'sender_model') ClientModel? senderModel,
     @JsonKey(name: 'receiver_model') ClientModel? receiverModel,
   }) = _TransferModel;
 

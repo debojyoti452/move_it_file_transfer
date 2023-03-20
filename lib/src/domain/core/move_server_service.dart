@@ -262,7 +262,7 @@ class MoveServerService extends _MoveServerInterface {
       });
 
       var response = await Dio().post(
-        '${transferModel.sendModel?.connectUrl}${Endpoints.TRANSFER_FILE}',
+        '${transferModel.senderModel?.connectUrl}${Endpoints.TRANSFER_FILE}',
         data: formData,
         onSendProgress: (int sent, int total) {
           /// convert to percentage
@@ -292,7 +292,7 @@ class MoveServerService extends _MoveServerInterface {
     try {
       return _dxHttp
           .post(
-              '${connectRequest.toData?.connectUrl}${Endpoints.REQUEST_CONNECTION}',
+              '${connectRequest.receiverModel?.connectUrl}${Endpoints.REQUEST_CONNECTION}',
               params: connectRequest.toJson())
           .then((value) {
         return Future.value(true);
@@ -308,14 +308,14 @@ class MoveServerService extends _MoveServerInterface {
   }) {
     try {
       var response = ConnectResponse(
-        fromIp: connectRequest.fromIp,
-        toIp: connectRequest.toIp,
+        senderIp: connectRequest.senderIp,
+        receiverIp: connectRequest.receiverIp,
         acceptedStatus: true,
       );
 
       return _dxHttp
           .post(
-              '${connectRequest.fromData?.connectUrl}${Endpoints.ACCEPT_CONNECTION}',
+              '${connectRequest.senderModel?.connectUrl}${Endpoints.ACCEPT_CONNECTION}',
               params: response.toJson())
           .then((value) {
         return Future.value(true);

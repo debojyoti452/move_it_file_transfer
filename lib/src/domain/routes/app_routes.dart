@@ -45,14 +45,20 @@ class AppRoutes {
         );
 
       case SendFileScreen.id:
+        var args = settings.arguments as bool? ?? false;
         return _SlideAnimator(
-          builder: (_) => const SendFileScreen(),
+          builder: (_) => SendFileScreen(
+            isFromReceiverScreen: args,
+          ),
           settings: settings,
         );
 
       case ReceiveFileScreen.id:
+        var args = settings.arguments as bool? ?? false;
         return _SlideAnimator(
-          builder: (_) => const ReceiveFileScreen(),
+          builder: (_) => ReceiveFileScreen(
+            isFromSenderScreen: args,
+          ),
           settings: settings,
         );
 

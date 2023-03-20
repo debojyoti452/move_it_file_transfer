@@ -150,10 +150,10 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
       var userModel = state.userModel;
       moveServerService.sendRequestToDevice(
         connectRequest: ConnectRequest(
-          fromData: userModel,
-          toData: clientModel,
-          fromIp: userModel.ipAddress,
-          toIp: clientModel.ipAddress,
+          senderModel: userModel,
+          receiverModel: clientModel,
+          senderIp: userModel.ipAddress,
+          receiverIp: clientModel.ipAddress,
         ),
       );
 
@@ -171,9 +171,9 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
       emit(state.copyWith(status: AppCubitLoading()));
       var dataList = state.nearbyClients;
       var nearbyClients = dataList.firstWhere(
-          (element) => element.ipAddress == model.toIp,
+          (element) => element.ipAddress == model.receiverIp,
           orElse: () => const ClientModel());
-      dataList.removeWhere((element) => element.ipAddress == model.toIp);
+      dataList.removeWhere((element) => element.ipAddress == model.receiverIp);
 
       var updatedNearbyClient = nearbyClients.copyWith(
         isConnected: true,

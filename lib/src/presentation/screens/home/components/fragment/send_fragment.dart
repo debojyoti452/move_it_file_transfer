@@ -73,6 +73,7 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
             vertical: 14.h,
           ),
           child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
                 Align(
@@ -105,7 +106,7 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
                   height: 50.h,
                 ),
                 SizedBox(
-                  height: 200.h,
+                  height: 100.h,
                   child: const DxNearbyView(),
                 ),
                 SizedBox(
@@ -261,10 +262,10 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
                 try {
                   var client = nearbyClients[index];
                   var connectModel = ConnectRequest(
-                    fromIp: client.ipAddress,
-                    toIp: state.userModel.ipAddress,
-                    fromData: state.userModel,
-                    toData: client,
+                    senderIp: client.ipAddress,
+                    receiverIp: state.userModel.ipAddress,
+                    senderModel: state.userModel,
+                    receiverModel: client,
                   );
                   context
                       .read<TransferCubit>()

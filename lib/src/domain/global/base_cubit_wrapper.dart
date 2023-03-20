@@ -22,6 +22,8 @@
  *
  */
 
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -54,6 +56,7 @@ abstract class BaseCubitWrapper<T> extends Cubit<T> {
   }
 
   Future<bool> isStoragePermissionGranted() async {
+    if (!Platform.isAndroid) return true;
     return await NativeCalls.isStoragePermissionGranted();
   }
 

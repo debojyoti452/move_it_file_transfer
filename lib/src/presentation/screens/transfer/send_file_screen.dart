@@ -40,7 +40,12 @@ import 'receive_file_screen.dart';
 class SendFileScreen extends StatefulWidget {
   static const id = 'SEND_FILE_SCREEN';
 
-  const SendFileScreen({Key? key}) : super(key: key);
+  const SendFileScreen({
+    Key? key,
+    required this.isFromReceiverScreen,
+  }) : super(key: key);
+
+  final bool isFromReceiverScreen;
 
   @override
   _SendFileScreenState createState() => _SendFileScreenState();
@@ -53,6 +58,10 @@ class _SendFileScreenState extends BaseStateWrapper<SendFileScreen> {
   void onInit() {
     _cubit = context.read<TransferCubit>();
     _cubit.initialize();
+    if (widget.isFromReceiverScreen) {
+      logger('isFromReceiverScreen: ${widget.isFromReceiverScreen}');
+      _cubit.swapSenderToReceiver(isSender: true);
+    }
   }
 
   @override
@@ -73,10 +82,31 @@ class _SendFileScreenState extends BaseStateWrapper<SendFileScreen> {
             ),
             elevation: 0,
             backgroundColor: Colors.white,
+            leading: IconButton(
+              onPressed: () {
+                if (widget.isFromReceiverScreen == true) {
+                  _cubit.swapSenderToReceiver(isSender: true);
+                  Navigator.popUntil(
+                    context,
+                    (route) => route.isFirst,
+                  );
+                } else {
+                  Navigator.pop(context);
+                }
+              },
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: ColorConstants.BLACK,
+              ),
+            ),
             actions: [
               IconButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, ReceiveFileScreen.id);
+                  Navigator.pushNamed(
+                    context,
+                    ReceiveFileScreen.id,
+                    arguments: true,
+                  );
                 },
                 icon: const Icon(
                   Icons.call_received,
@@ -102,7 +132,7 @@ class _SendFileScreenState extends BaseStateWrapper<SendFileScreen> {
                 ),
                 _addFileButton(
                   onAddFileClick: () {
-                    _cubit.openFileExplorer();
+                    _cubit.fileSelector();
                   },
                 ),
                 SizedBox(
@@ -160,10 +190,31 @@ class _SendFileScreenState extends BaseStateWrapper<SendFileScreen> {
             ),
             elevation: 0,
             backgroundColor: Colors.white,
+            leading: IconButton(
+              onPressed: () {
+                if (widget.isFromReceiverScreen == true) {
+                  _cubit.swapSenderToReceiver(isSender: true);
+                  Navigator.popUntil(
+                    context,
+                    (route) => route.isFirst,
+                  );
+                } else {
+                  Navigator.pop(context);
+                }
+              },
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: ColorConstants.BLACK,
+              ),
+            ),
             actions: [
               IconButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, ReceiveFileScreen.id);
+                  Navigator.pushNamed(
+                    context,
+                    ReceiveFileScreen.id,
+                    arguments: true,
+                  );
                 },
                 icon: const Icon(
                   Icons.call_received,
@@ -189,7 +240,7 @@ class _SendFileScreenState extends BaseStateWrapper<SendFileScreen> {
                 ),
                 _addFileButton(
                   onAddFileClick: () {
-                    _cubit.openFileExplorer();
+                    _cubit.fileSelector();
                   },
                 ),
                 SizedBox(
@@ -270,14 +321,15 @@ class _SendFileScreenState extends BaseStateWrapper<SendFileScreen> {
   }
 
   Widget _userItemView(ConnectRequest connectRequest) {
-    if (connectRequest.toData == null || connectRequest.fromData == null) {
+    if (connectRequest.receiverModel == null ||
+        connectRequest.senderModel == null) {
       BotToast.showText(
         text: 'Something went wrong',
       );
       Navigator.pop(context);
     }
-    var clientModel = connectRequest.fromData;
-    var userModel = connectRequest.toData;
+    var clientModel = connectRequest.senderModel;
+    var userModel = connectRequest.receiverModel;
     return Column(
       children: [
         Container(

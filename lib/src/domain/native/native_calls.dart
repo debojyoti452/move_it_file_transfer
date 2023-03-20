@@ -22,6 +22,7 @@
  *
  */
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 
@@ -50,6 +51,9 @@ class NativeCalls {
     required String fileExtension,
     required String filePath,
   }) async {
+    if (Platform.isAndroid == false) {
+      return false;
+    }
     final bool result = await _channel
         .invokeMethod(NativeConstant.saveFileMethod, <String, dynamic>{
       'fileName': fileName,

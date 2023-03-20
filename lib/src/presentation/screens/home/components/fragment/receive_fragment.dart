@@ -303,10 +303,10 @@ class _ReceiveFragmentState extends BaseStateWrapper<ReceiveFragment> {
               try {
                 var client = nearbyClients[index];
                 var connectModel = ConnectRequest(
-                  fromIp: state.userModel.ipAddress,
-                  toIp: client.ipAddress,
-                  fromData: client,
-                  toData: state.userModel,
+                  senderIp: state.userModel.ipAddress,
+                  receiverIp: client.ipAddress,
+                  senderModel: client,
+                  receiverModel: state.userModel,
                 );
                 context
                     .read<TransferCubit>()
@@ -392,7 +392,7 @@ class _ReceiveFragmentState extends BaseStateWrapper<ReceiveFragment> {
         itemBuilder: (context, index) {
           var item = state.requestList[index];
           if (state.acceptedList
-              .any((element) => element.ipAddress == item.fromIp)) {
+              .any((element) => element.ipAddress == item.senderIp)) {
             return Container();
           }
           return Container(
@@ -429,14 +429,14 @@ class _ReceiveFragmentState extends BaseStateWrapper<ReceiveFragment> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            item.fromData?.clientName ?? 'Debojyoti Singha',
+                            item.senderModel?.clientName ?? 'Debojyoti Singha',
                             style:
                                 Theme.of(context).textTheme.bodySmall?.copyWith(
                                       color: ColorConstants.PRIMARY_BLUE,
                                     ),
                           ),
                           Text(
-                            item.fromData?.platform ?? 'android',
+                            item.senderModel?.platform ?? 'android',
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ],
@@ -444,7 +444,7 @@ class _ReceiveFragmentState extends BaseStateWrapper<ReceiveFragment> {
                     ),
                     SvgPicture.asset(
                       Helper.getIconByPlatform(
-                        item.fromData?.platform ?? 'android',
+                        item.senderModel?.platform ?? 'android',
                       ),
                       width: 40.w,
                     ),

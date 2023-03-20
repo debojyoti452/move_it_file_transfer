@@ -41,7 +41,12 @@ import 'send_file_screen.dart';
 class ReceiveFileScreen extends StatefulWidget {
   static const id = 'RECEIVE_FILE_SCREEN';
 
-  const ReceiveFileScreen({Key? key}) : super(key: key);
+  const ReceiveFileScreen({
+    Key? key,
+    required this.isFromSenderScreen,
+  }) : super(key: key);
+
+  final bool isFromSenderScreen;
 
   @override
   _ReceiveFileScreenState createState() => _ReceiveFileScreenState();
@@ -54,6 +59,10 @@ class _ReceiveFileScreenState extends BaseStateWrapper<ReceiveFileScreen> {
   void onInit() {
     _cubit = context.read<TransferCubit>();
     _cubit.initialize();
+    if (widget.isFromSenderScreen == true) {
+      logger('isFromSenderScreen: ${widget.isFromSenderScreen}');
+      _cubit.swapSenderToReceiver(isSender: false);
+    }
   }
 
   @override
@@ -74,10 +83,31 @@ class _ReceiveFileScreenState extends BaseStateWrapper<ReceiveFileScreen> {
             ),
             elevation: 0,
             backgroundColor: Colors.white,
+            leading: IconButton(
+              onPressed: () {
+                if (widget.isFromSenderScreen == true) {
+                  _cubit.swapSenderToReceiver(isSender: true);
+                  Navigator.popUntil(
+                    context,
+                    (route) => route.isFirst,
+                  );
+                } else {
+                  Navigator.pop(context);
+                }
+              },
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: ColorConstants.BLACK,
+              ),
+            ),
             actions: [
               IconButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, SendFileScreen.id);
+                  Navigator.pushNamed(
+                    context,
+                    SendFileScreen.id,
+                    arguments: true,
+                  );
                 },
                 icon: const Icon(
                   Icons.upload,
@@ -178,10 +208,31 @@ class _ReceiveFileScreenState extends BaseStateWrapper<ReceiveFileScreen> {
             ),
             elevation: 0,
             backgroundColor: Colors.white,
+            leading: IconButton(
+              onPressed: () {
+                if (widget.isFromSenderScreen == true) {
+                  _cubit.swapSenderToReceiver(isSender: true);
+                  Navigator.popUntil(
+                    context,
+                    (route) => route.isFirst,
+                  );
+                } else {
+                  Navigator.pop(context);
+                }
+              },
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: ColorConstants.BLACK,
+              ),
+            ),
             actions: [
               IconButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, SendFileScreen.id);
+                  Navigator.pushNamed(
+                    context,
+                    SendFileScreen.id,
+                    arguments: true,
+                  );
                 },
                 icon: const Icon(
                   Icons.upload,
@@ -237,14 +288,15 @@ class _ReceiveFileScreenState extends BaseStateWrapper<ReceiveFileScreen> {
   }
 
   Widget _userItemView(ConnectRequest connectRequest) {
-    if (connectRequest.toData == null || connectRequest.fromData == null) {
+    if (connectRequest.receiverModel == null ||
+        connectRequest.senderModel == null) {
       BotToast.showText(
         text: 'Something went wrong',
       );
       // Navigator.pop(context);
     }
-    var clientModel = connectRequest.toData;
-    var userModel = connectRequest.fromData;
+    var clientModel = connectRequest.receiverModel;
+    var userModel = connectRequest.senderModel;
     return Column(
       children: [
         Container(

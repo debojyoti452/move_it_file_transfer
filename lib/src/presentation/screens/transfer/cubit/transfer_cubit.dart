@@ -92,7 +92,7 @@ class TransferCubit extends BaseCubitWrapper<TransferState> {
 
       debugPrint('transferModel: $transferModel');
 
-      if (transferModel.sendModel == null ||
+      if (transferModel.senderModel == null ||
           transferModel.receiverModel == null ||
           (fileList.isEmpty)) {
         BotToast.showText(text: 'No file selected');
@@ -124,7 +124,7 @@ class TransferCubit extends BaseCubitWrapper<TransferState> {
     }
   }
 
-  void openFileExplorer() async {
+  void fileSelector() async {
     try {
       emitState(state.copyWith(
         status: AppCubitLoading(),
@@ -133,12 +133,16 @@ class TransferCubit extends BaseCubitWrapper<TransferState> {
           await FilePicker.platform.pickFiles(allowMultiple: true);
       if (result != null) {
         List<File> files = result.paths.map((path) => File(path!)).toList();
+        var fileNamesList = files.map((e) => e.path.split('/').last).toList();
+        if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+          fileNamesList = files.map((e) => e.path.split('\\').last).toList();
+        }
 
         var selectedList = state.fileList.toList();
         var fileModelList = <FileModel>[];
         for (File element in files) {
           fileModelList.add(FileModel(
-            fileName: element.path.split('/').last,
+            fileName: fileNamesList[files.indexOf(element)],
             fileStream: element,
             fileExtension: element.path.split('.').last,
             fileSize: element.lengthSync(),
@@ -147,8 +151,8 @@ class TransferCubit extends BaseCubitWrapper<TransferState> {
         }
 
         var updatedList = selectedList..addAll(fileModelList);
-        var senderModel = state.connectRequest?.toData;
-        var receiverModel = state.connectRequest?.fromData;
+        var senderModel = state.connectRequest?.receiverModel;
+        var receiverModel = state.connectRequest?.senderModel;
 
         progressStreamController.sink.add(0);
         emitState(
@@ -156,7 +160,7 @@ class TransferCubit extends BaseCubitWrapper<TransferState> {
             status: AppCubitSuccess(),
             fileList: updatedList,
             transferData: TransferModel(
-              sendModel: senderModel,
+              senderModel: senderModel,
               receiverModel: receiverModel,
             ),
           ),
@@ -183,6 +187,31 @@ class TransferCubit extends BaseCubitWrapper<TransferState> {
   @override
   Future<bool> isSenderConnected(String ipAddress) async {
     return await moveServerService.isServerRunning(ipAddress);
+  }
+
+  void swapSenderToReceiver({bool? isSender}) async {
+    var senderModel = state.connectRequest?.senderModel;
+    var receiverModel = state.connectRequest?.receiverModel;
+
+    logger('Sender Model $senderModel');
+    logger('Receiver Model $receiverModel');
+    logger('Transfer Data ${state.transferData}');
+
+    emitState(
+      state.copyWith(
+        transferData: TransferModel(
+          senderModel: receiverModel,
+          receiverModel: senderModel,
+        ),
+        connectRequest: state.connectRequest?.copyWith(
+          senderModel: receiverModel,
+          receiverModel: senderModel,
+          senderIp: receiverModel?.ipAddress,
+          receiverIp: senderModel?.ipAddress,
+        ),
+      ),
+    );
+    logger('Sender to Receiver swapped $state');
   }
 
   @override

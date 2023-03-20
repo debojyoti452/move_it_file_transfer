@@ -93,10 +93,10 @@ class ReceiveFragmentCubit extends BaseCubitWrapper<ReceiveFragmentState> {
       if (response == true) {
         var acceptedList = state.acceptedList.toList();
         var requestedList = state.requestList.toList();
-        var itemFromData = item.fromData?.copyWith(isConnected: true);
+        var itemFromData = item.senderModel?.copyWith(isConnected: true);
 
-        if (acceptedList.any(
-                (element) => element.ipAddress == item.fromData?.ipAddress) ==
+        if (acceptedList.any((element) =>
+                element.ipAddress == item.senderModel?.ipAddress) ==
             false) {
           acceptedList.add(itemFromData ?? const ClientModel());
         }
