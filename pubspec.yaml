@@ -25,10 +25,10 @@ dependencies:
   shared_preferences: ^2.0.17
   file_picker: ^5.2.5
   dart_std: ^0.0.4
-  dx_http:
-    git:
-      url: https://github.com/debojyoti452/dxhttp.git
-      ref: main
+  dx_http: 0.0.1-beta
+#    git:
+#      url: https://github.com/debojyoti452/dxhttp.git
+#      ref: main
 #  move_db:
 #    path: ./move_db
   window_size:
