@@ -46,8 +46,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     setWindowTitle(AppConstants.appName);
-    setWindowMinSize(const Size(1024, 768));
-    setWindowMaxSize(const Size(1024, 768));
+    setWindowMinSize(const Size(800, 600));
+    // setWindowMaxSize(const Size(1024, 768));
   }
   await SharedPref.init();
   MoveDI.init();
