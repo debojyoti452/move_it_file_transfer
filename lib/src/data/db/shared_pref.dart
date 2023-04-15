@@ -104,6 +104,10 @@ class LocalDb {
       defaultValue: NOT_FOUND,
     );
 
+    if (sharedModel == null) {
+      return const ClientModel();
+    }
+
     return sharedModel == NOT_FOUND
         ? const ClientModel()
         : ClientModel.fromJson(jsonDecode(sharedModel ?? ''));
@@ -111,5 +115,35 @@ class LocalDb {
 
   static Future<bool> setUserData(ClientModel value) async {
     return SharedPref.set<String>('clientModel', jsonEncode(value.toJson()));
+  }
+
+  static Future<bool> clearUserData() async {
+    return SharedPref.remove('clientModel');
+  }
+
+  static Future<bool> clearAll() async {
+    return SharedPref.clear();
+  }
+
+  static Future<List<ClientModel>> getRecentSearch() async {
+    var sharedModel = SharedPref.get<String>(
+      'recentSearch',
+      defaultValue: NOT_FOUND,
+    );
+
+    if (sharedModel == null) {
+      return const [];
+    }
+
+    return sharedModel == NOT_FOUND
+        ? const []
+        : (jsonDecode(sharedModel ?? '') as List)
+            .map((e) => ClientModel.fromJson(e))
+            .toList();
+  }
+
+  static Future<bool> saveRecentSearch(List<ClientModel> value) async {
+    return SharedPref.set<String>(
+        'recentSearch', jsonEncode(value.map((e) => e.toJson()).toList()));
   }
 }

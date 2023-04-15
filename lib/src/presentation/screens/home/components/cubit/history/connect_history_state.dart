@@ -22,12 +22,35 @@
  *
  */
 
-mixin StatusCode {
-  static const int NEW_CONNECTION_REQUEST = 900;
-  static const int NEW_CONNECTION_ACCEPTED = 901;
-  static const int NEW_CONNECTION_REJECTED = 902;
-  static const int NEW_FILE_REQUEST = 903;
-  static const int NEW_FILE_ACCEPTED = 904;
-  static const int NEW_FILE_RECEIVER = 905;
-  static const int NOTIFY_NEW_CONNECTION_REQUEST = 906;
+part of 'connect_history_cubit.dart';
+
+class ConnectHistoryState extends Equatable {
+  const ConnectHistoryState({
+    required this.status,
+    required this.acceptedList,
+    required this.userModel,
+  });
+
+  final AppCubitStatus status;
+  final List<ClientModel> acceptedList;
+  final ClientModel userModel;
+
+  @override
+  List<Object?> get props => [
+        status,
+        acceptedList,
+        userModel,
+      ];
+
+  ConnectHistoryState copyWith({
+    AppCubitStatus? status,
+    List<ClientModel>? acceptedList,
+    ClientModel? userModel,
+  }) {
+    return ConnectHistoryState(
+      status: status ?? this.status,
+      acceptedList: acceptedList ?? this.acceptedList,
+      userModel: userModel ?? this.userModel,
+    );
+  }
 }

@@ -34,6 +34,7 @@ import '../../../../../domain/global/app_cubit_status.dart';
 import '../../../../../domain/global/base_state_wrapper.dart';
 import '../../../../../domain/themes/color_constants.dart';
 import '../../../../../domain/utils/helper.dart';
+import '../../../../widgets/extra_view.dart';
 import '../../../transfer/cubit/transfer_cubit.dart';
 import '../../../transfer/receive_file_screen.dart';
 import '../cubit/receive/receive_fragment_cubit.dart';
@@ -358,7 +359,7 @@ class _ReceiveFragmentState extends BaseStateWrapper<ReceiveFragment> {
                         '${nearbyClients[index].platform}',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
-                      _connectedStatusView(
+                      connectedStatusView(
                           (nearbyClients[index].isConnected ?? false)),
                     ],
                   ),
@@ -519,16 +520,6 @@ class _ReceiveFragmentState extends BaseStateWrapper<ReceiveFragment> {
           );
         },
       ),
-    );
-  }
-
-  Widget _connectedStatusView(bool isConnected) {
-    return Text(
-      isConnected ? 'Accepted' : 'Re-Connect',
-      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: isConnected ? Colors.green : Colors.red,
-          ),
     );
   }
 

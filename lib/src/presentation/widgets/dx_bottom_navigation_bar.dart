@@ -45,6 +45,7 @@ class _DxBottomNavigationBarState extends State<DxBottomNavigationBar> {
   List<IconData> get _tabs => [
         Icons.send,
         Icons.wifi,
+        Icons.history,
         Icons.person_pin,
       ];
 

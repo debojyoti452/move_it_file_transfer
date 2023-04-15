@@ -165,20 +165,24 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
     }
   }
 
-  void updateAcceptedRequestClient({required ConnectRequest model}) {
+  Future<void> updateAcceptedRequestClient(
+      {required ConnectRequest model}) async {
     try {
       BotToast.showLoading();
       emit(state.copyWith(status: AppCubitLoading()));
       var dataList = state.nearbyClients;
+
       var nearbyClients = dataList.firstWhere(
           (element) => element.ipAddress == model.receiverIp,
           orElse: () => const ClientModel());
+
       dataList.removeWhere((element) => element.ipAddress == model.receiverIp);
 
       var updatedNearbyClient = nearbyClients.copyWith(
         isConnected: true,
       );
       dataList.add(updatedNearbyClient);
+
       emit(state.copyWith(nearbyClients: dataList, status: AppCubitSuccess()));
     } catch (e) {
       debugPrint('SendFragmentState: updateAcceptedRequestClient: $e');

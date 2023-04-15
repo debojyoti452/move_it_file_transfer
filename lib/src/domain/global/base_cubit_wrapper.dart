@@ -24,9 +24,12 @@
 
 import 'dart:io';
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../data/db/shared_pref.dart';
+import '../../data/model/client_model.dart';
 import '../core/move_server_service.dart';
 import '../di/move_di.dart';
 import '../native/native_calls.dart';
@@ -62,5 +65,24 @@ abstract class BaseCubitWrapper<T> extends Cubit<T> {
 
   Future<bool> requestStoragePermission() async {
     return await NativeCalls.requestStoragePermission();
+  }
+
+  /// Saving the user details to the local db
+  /// because we need to optimize the search
+  void saveConnectionList({required ClientModel model}) async {
+    try {
+      BotToast.showLoading();
+      var oldList = await LocalDb.getRecentSearch();
+
+      /// check if the user is already in the list
+      if (oldList.contains(model) == false) {
+        oldList.add(model);
+      }
+      await LocalDb.saveRecentSearch(oldList);
+    } catch (e) {
+      debugPrint('SendFragmentState: saveUserDetails: $e');
+    } finally {
+      BotToast.closeAllLoading();
+    }
   }
 }

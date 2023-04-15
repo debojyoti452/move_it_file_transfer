@@ -219,6 +219,19 @@ class HomeCubit extends BaseCubitWrapper<HomeState> {
         code: StatusCode.NEW_CONNECTION_REQUEST,
       ),
     ));
+
+    notifyReceiverRequest();
+  }
+
+  /// notify if any request is available
+  void notifyReceiverRequest() {
+    emit(state.copyWith(status: AppCubitLoading()));
+    debugPrint('notifyRequest');
+    emit(state.copyWith(
+      status: AppCubitSuccess(
+        code: StatusCode.NOTIFY_NEW_CONNECTION_REQUEST,
+      ),
+    ));
   }
 
   @override

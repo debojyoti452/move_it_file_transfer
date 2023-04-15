@@ -114,7 +114,9 @@ class ReceiveFragmentCubit extends BaseCubitWrapper<ReceiveFragmentState> {
         ));
       }
       emitState(state.copyWith(
-          status: AppCubitSuccess(), requestList: state.requestList));
+        status: AppCubitSuccess(),
+        requestList: state.requestList,
+      ));
     } catch (e) {
       debugPrint(e.toString());
       emitState(state.copyWith(status: AppCubitError(message: e.toString())));

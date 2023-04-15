@@ -22,6 +22,7 @@
  *
  */
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -36,9 +37,11 @@ import '../../../domain/global/base_state_wrapper.dart';
 import '../../../domain/global/status_code.dart';
 import '../../widgets/dx_bottom_navigation_bar.dart';
 import '../../widgets/dx_sidebar.dart';
+import '../../widgets/extra_view.dart';
 import '../transfer/cubit/transfer_cubit.dart';
 import 'components/cubit/receive/receive_fragment_cubit.dart';
 import 'components/cubit/send/send_fragment_cubit.dart';
+import 'components/fragment/connect_history_fragment.dart';
 import 'components/fragment/profile_fragment.dart';
 import 'components/fragment/receive_fragment.dart';
 import 'components/fragment/send_fragment.dart';
@@ -47,6 +50,7 @@ import 'cubit/home_cubit.dart';
 enum BottomTabEnum {
   send('Send'),
   receive('Receive'),
+  history('History'),
   profile('Profile');
 
   final String value;
@@ -119,6 +123,24 @@ class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
                   );
             }
           }
+
+          if ((state.status as AppCubitSuccess).code ==
+              StatusCode.NOTIFY_NEW_CONNECTION_REQUEST) {
+            /// show notification for new connection request
+            showNotificationView(
+              context: context,
+              message: 'New Receiver Request, Tap to view',
+              onTap: () {
+                debugPrint('New Receiver Request, Tap to view');
+                BotToast.cleanAll();
+                _pageController.animateToPage(
+                  1,
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.ease,
+                );
+              },
+            );
+          }
         }
       },
       builder: (context, state) {
@@ -129,6 +151,7 @@ class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
               children: [
                 const SendFragment(),
                 const ReceiveFragment(),
+                const ConnectHistoryFragment(),
                 const ProfileFragment(),
               ],
               physics: const NeverScrollableScrollPhysics(),
@@ -188,6 +211,24 @@ class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
                   );
             }
           }
+
+          if ((state.status as AppCubitSuccess).code ==
+              StatusCode.NOTIFY_NEW_CONNECTION_REQUEST) {
+            /// show notification for new connection request
+            showNotificationView(
+              context: context,
+              message: 'New Receiver Request, Tap to view',
+              onTap: () {
+                debugPrint('New Receiver Request, Tap to view');
+                BotToast.cleanAll();
+                _pageController.animateToPage(
+                  1,
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.ease,
+                );
+              },
+            );
+          }
         }
       },
       builder: (context, state) {
@@ -238,6 +279,7 @@ class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
                     children: [
                       const SendFragment(),
                       const ReceiveFragment(),
+                      const ConnectHistoryFragment(),
                       const ProfileFragment(),
                     ],
                     physics: const NeverScrollableScrollPhysics(),

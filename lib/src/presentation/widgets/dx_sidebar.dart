@@ -48,6 +48,7 @@ class _DxSidebarState extends State<DxSidebar> {
   List<IconData> get _tabs => [
         Icons.send,
         Icons.wifi,
+        Icons.history,
         Icons.person_pin,
       ];
 

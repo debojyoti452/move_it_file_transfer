@@ -36,6 +36,7 @@ import 'src/data/db/shared_pref.dart';
 import 'src/domain/di/move_di.dart';
 import 'src/domain/routes/app_routes.dart';
 import 'src/domain/themes/color_constants.dart';
+import 'src/presentation/screens/home/components/cubit/history/connect_history_cubit.dart';
 import 'src/presentation/screens/home/components/cubit/receive/receive_fragment_cubit.dart';
 import 'src/presentation/screens/home/components/cubit/send/send_fragment_cubit.dart';
 import 'src/presentation/screens/home/cubit/home_cubit.dart';
@@ -62,6 +63,9 @@ Future<void> main() async {
       ),
       BlocProvider<ReceiveFragmentCubit>(
         create: (context) => ReceiveFragmentCubit(),
+      ),
+      BlocProvider<ConnectHistoryCubit>(
+        create: (context) => ConnectHistoryCubit(),
       ),
       BlocProvider<TransferCubit>(
         create: (context) => TransferCubit(),
