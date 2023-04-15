@@ -94,9 +94,6 @@ mixin IpGenerator {
     });
     var updatedList = list.where((element) => element.host != host).toList();
     updatedList.sort((a, b) => a.host!.compareTo(b.host!));
-    for (var element in updatedList) {
-      debugPrint('[GenerateListOfLocalIp] Host: ${element.host}');
-    }
     return updatedList;
   }
 

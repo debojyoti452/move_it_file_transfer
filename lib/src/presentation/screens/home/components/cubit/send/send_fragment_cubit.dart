@@ -60,6 +60,9 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
         emit(state.copyWith(userModel: await LocalDb.getUserData()));
       }
       emit(state.copyWith(status: AppCubitSuccess()));
+
+      /// Search nearby devices in background
+      searchNearbyDevices();
     } catch (e) {
       debugPrint('SendFragmentState: initialHome: $e');
       emit(state.copyWith(status: AppCubitError(message: e.toString())));
