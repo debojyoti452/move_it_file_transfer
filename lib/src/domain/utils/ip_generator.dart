@@ -23,11 +23,9 @@
  */
 
 import 'dart:io';
-import 'dart:math';
-
-import 'package:flutter/material.dart';
-
+import 'package:flutter/foundation.dart';
 import '../../data/model/network_address_model.dart';
+import '../di/move_di.dart';
 
 mixin IpGenerator {
   static const int _port = 4520;
@@ -37,9 +35,11 @@ mixin IpGenerator {
     var interfaces = await NetworkInterface.list();
     for (var interface in interfaces) {
       for (var networkAddress in interface.addresses) {
-        debugPrint('Network Address: ${networkAddress.address}');
-        if (networkAddress.type == InternetAddressType.IPv4 &&
-            networkAddress.address.startsWith('192.168')) {
+        debugPrint('[GetIpAddress] Network Address: ${networkAddress.address}');
+        // if (networkAddress.type == InternetAddressType.IPv4 &&
+        //     networkAddress.address.startsWith('192.168')) {
+
+        if (networkAddress.type == InternetAddressType.IPv4) {
           ipList.add(NetworkAddressModel(
             address: 'http://${networkAddress.address}:$_port',
             host: networkAddress.address,
@@ -53,20 +53,51 @@ mixin IpGenerator {
   }
 
   static Future<NetworkAddressModel> getOwnLocalIpWithPort() async {
+    final wifiIp = await _getWifiIpAddress();
     var networkAddress = await getIpAddress();
-    return networkAddress[Random().nextInt(networkAddress.length)];
+    var rankIpAddresses = networkAddress
+        .where((element) => element.host!.startsWith(wifiIp))
+        .toList();
+
+    if (rankIpAddresses.isNotEmpty) {
+      return rankIpAddresses.first;
+    } else {
+      return networkAddress.first;
+    }
+  }
+
+  /// get wifi ip address
+  static Future<String> _getWifiIpAddress() async {
+    if (kIsWeb) return Future.value('');
+    try {
+      final networkInfo = MoveDI.networkInfo;
+      var networkAddress = await networkInfo.getWifiIP();
+      return networkAddress ?? '';
+    } catch (e) {
+      debugPrint('Error: $e');
+      return '';
+    }
   }
 
   /// generate list of ip address with port
-  static Future<List<NetworkAddressModel>> generateListOfLocalIp() async {
-    return List.generate(256, (index) {
+  static Future<List<NetworkAddressModel>> generateListOfLocalIp({
+    String? host,
+  }) async {
+    var list = List.generate(256, (index) {
+      var host0 = '${host?.split('.').take(3).join('.')}.$index';
       return NetworkAddressModel(
-        address: 'http://192.168.0.$index:$_port',
-        host: '192.168.0.$index',
+        address: 'http://$host0:$_port',
+        host: host0,
         port: _port,
         type: NetworkAddressType.ipv4,
       );
     });
+    var updatedList = list.where((element) => element.host != host).toList();
+    updatedList.sort((a, b) => a.host!.compareTo(b.host!));
+    for (var element in updatedList) {
+      debugPrint('[GenerateListOfLocalIp] Host: ${element.host}');
+    }
+    return updatedList;
   }
 
   /// binary search algorithm to find the ip address

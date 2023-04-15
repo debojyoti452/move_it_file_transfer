@@ -344,8 +344,8 @@ class MoveServerService extends _MoveServerInterface {
 
   void _nearbyClient() async {
     var clients = <ClientModel>[];
-    var ipList = await IpGenerator.generateListOfLocalIp();
     var ownIp = await IpGenerator.getOwnLocalIpWithPort();
+    var ipList = await IpGenerator.generateListOfLocalIp(host: ownIp.host);
     var dividedIpList = _divideIpList(ipList);
 
     // run in parallel to check the availability of the receiver
@@ -373,7 +373,7 @@ class MoveServerService extends _MoveServerInterface {
     var temp = <NetworkAddressModel>[];
     for (var i = 0; i < ipList.length; i++) {
       temp.add(ipList[i]);
-      if (i % 30 == 0) {
+      if (i % 50 == 0) {
         dividedList.add(temp);
         temp = <NetworkAddressModel>[];
       }
@@ -399,7 +399,7 @@ class MoveServerService extends _MoveServerInterface {
           socket.destroy();
           return true;
         } catch (e) {
-          log('Error: $e');
+          // log('Error: $e');
           return false;
         }
       }

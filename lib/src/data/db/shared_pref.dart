@@ -110,7 +110,7 @@ class LocalDb {
 
     return sharedModel == NOT_FOUND
         ? const ClientModel()
-        : ClientModel.fromJson(jsonDecode(sharedModel ?? ''));
+        : ClientModel.fromJson(jsonDecode(sharedModel));
   }
 
   static Future<bool> setUserData(ClientModel value) async {
@@ -137,7 +137,7 @@ class LocalDb {
 
     return sharedModel == NOT_FOUND
         ? const []
-        : (jsonDecode(sharedModel ?? '') as List)
+        : (jsonDecode(sharedModel))
             .map((e) => ClientModel.fromJson(e))
             .toList();
   }
