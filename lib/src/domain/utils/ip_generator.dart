@@ -23,9 +23,8 @@
  */
 
 import 'dart:io';
-import 'dart:math';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../data/model/network_address_model.dart';
 
@@ -37,9 +36,11 @@ mixin IpGenerator {
     var interfaces = await NetworkInterface.list();
     for (var interface in interfaces) {
       for (var networkAddress in interface.addresses) {
-        debugPrint('Network Address: ${networkAddress.address}');
-        if (networkAddress.type == InternetAddressType.IPv4 &&
-            networkAddress.address.startsWith('192.168')) {
+        debugPrint('[GetIpAddress] Network Address: ${networkAddress.address}');
+        // if (networkAddress.type == InternetAddressType.IPv4 &&
+        //     networkAddress.address.startsWith('192.168')) {
+
+        if (networkAddress.type == InternetAddressType.IPv4) {
           ipList.add(NetworkAddressModel(
             address: 'http://${networkAddress.address}:$_port',
             host: networkAddress.address,
@@ -54,19 +55,31 @@ mixin IpGenerator {
 
   static Future<NetworkAddressModel> getOwnLocalIpWithPort() async {
     var networkAddress = await getIpAddress();
-    return networkAddress[Random().nextInt(networkAddress.length)];
+    var rankIpAddresses = networkAddress.toList();
+    debugPrint('[GetIpAddress] Network Address: ${networkAddress.length}');
+    if (rankIpAddresses.isNotEmpty) {
+      return rankIpAddresses.first;
+    } else {
+      return networkAddress.first;
+    }
   }
 
   /// generate list of ip address with port
-  static Future<List<NetworkAddressModel>> generateListOfLocalIp() async {
-    return List.generate(256, (index) {
+  static Future<List<NetworkAddressModel>> generateListOfLocalIp({
+    String? host,
+  }) async {
+    var list = List.generate(256, (index) {
+      var host0 = '${host?.split('.').take(3).join('.')}.$index';
       return NetworkAddressModel(
-        address: 'http://192.168.0.$index:$_port',
-        host: '192.168.0.$index',
+        address: 'http://$host0:$_port',
+        host: host0,
         port: _port,
         type: NetworkAddressType.ipv4,
       );
     });
+    var updatedList = list.where((element) => element.host != host).toList();
+    updatedList.sort((a, b) => a.host!.compareTo(b.host!));
+    return updatedList;
   }
 
   /// binary search algorithm to find the ip address

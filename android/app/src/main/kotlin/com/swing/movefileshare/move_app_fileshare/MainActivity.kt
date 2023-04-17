@@ -252,6 +252,9 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
     }
 
     private fun showCustomToast(message: String) {
+        if (Build.VERSION_CODES.Q <= Build.VERSION.SDK_INT) {
+            return
+        }
         val toast = Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT)
         toast.setGravity(Gravity.CENTER, 0, 0)
         toast.show()
