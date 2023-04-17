@@ -91,6 +91,9 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
       /// Listen to the stream of messages from the isolate
       receivePort.asBroadcastStream().listen((message) {
         if (message is! List<ClientModel>) {
+          emit(state.copyWith(
+            status: AppCubitError(message: 'Invalid data type'),
+          ));
           return;
         }
 
@@ -98,6 +101,13 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
           if (nearbyClients.contains(element) == false) {
             nearbyClients.add(element);
           }
+        }
+        if (nearbyClients.isEmpty) {
+          emit(state.copyWith(
+            nearbyClients: [],
+            status: AppCubitError(message: 'No nearby device found'),
+          ));
+          return;
         }
         emit(state.copyWith(
           nearbyClients: nearbyClients,

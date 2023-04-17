@@ -395,7 +395,7 @@ class MoveServerService extends _MoveServerInterface {
           var socket = await Socket.connect(
             addressModel.host,
             addressModel.port!,
-            timeout: const Duration(seconds: 5),
+            timeout: const Duration(seconds: 1),
           );
           socket.destroy();
           return true;

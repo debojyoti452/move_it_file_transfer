@@ -23,9 +23,10 @@
  */
 
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
+
 import '../../data/model/network_address_model.dart';
-import '../di/move_di.dart';
 
 mixin IpGenerator {
   static const int _port = 4520;
@@ -55,6 +56,7 @@ mixin IpGenerator {
   static Future<NetworkAddressModel> getOwnLocalIpWithPort() async {
     var networkAddress = await getIpAddress();
     var rankIpAddresses = networkAddress.toList();
+    debugPrint('[GetIpAddress] Network Address: ${networkAddress.length}');
     if (rankIpAddresses.isNotEmpty) {
       return rankIpAddresses.first;
     } else {
