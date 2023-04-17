@@ -368,7 +368,8 @@ class MoveServerService extends _MoveServerInterface {
 
   /// Divide the list into 30 parts
   List<List<NetworkAddressModel>> _divideIpList(
-      List<NetworkAddressModel> ipList) {
+    List<NetworkAddressModel> ipList,
+  ) {
     var dividedList = <List<NetworkAddressModel>>[];
     var temp = <NetworkAddressModel>[];
     for (var i = 0; i < ipList.length; i++) {

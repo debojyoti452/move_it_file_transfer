@@ -53,29 +53,12 @@ mixin IpGenerator {
   }
 
   static Future<NetworkAddressModel> getOwnLocalIpWithPort() async {
-    final wifiIp = await _getWifiIpAddress();
     var networkAddress = await getIpAddress();
-    var rankIpAddresses = networkAddress
-        .where((element) => element.host!.startsWith(wifiIp))
-        .toList();
-
+    var rankIpAddresses = networkAddress.toList();
     if (rankIpAddresses.isNotEmpty) {
       return rankIpAddresses.first;
     } else {
       return networkAddress.first;
-    }
-  }
-
-  /// get wifi ip address
-  static Future<String> _getWifiIpAddress() async {
-    if (kIsWeb) return Future.value('');
-    try {
-      final networkInfo = MoveDI.networkInfo;
-      var networkAddress = await networkInfo.getWifiIP();
-      return networkAddress ?? '';
-    } catch (e) {
-      debugPrint('Error: $e');
-      return '';
     }
   }
 

@@ -22,8 +22,6 @@
  *
  */
 
-import 'package:network_info_plus/network_info_plus.dart';
-
 import '../core/move_server_service.dart';
 
 class MoveDI {
@@ -36,7 +34,6 @@ class MoveDI {
   MoveDI._internal();
 
   static MoveServerService? _moveServerService;
-  static NetworkInfo? _networkInfo;
 
   static MoveServerService get moveServerService {
     if (_moveServerService == null) {
@@ -45,16 +42,8 @@ class MoveDI {
     return _moveServerService!;
   }
 
-  static NetworkInfo get networkInfo {
-    if (_networkInfo == null) {
-      init();
-    }
-    return _networkInfo!;
-  }
-
   static void init() {
     _moveServerService = MoveServerService();
-    _networkInfo = NetworkInfo();
   }
 
   void dispose() {

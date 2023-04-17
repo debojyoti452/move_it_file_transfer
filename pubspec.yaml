@@ -41,7 +41,6 @@ dependencies:
   flutter_svg: ^2.0.2
   mime: ^1.0.4
   basic_utils: ^5.5.1
-  network_info_plus: ^3.0.3
 
 
 dev_dependencies:
