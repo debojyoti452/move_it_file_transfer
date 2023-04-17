@@ -1,0 +1,49 @@
+
+name: Build Project
+
+on:
+  workflow_dispatch:
+    inputs:
+      flavor:
+        description: 'Are you sure to run?'
+        required: false
+        default: 'Run all'
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      - develop
+      - OSP-*
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Setup Java environment in order to build the Android app.
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '12.x'
+          distribution: 'zulu'
+          cache: 'gradle'
+      # Setup the flutter environment.
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+          # Get flutter dependencies.
+      - run: flutter clean
+
+      # Get flutter dependencies.
+      - run: flutter pub get
+
+      # Build the generated code.
+      - run: flutter pub run build_runner build --delete-conflicting-outputs
+
+      # Statically analyze the Dart code for any errors.
+      - run: flutter analyze .
+
+      # Run the tests.
+      #- run: flutter test
