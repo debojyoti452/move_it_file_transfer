@@ -62,7 +62,7 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
       emit(state.copyWith(status: AppCubitSuccess()));
 
       /// Search nearby devices in background
-      searchNearbyDevices();
+      // searchNearbyDevices();
     } catch (e) {
       debugPrint('SendFragmentState: initialHome: $e');
       emit(state.copyWith(status: AppCubitError(message: e.toString())));
@@ -102,13 +102,7 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
             nearbyClients.add(element);
           }
         }
-        if (nearbyClients.isEmpty) {
-          emit(state.copyWith(
-            nearbyClients: [],
-            status: AppCubitError(message: 'No nearby device found'),
-          ));
-          return;
-        }
+
         emit(state.copyWith(
           nearbyClients: nearbyClients,
           status: AppCubitSuccess(),
@@ -124,6 +118,7 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
         status: AppCubitError(message: e.toString()),
       ));
     } finally {
+      // receivePort.close();
       BotToast.closeAllLoading();
       // dispose();
     }
@@ -135,12 +130,10 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
     var nearbyClients = args.dataList;
     MoveDI.moveServerService.nearbyClients().listen((event) {
       for (var element in event) {
-        if (nearbyClients
-            .any((element) => element.ipAddress == element.ipAddress)) {
-          continue;
-        }
         if (nearbyClients.contains(element) == false) {
           nearbyClients.add(element);
+        } else {
+          continue;
         }
       }
       args.sendPort?.send(nearbyClients);
