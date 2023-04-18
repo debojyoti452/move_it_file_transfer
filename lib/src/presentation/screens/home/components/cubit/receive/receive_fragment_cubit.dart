@@ -51,8 +51,13 @@ class ReceiveFragmentCubit extends BaseCubitWrapper<ReceiveFragmentState> {
       BotToast.showLoading();
       emitState(state.copyWith(status: AppCubitLoading()));
       var userModel = await LocalDb.getUserData();
-      emitState(
-          state.copyWith(status: AppCubitSuccess(), userModel: userModel));
+      var cachedConnectedList = await getCachedConnectionList();
+
+      emitState(state.copyWith(
+        status: AppCubitSuccess(),
+        userModel: userModel,
+        acceptedList: cachedConnectedList,
+      ));
     } catch (e) {
       debugPrint(e.toString());
       emitState(state.copyWith(status: AppCubitError(message: e.toString())));
@@ -63,7 +68,24 @@ class ReceiveFragmentCubit extends BaseCubitWrapper<ReceiveFragmentState> {
 
   /// update requested list
   void updateRequestList(List<ConnectRequest> requestList) {
-    emitState(state.copyWith(requestList: requestList));
+    emitState(state.copyWith(
+      status: AppCubitSuccess(),
+    ));
+    var acceptedList = state.acceptedList.toList();
+
+    /// remove all the request which is already accepted
+    requestList.removeWhere(
+      (element) => acceptedList.any(
+        (item) =>
+            item.ipAddress == element.senderModel?.ipAddress &&
+            item.clientName == element.senderModel?.clientName,
+      ),
+    );
+
+    emitState(state.copyWith(
+      status: AppCubitSuccess(),
+      requestList: requestList,
+    ));
   }
 
   void rejectRequest(ConnectRequest item) {
@@ -99,6 +121,7 @@ class ReceiveFragmentCubit extends BaseCubitWrapper<ReceiveFragmentState> {
                 element.ipAddress == item.senderModel?.ipAddress) ==
             false) {
           acceptedList.add(itemFromData ?? const ClientModel());
+          saveConnectionList(model: itemFromData ?? const ClientModel());
         }
 
         requestedList.remove(item);

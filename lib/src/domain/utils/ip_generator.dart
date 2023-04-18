@@ -37,9 +37,6 @@ mixin IpGenerator {
     for (var interface in interfaces) {
       for (var networkAddress in interface.addresses) {
         debugPrint('[GetIpAddress] Network Address: ${networkAddress.address}');
-        // if (networkAddress.type == InternetAddressType.IPv4 &&
-        //     networkAddress.address.startsWith('192.168')) {
-
         if (networkAddress.type == InternetAddressType.IPv4) {
           ipList.add(NetworkAddressModel(
             address: 'http://${networkAddress.address}:$_port',
@@ -55,12 +52,13 @@ mixin IpGenerator {
 
   static Future<NetworkAddressModel> getOwnLocalIpWithPort() async {
     var networkAddress = await getIpAddress();
-    var rankIpAddresses = networkAddress.toList();
-    debugPrint('[GetIpAddress] Network Address: ${networkAddress.length}');
-    if (rankIpAddresses.isNotEmpty) {
-      return rankIpAddresses.first;
+    var indexOfOwnIp = networkAddress.indexWhere((element) =>
+        (element.host?.startsWith('192.') ?? false) ||
+        (element.host?.startsWith('172.') ?? false));
+    if (indexOfOwnIp != -1) {
+      return networkAddress[indexOfOwnIp];
     } else {
-      return networkAddress.first;
+      return networkAddress[0];
     }
   }
 

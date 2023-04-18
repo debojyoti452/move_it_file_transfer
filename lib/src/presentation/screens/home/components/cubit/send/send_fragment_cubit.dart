@@ -57,7 +57,11 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
           'SendFragmentState: initialHome: end ${LocalDb.isAppOnboarded()} user: ${await LocalDb.getUserData()}');
 
       if (LocalDb.isAppOnboarded() == true) {
-        emit(state.copyWith(userModel: await LocalDb.getUserData()));
+        var userModel = await LocalDb.getUserData();
+
+        emit(state.copyWith(
+          userModel: userModel,
+        ));
       }
       emit(state.copyWith(status: AppCubitSuccess()));
 
@@ -85,6 +89,8 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
         dataList: nearbyClients,
       );
 
+      var alreadyExistedList = await getCachedConnectionList();
+
       /// Spawn the isolate
       searchAlgoIsolate = await Isolate.spawn(_computeSearchDeviceInBg, args);
 
@@ -100,6 +106,21 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
         for (var element in message) {
           if (nearbyClients.contains(element) == false) {
             nearbyClients.add(element);
+          }
+        }
+
+        /// update already connected devices from the cache
+        /// if any device is connected then update the list
+        /// and show the connected icon on the device
+        /// so that user can easily identify which device is connected
+        for (var element in nearbyClients) {
+          if (alreadyExistedList.any((element) =>
+              element.ipAddress == element.ipAddress &&
+              element.clientName == element.clientName)) {
+            var updated = element.copyWith(
+              isConnected: true,
+            );
+            nearbyClients[nearbyClients.indexOf(element)] = updated;
           }
         }
 
@@ -130,6 +151,10 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
     var nearbyClients = args.dataList;
     MoveDI.moveServerService.nearbyClients().listen((event) {
       for (var element in event) {
+        if (nearbyClients.any((ele) => ele.ipAddress == element.ipAddress)) {
+          continue;
+        }
+
         if (nearbyClients.contains(element) == false) {
           nearbyClients.add(element);
         } else {
@@ -171,8 +196,9 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
     }
   }
 
-  Future<void> updateAcceptedRequestClient(
-      {required ConnectRequest model}) async {
+  Future<void> updateAcceptedRequestClient({
+    required ConnectRequest model,
+  }) async {
     try {
       BotToast.showLoading();
       emit(state.copyWith(status: AppCubitLoading()));
@@ -188,6 +214,7 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
         isConnected: true,
       );
       dataList.add(updatedNearbyClient);
+      saveConnectionList(model: updatedNearbyClient);
 
       emit(state.copyWith(nearbyClients: dataList, status: AppCubitSuccess()));
     } catch (e) {
