@@ -175,8 +175,9 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
     }
   }
 
-  Future<void> updateAcceptedRequestClient(
-      {required ConnectRequest model}) async {
+  Future<void> updateAcceptedRequestClient({
+    required ConnectRequest model,
+  }) async {
     try {
       BotToast.showLoading();
       emit(state.copyWith(status: AppCubitLoading()));
@@ -192,6 +193,7 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
         isConnected: true,
       );
       dataList.add(updatedNearbyClient);
+      saveConnectionList(model: updatedNearbyClient);
 
       emit(state.copyWith(nearbyClients: dataList, status: AppCubitSuccess()));
     } catch (e) {

@@ -73,13 +73,15 @@ abstract class BaseCubitWrapper<T> extends Cubit<T> {
     try {
       BotToast.showLoading();
       var oldList = await LocalDb.getRecentSearch();
+      var modelList = oldList.toList();
       // check if the user is already in the list
-      if (oldList.contains(model) == false) {
-        oldList.add(model);
+      if (modelList.contains(model) == false) {
+        modelList.add(model);
       }
-      await LocalDb.saveRecentSearch(oldList);
 
-      debugPrint('SendFragmentState: saveUserDetails: $oldList');
+      await LocalDb.saveRecentSearch(modelList);
+
+      debugPrint('SendFragmentState: saveUserDetails: $modelList');
     } catch (e) {
       debugPrint('SendFragmentState: saveUserDetails: $e');
     } finally {
