@@ -99,6 +99,7 @@ class ReceiveFragmentCubit extends BaseCubitWrapper<ReceiveFragmentState> {
                 element.ipAddress == item.senderModel?.ipAddress) ==
             false) {
           acceptedList.add(itemFromData ?? const ClientModel());
+          saveConnectionList(model: itemFromData ?? const ClientModel());
         }
 
         requestedList.remove(item);

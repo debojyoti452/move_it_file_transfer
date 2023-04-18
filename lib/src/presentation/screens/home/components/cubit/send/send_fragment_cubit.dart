@@ -130,6 +130,10 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
     var nearbyClients = args.dataList;
     MoveDI.moveServerService.nearbyClients().listen((event) {
       for (var element in event) {
+        if (nearbyClients.any((ele) => ele.ipAddress == element.ipAddress)) {
+          continue;
+        }
+
         if (nearbyClients.contains(element) == false) {
           nearbyClients.add(element);
         } else {

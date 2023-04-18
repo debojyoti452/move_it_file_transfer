@@ -25,6 +25,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/client_model.dart';
@@ -130,20 +131,20 @@ class LocalDb {
       'recentSearch',
       defaultValue: NOT_FOUND,
     );
-
     if (sharedModel == null) {
       return const [];
     }
 
-    return sharedModel == NOT_FOUND
+    List<dynamic> jsonData = sharedModel == NOT_FOUND
         ? const []
-        : (jsonDecode(sharedModel))
-            .map((e) => ClientModel.fromJson(e))
-            .toList();
+        : jsonDecode(sharedModel) as List<dynamic>;
+
+    var data = jsonData.map((e) => ClientModel.fromJson(e)).toList();
+
+    return data;
   }
 
   static Future<bool> saveRecentSearch(List<ClientModel> value) async {
-    return SharedPref.set<String>(
-        'recentSearch', jsonEncode(value.map((e) => e.toJson()).toList()));
+    return SharedPref.set<String>('recentSearch', jsonEncode(value));
   }
 }
