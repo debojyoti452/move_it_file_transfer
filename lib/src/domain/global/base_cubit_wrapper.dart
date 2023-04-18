@@ -78,12 +78,25 @@ abstract class BaseCubitWrapper<T> extends Cubit<T> {
       if (modelList.contains(model) == false) {
         modelList.add(model);
       }
-
       await LocalDb.saveRecentSearch(modelList);
-
-      debugPrint('SendFragmentState: saveUserDetails: $modelList');
     } catch (e) {
       debugPrint('SendFragmentState: saveUserDetails: $e');
+    } finally {
+      BotToast.closeAllLoading();
+    }
+  }
+
+  /// Getting the user details from the local db
+  /// because we need to optimize the search
+  Future<List<ClientModel>> getCachedConnectionList() async {
+    try {
+      BotToast.showLoading();
+      var oldList = await LocalDb.getRecentSearch();
+      var modelList = oldList.toList();
+      return modelList;
+    } catch (e) {
+      debugPrint('SendFragmentState: saveUserDetails: $e');
+      return [];
     } finally {
       BotToast.closeAllLoading();
     }
