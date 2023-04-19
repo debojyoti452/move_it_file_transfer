@@ -1,3 +1,27 @@
+<!--
+  - /**
+  -  * * GNU General Public License v3.0
+  -  * *******************************************************************************************
+  -  *  * Created By Debojyoti Singha
+  -  *  * Copyright (c) 2023.
+  -  *  * This program is free software: you can redistribute it and/or modify
+  -  *  * it under the terms of the GNU General Public License as published by
+  -  *  * the Free Software Foundation, either version 3 of the License, or
+  -  *  * (at your option) any later version.
+  -  *  *
+  -  *  * This program is distributed in the hope that it will be useful,
+  -  *  *
+  -  *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  -  *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  -  *  * GNU General Public License for more details.
+  -  *  *
+  -  *  * You should have received a copy of the GNU General Public License
+  -  *  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -  *  * Contact Email: support@swingtechnologies.in
+  -  * ******************************************************************************************
+  -  */
+  -->
+
 <svg width="27" height="27" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg">
 <circle cx="13.5" cy="13.5" r="13.5" fill="black"/>
 <path d="M15.9434 7.14703H11.0566C10.2136 7.14703 9.52942 7.79388 9.52942 8.59088V18.4091C9.52942 19.2061 10.2136 19.8529 11.0566 19.8529H15.9434C16.7864 19.8529 17.4706 19.2061 17.4706 18.4091V8.59088C17.4706 7.79388 16.7864 7.14703 15.9434 7.14703ZM13.5 19.2754C12.993 19.2754 12.5837 18.8884 12.5837 18.4091C12.5837 17.9297 12.993 17.5428 13.5 17.5428C14.007 17.5428 14.4163 17.9297 14.4163 18.4091C14.4163 18.8884 14.007 19.2754 13.5 19.2754ZM16.2489 16.9652H10.7511V8.87965H16.2489V16.9652Z" fill="white"/>
