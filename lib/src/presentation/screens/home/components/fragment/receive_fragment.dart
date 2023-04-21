@@ -120,7 +120,9 @@ class _ReceiveFragmentState extends BaseStateWrapper<ReceiveFragment> {
                         ),
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _cubit.refreshAcceptedList();
+                        },
                         padding: EdgeInsets.zero,
                         icon: const Icon(
                           Icons.refresh,
@@ -224,7 +226,9 @@ class _ReceiveFragmentState extends BaseStateWrapper<ReceiveFragment> {
                         ),
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _cubit.refreshAcceptedList();
+                        },
                         padding: EdgeInsets.zero,
                         icon: const Icon(
                           Icons.refresh,

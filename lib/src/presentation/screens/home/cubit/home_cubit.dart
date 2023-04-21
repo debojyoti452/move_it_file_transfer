@@ -30,12 +30,12 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../../../core/service/move_server_service.dart';
 import '../../../../data/constants/app_constants.dart';
 import '../../../../data/db/shared_pref.dart';
 import '../../../../data/model/client_model.dart';
 import '../../../../data/model/connect_model.dart';
 import '../../../../data/model/file_model.dart';
-import '../../../../domain/core/move_server_service.dart';
 import '../../../../domain/global/app_cubit_status.dart';
 import '../../../../domain/global/base_cubit_wrapper.dart';
 import '../../../../domain/global/status_code.dart';

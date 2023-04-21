@@ -31,9 +31,9 @@ import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../../../core/service/move_server_service.dart';
 import '../../../../data/model/connect_model.dart';
 import '../../../../data/model/file_model.dart';
-import '../../../../domain/core/move_server_service.dart';
 import '../../../../domain/global/app_cubit_status.dart';
 import '../../../../domain/global/base_cubit_wrapper.dart';
 

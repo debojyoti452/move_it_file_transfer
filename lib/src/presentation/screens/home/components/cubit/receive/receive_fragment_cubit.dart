@@ -148,6 +148,37 @@ class ReceiveFragmentCubit extends BaseCubitWrapper<ReceiveFragmentState> {
     }
   }
 
+  /// Refresh Accepted List
+  /// and check if the sender is online or not
+  /// if not online then remove from the list
+  void refreshAcceptedList() async {
+    debugPrint('refreshAcceptedList');
+    try {
+      BotToast.showLoading();
+      emitState(state.copyWith(
+        status: AppCubitLoading(),
+      ));
+      // var acceptedList = state.acceptedList.toList();
+      var acceptedList = await getCachedConnectionList();
+      var updatedList = <ClientModel>[];
+      for (var item in acceptedList) {
+        var isOnline = await isSenderConnected(item.ipAddress ?? '');
+        if (isOnline == true) {
+          updatedList.add(item.copyWith(isConnected: true));
+        }
+      }
+      emitState(state.copyWith(
+        status: AppCubitSuccess(),
+        acceptedList: updatedList,
+      ));
+    } catch (e) {
+      debugPrint(e.toString());
+      emitState(state.copyWith(status: AppCubitError(message: e.toString())));
+    } finally {
+      BotToast.closeAllLoading();
+    }
+  }
+
   @override
   Future<bool> isSenderConnected(String ipAddress) async {
     return await moveServerService.isServerRunning(ipAddress);

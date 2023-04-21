@@ -28,9 +28,9 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../core/service/move_server_service.dart';
 import '../../data/db/shared_pref.dart';
 import '../../data/model/client_model.dart';
-import '../core/move_server_service.dart';
 import '../di/move_di.dart';
 import '../native/native_calls.dart';
 
@@ -93,6 +93,16 @@ abstract class BaseCubitWrapper<T> extends Cubit<T> {
       BotToast.showLoading();
       var oldList = await LocalDb.getRecentSearch();
       var modelList = oldList.toList();
+
+      /// check if the user is online
+      /// if not then remove the user from the list
+      for (var i = 0; i < modelList.length; i++) {
+        var model = modelList[i];
+        var isOnline = await isSenderConnected(model.ipAddress!);
+        if (!isOnline) {
+          modelList.remove(model);
+        }
+      }
       return modelList;
     } catch (e) {
       debugPrint('SendFragmentState: saveUserDetails: $e');

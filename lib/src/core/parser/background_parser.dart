@@ -22,31 +22,8 @@
  *
  */
 
-import '../../core/service/move_server_service.dart';
+class BackgroundParser<T> {
+  String _data;
 
-class MoveDI {
-  static final MoveDI _singleton = MoveDI._internal();
-
-  factory MoveDI() {
-    return _singleton;
-  }
-
-  MoveDI._internal();
-
-  static MoveServerService? _moveServerService;
-
-  static MoveServerService get moveServerService {
-    if (_moveServerService == null) {
-      init();
-    }
-    return _moveServerService!;
-  }
-
-  static void init() {
-    _moveServerService = MoveServerService();
-  }
-
-  void dispose() {
-    _moveServerService?.dispose();
-  }
+  BackgroundParser(this._data);
 }

@@ -114,9 +114,9 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
         /// and show the connected icon on the device
         /// so that user can easily identify which device is connected
         for (var element in nearbyClients) {
-          if (alreadyExistedList.any((element) =>
-              element.ipAddress == element.ipAddress &&
-              element.clientName == element.clientName)) {
+          if (alreadyExistedList.any((ele) =>
+              element.ipAddress == ele.ipAddress &&
+              element.clientName == ele.clientName)) {
             var updated = element.copyWith(
               isConnected: true,
             );
@@ -124,6 +124,10 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
           }
         }
 
+        /// Temporary fix for duplicate device
+        /// Need to find the root cause of this issue
+        var setList = nearbyClients.toSet();
+        nearbyClients = setList.toList();
         emit(state.copyWith(
           nearbyClients: nearbyClients,
           status: AppCubitSuccess(),

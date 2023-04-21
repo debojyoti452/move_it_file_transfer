@@ -28,8 +28,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../core/service/move_server_service.dart';
 import '../../../data/model/connect_model.dart';
-import '../../../domain/core/move_server_service.dart';
 import '../../../domain/global/base_state_wrapper.dart';
 import '../../../domain/themes/color_constants.dart';
 import '../../../domain/utils/helper.dart';

@@ -98,4 +98,15 @@ mixin IpGenerator {
     }
     return networkAddress[0];
   }
+
+  /// IP Matcher
+  // check two ip address are same or not
+  static bool isSameIp(String host, String ownHost) {
+    var hostList = host.split('.').join();
+    var ownHostList = ownHost.split('.').join();
+    if (hostList == ownHostList) {
+      return true;
+    }
+    return false;
+  }
 }
