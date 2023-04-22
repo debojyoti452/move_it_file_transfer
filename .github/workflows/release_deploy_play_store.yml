@@ -64,4 +64,6 @@ jobs:
 
       - name: Deploy to Play Store
         run: bundle exec fastlane ${{ github.event.inputs.lane || 'production' }}
+        env:
+          PLAY_STORE_CONFIG_JSON: ${{ secrets.PLAY_STORE_CONFIG_JSON }}
         working-directory: android
