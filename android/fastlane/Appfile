@@ -1,1 +1,1 @@
-package_name("com.swing.moveit") # e.g. com.krausefx.app
+package_name("com.swing.moveit")
