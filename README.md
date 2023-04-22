@@ -15,17 +15,37 @@ A lot of people are using AirDrop to share files between their devices. But, Air
 6. Select the files you want to share
 7. Click on the "Send" button
 
-### Windows
-Requirements: Windows 10
+### Platform Support
+- Windows
+- Linux
+- Mac
+- Android
+- iOS
 
 ## Contributing
-1. Fork it (
-2. Create your feature branch (
-3. Commit your changes (
-4. Push to the branch (
-5. Create a new Pull Request (
-6. Wait for the Pull Request to be merged (
-7. Celebrate! (
+1. Fork it 🔻
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a new Pull Request
+6. Wait for the Pull Request to be merged
+7. Celebrate! 🎉
+
+## License
+Licensed under the [GNU General Public License v3.0](https://github.com/debojyoti452/move_app/blob/main/LICENSE)
 
 ## Privacy Notice
 https://4shorturl.app/hm117
+
+## Contributors
+
+- [Debojyoti Singha](https://debojyoti452.com)
+
+## Author
+
+- [Debojyoti Singha](https://debojyoti452.com)
+
+## Support
+
+- Email: support@swingtechnologies.in
+- Website: https://www.swingtechnologies.in
