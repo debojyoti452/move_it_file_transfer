@@ -50,3 +50,4 @@ lib/generated_plugin_registrant.dart
 pubspec.lock
 
 *.old.dart
+android/fastlane/metadata/
