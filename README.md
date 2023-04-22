@@ -7,19 +7,25 @@ MoveIt is a File Sharing App for all Platform (Windows, Linux, Mac, Android, iOS
 A lot of people are using AirDrop to share files between their devices. But, AirDrop is only available for Mac and iOS. So, I created MoveIt to share files between all devices.
 
 ## How to use
-
+1. Download the App
+2. Open the App
+3. Click on the "Refresh" icon button
+4. Select the device you want to share files with
+5. Click on the "Send" icon button
+6. Select the files you want to share
+7. Click on the "Send" button
 
 ### Windows
 Requirements: Windows 10
 
-## Important Notice
-- [sqflite ffi](https://pub.dev/packages/sqflite_common_ffi) is not supported on Windows yet. So, you can't use the database on Windows. You need to add following steps to use the database on Windows.
-  Windows
-  Should work as is in debug mode (sqlite3.dll is bundled).
-
-In release mode, add sqlite3.dll in same folder as your executable.
-
-sqfliteFfiInit is provided as an implementation reference for loading the sqlite library. Please look at sqlite3 if you want to override the behavior.
+## Contributing
+1. Fork it (
+2. Create your feature branch (
+3. Commit your changes (
+4. Push to the branch (
+5. Create a new Pull Request (
+6. Wait for the Pull Request to be merged (
+7. Celebrate! (
 
 ## Privacy Notice
 https://4shorturl.app/hm117
