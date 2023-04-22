@@ -16,23 +16,13 @@
 default_platform(:android)
 
 platform :android do
-  desc "Runs all the tests"
-  lane :test do
-    gradle(task: "test")
-  end
-
-  desc "Submit a new Beta Build to Crashlytics Beta"
-  lane :beta do
-    gradle(task: "clean assembleRelease")
-    crashlytics
-  
-    # sh "your_script.sh"
-    # You can also use other beta testing services here
-  end
-
   desc "Deploy a new version to the Google Play"
-  lane :deploy do
-    gradle(task: "clean assembleRelease")
-    upload_to_play_store
+  lane :production do
+    sh "flutter clean && flutter pub get && flutter pub run build_runner build --delete-conflicting-outputs && flutter build appbundle"
+    upload_to_play_store(
+        track: 'production',
+        aab: '../build/app/outputs/bundle/prodRelease/app-prod-release.aab',
+        json_key_data: ENV['PLAY_STORE_CONFIG_JSON'],
+    )
   end
 end
