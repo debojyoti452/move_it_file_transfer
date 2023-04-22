@@ -38,7 +38,7 @@ class _ProfileFragmentState extends State<ProfileFragment> {
   Widget build(BuildContext context) {
     return Container(
       child: const Center(
-        child: Text('Profile Fragment'),
+        child: Text('Coming Soon...😎'),
       ),
     );
   }

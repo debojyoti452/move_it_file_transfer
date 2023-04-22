@@ -1,0 +1,63 @@
+name: Deploy to Play Store
+on:
+  # Enable manual run
+  workflow_dispatch:
+    inputs:
+      lane:
+        description: "Fastlane lane"
+        required: true
+        default: "production"
+        type: choice
+        options:
+          - internal
+          - production
+
+# Declare default permissions as read only.
+permissions: read-all
+
+jobs:
+  fastlane-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Set up Flutter.
+      - name: Clone Flutter repository with master channel
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+      - run: flutter doctor -v
+
+      - name: Checkout OneStore code
+        uses: actions/checkout@v3
+      - run: flutter pub get
+
+      # Setup Ruby, Bundler, and Gemfile dependencies
+      - name: Setup Fastlane
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2.0"
+          bundler-cache: true
+          working-directory: android
+
+      - name: Configure Keystore
+        run: |
+          echo "$PLAY_STORE_UPLOAD_KEY" | base64 --decode > app/"$KEYSTORE_FILE_NAME"
+          echo "storeFile=$KEYSTORE_FILE_NAME" >> "$KEYSTORE_PROP_NAME"
+          echo "keyAlias=$KEYSTORE_KEY_ALIAS" >> "$KEYSTORE_PROP_NAME"
+          echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> "$KEYSTORE_PROP_NAME"
+          echo "keyPassword=$KEYSTORE_KEY_PASSWORD" >> "$KEYSTORE_PROP_NAME"
+        env:
+          PLAY_STORE_UPLOAD_KEY: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_FILE_NAME: ${{ secrets.KEYSTORE_FILE_NAME }}
+          KEYSTORE_PROP_NAME: ${{ secrets.KEYSTORE_PROP_NAME }}
+        working-directory: android
+
+      # Build and deploy with Fastlane (by default, to beta track) 🚀.
+      # Naturally, promote_to_production only deploys.
+      - run: bundle exec fastlane ${{ github.event.inputs.lane || 'production' }}
+        env:
+          PLAY_STORE_CONFIG_JSON: ${{ secrets.PLAY_STORE_CONFIG_JSON }}
+        working-directory: android
