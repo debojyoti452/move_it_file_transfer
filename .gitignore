@@ -51,3 +51,4 @@ pubspec.lock
 
 *.old.dart
 android/fastlane/metadata/
+scripts/installer_windows_build.iss
