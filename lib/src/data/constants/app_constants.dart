@@ -23,7 +23,7 @@
  */
 
 mixin AppConstants {
-  static const String appName = 'Move';
+  static const String appName = 'MoveIt - File Transfer On Go';
   static const String http = 'http://';
   static const String https = 'https://';
   static const int PORT = 4520;
