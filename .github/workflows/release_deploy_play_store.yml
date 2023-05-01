@@ -27,7 +27,7 @@ jobs:
           cache: true
       - run: flutter doctor -v
 
-      - name: Checkout code
+      - name: Checkout OneStore code
         uses: actions/checkout@v3
       - run: flutter pub get
 
@@ -53,17 +53,11 @@ jobs:
           KEYSTORE_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEYSTORE_FILE_NAME: ${{ secrets.KEYSTORE_FILE_NAME }}
           KEYSTORE_PROP_NAME: ${{ secrets.KEYSTORE_PROP_NAME }}
-          PLAY_STORE_CONFIG_JSON_NAME: ${{ secrets.PLAY_STORE_CONFIG_JSON_NAME }}
         working-directory: android
-      - name: Create Google Play Config file
-        run : |
-          echo "$PLAY_STORE_CONFIG_JSON_FILE" > play_store_config.json.b64
-          base64 -d -i play_store_config.json.b64 > play_store_config.json
-        env:
-          PLAY_STORE_CONFIG_JSON_FILE: ${{ secrets.PLAY_STORE_CONFIG_JSON }}
 
-      - name: Deploy to Play Store
-        run: bundle exec fastlane ${{ github.event.inputs.lane || 'production' }}
+      # Build and deploy with Fastlane (by default, to beta track) 🚀.
+      # Naturally, promote_to_production only deploys.
+      - run: bundle exec fastlane ${{ github.event.inputs.lane || 'production' }}
         env:
-          PLAY_STORE_CONFIG_JSON: ${{ secrets.PLAY_STORE_CONFIG_JSON_FILE }}
+          PLAY_STORE_CONFIG_JSON: ${{ secrets.PLAY_STORE_CONFIG_JSON }}
         working-directory: android
