@@ -46,7 +46,7 @@ class _DxBottomNavigationBarState extends State<DxBottomNavigationBar> {
         Icons.send,
         Icons.wifi,
         Icons.history,
-        Icons.person_pin,
+        // Icons.person_pin,
       ];
 
   int _selectedIndex = 0;

@@ -42,7 +42,6 @@ import '../transfer/cubit/transfer_cubit.dart';
 import 'components/cubit/receive/receive_fragment_cubit.dart';
 import 'components/cubit/send/send_fragment_cubit.dart';
 import 'components/fragment/connect_history_fragment.dart';
-import 'components/fragment/profile_fragment.dart';
 import 'components/fragment/receive_fragment.dart';
 import 'components/fragment/send_fragment.dart';
 import 'cubit/home_cubit.dart';
@@ -50,8 +49,8 @@ import 'cubit/home_cubit.dart';
 enum BottomTabEnum {
   send('Send'),
   receive('Receive'),
-  history('History'),
-  profile('Profile');
+  history('History');
+  // profile('Profile');
 
   final String value;
 
@@ -152,7 +151,7 @@ class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
                 const SendFragment(),
                 const ReceiveFragment(),
                 const ConnectHistoryFragment(),
-                const ProfileFragment(),
+                // const ProfileFragment(),
               ],
               physics: const NeverScrollableScrollPhysics(),
             ),
@@ -280,7 +279,7 @@ class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
                       const SendFragment(),
                       const ReceiveFragment(),
                       const ConnectHistoryFragment(),
-                      const ProfileFragment(),
+                      // const ProfileFragment(),
                     ],
                     physics: const NeverScrollableScrollPhysics(),
                   ),

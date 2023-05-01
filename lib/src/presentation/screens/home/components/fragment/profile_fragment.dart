@@ -24,6 +24,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../../../../../domain/global/base_state_wrapper.dart';
+
 class ProfileFragment extends StatefulWidget {
   static const String id = 'PROFILE_FRAGMENT';
 
@@ -33,13 +35,44 @@ class ProfileFragment extends StatefulWidget {
   _ProfileFragmentState createState() => _ProfileFragmentState();
 }
 
-class _ProfileFragmentState extends State<ProfileFragment> {
+class _ProfileFragmentState extends BaseStateWrapper<ProfileFragment> {
   @override
-  Widget build(BuildContext context) {
+  void onInit() {}
+
+  @override
+  Widget onMobile(
+      BuildContext context, BoxConstraints constraints, PlatformType platform) {
     return Container(
-      child: const Center(
-        child: Text('Coming Soon...😎'),
-      ),
-    );
+        child: Column(
+      children: [
+        const Text('Profile Fragment'),
+      ],
+    ));
   }
+
+  @override
+  Widget onTablet(
+      BuildContext context, BoxConstraints constraints, PlatformType platform) {
+    return Container(
+        child: Column(
+      children: [
+        const Text('Profile Fragment'),
+      ],
+    ));
+  }
+
+  @override
+  void onPause() {}
+
+  @override
+  void onResume() {}
+
+  @override
+  void onStop() {}
+
+  @override
+  void onDestroy() {}
+
+  @override
+  void onDispose() {}
 }

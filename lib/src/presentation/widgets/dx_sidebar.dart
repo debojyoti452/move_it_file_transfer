@@ -49,7 +49,7 @@ class _DxSidebarState extends State<DxSidebar> {
         Icons.send,
         Icons.wifi,
         Icons.history,
-        Icons.person_pin,
+        // Icons.person_pin,
       ];
 
   int selectedIndex = 0;
