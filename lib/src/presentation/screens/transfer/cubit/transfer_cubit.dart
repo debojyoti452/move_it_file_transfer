@@ -54,7 +54,11 @@ class TransferCubit extends BaseCubitWrapper<TransferState> {
   void initialize() {
     try {
       BotToast.showLoading();
-      emitState(state.copyWith(status: AppCubitLoading()));
+      emitState(state.copyWith(
+        status: AppCubitLoading(),
+        fileList: [],
+        downloadStatus: DownloadStatus.initial,
+      ));
       progressStreamController = StreamController<int>.broadcast();
 
       emitState(state.copyWith(

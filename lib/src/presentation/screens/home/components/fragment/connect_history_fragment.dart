@@ -202,6 +202,14 @@ class _ConnectHistoryFragmentState
                     ],
                   ),
                 ),
+                IconButton(
+                    onPressed: () {
+                      _cubit.deleteItem(index);
+                    },
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.black,
+                    )),
               ],
             ),
           ),

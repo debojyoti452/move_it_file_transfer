@@ -111,4 +111,19 @@ abstract class BaseCubitWrapper<T> extends Cubit<T> {
       BotToast.closeAllLoading();
     }
   }
+
+  /// Delete the user from the local db
+  void deleteConnectionFromCache(ClientModel model) async {
+    try {
+      BotToast.showLoading();
+      var oldList = await LocalDb.getRecentSearch();
+      var modelList = oldList.toList();
+      modelList.remove(model);
+      await LocalDb.saveRecentSearch(modelList);
+    } catch (e) {
+      debugPrint('SendFragmentState: saveUserDetails: $e');
+    } finally {
+      BotToast.closeAllLoading();
+    }
+  }
 }

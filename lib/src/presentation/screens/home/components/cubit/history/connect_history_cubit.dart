@@ -55,6 +55,20 @@ class ConnectHistoryCubit extends BaseCubitWrapper<ConnectHistoryState> {
     }
   }
 
+  void deleteItem(int index) async {
+    try {
+      emit(state.copyWith(status: AppCubitLoading()));
+      var acceptedList = state.acceptedList;
+      var item = acceptedList[index];
+      deleteConnectionFromCache(item);
+      acceptedList.removeAt(index);
+      emit(state.copyWith(
+          acceptedList: acceptedList, status: AppCubitSuccess()));
+    } catch (e) {
+      emit(state.copyWith(status: AppCubitError(message: '$e')));
+    }
+  }
+
   @override
   void dispose() {}
 
