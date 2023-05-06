@@ -212,7 +212,6 @@ class _DxNearbyViewPainter extends CustomPainter {
     return false;
   }
 
-  @Deprecated('use drawAxis() instead.')
   void drawCircles(Canvas canvas, Size size) {
     final paint = Paint();
     paint.color = ColorConstants.GREY_DARK;

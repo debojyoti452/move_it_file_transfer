@@ -2,6 +2,16 @@
 
 ### AirDrop for all Platform (Windows, Linux, Mac, Android, iOS)
 
+## Available at
+<p align="left">
+<a href="https://play.google.com/store/apps/details?id=com.swing.moveit">
+    <img alt="Get it on Google Play"
+        height="80"
+        src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" />
+</a>
+</p>
+
+
 ## Description
 MoveIt is a File Sharing App for all Platform (Windows, Linux, Mac, Android, iOS). It can be used as a replacement for AirDrop. 
 A lot of people are using AirDrop to share files between their devices. But, AirDrop is only available for Mac and iOS. So, I created MoveIt to share files between all devices.
@@ -30,6 +40,9 @@ A lot of people are using AirDrop to share files between their devices. But, Air
 5. Create a new Pull Request
 6. Wait for the Pull Request to be merged
 7. Celebrate! 🎉
+
+## Contributing Guide
+> Coming Soon
 
 ## License
 Licensed under the [GNU General Public License v3.0](https://github.com/debojyoti452/move_app/blob/main/LICENSE)
