@@ -2,6 +2,10 @@
 
 ### AirDrop for all Platform (Windows, Linux, Mac, Android, iOS)
 
+<p align="center">
+<img src="screenshots/feature_graphic.jpg">
+</p>
+
 ## Available at
 
 <p align="left">
@@ -11,18 +15,6 @@
         src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" />
 </a>
 </p>
-
-## Screenshots
-<table>
-  <tr>
-    <td><img src="screenshots/Screenshot_20230422-132528.png" width="250"></td>
-    <td><img src="screenshots/Screenshot_20230422-132651.png" width="250"></td>
-  </tr>
-  <tr>
-    <td><img src="screenshots/Screenshot_20230422-132705.png" width="250"></td>
-    <td><img src="screenshots/Screenshot_20230422-132807.png" width="250"></td>
-  </tr>
-</table>
 
 ## Description
 
@@ -53,6 +45,18 @@ devices.
 ## Contributing Guide
 
 [Contributing Guide](https://github.com/debojyoti452/move_it_file_transfer/blob/main/CONTRIBUTING.md)
+
+## Screenshots
+<table>
+  <tr>
+    <td><img src="screenshots/Screenshot_20230422-132528.png" width="250"></td>
+    <td><img src="screenshots/Screenshot_20230422-132651.png" width="250"></td>
+  </tr>
+  <tr>
+    <td><img src="screenshots/Screenshot_20230422-132705.png" width="250"></td>
+    <td><img src="screenshots/Screenshot_20230422-132807.png" width="250"></td>
+  </tr>
+</table>
 
 ## License
 
