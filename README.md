@@ -15,12 +15,12 @@
 ## Screenshots
 <table>
   <tr>
-    <td><img src="misc/platform/android/playstore/Screenshot_20230422-132528.png" width="250"></td>
-    <td><img src="misc/platform/android/playstore/Screenshot_20230422-132528.png" width="250"></td>
+    <td><img src="screenshots/Screenshot_20230422-132528.png" width="250"></td>
+    <td><img src="screenshots/Screenshot_20230422-132651.png" width="250"></td>
   </tr>
   <tr>
-    <td><img src="misc/platform/android/playstore/Screenshot_20230422-132705.png" width="250"></td>
-    <td><img src="misc/platform/android/playstore/Screenshot_20230422-132807.png" width="250"></td>
+    <td><img src="screenshots/Screenshot_20230422-132705.png" width="250"></td>
+    <td><img src="screenshots/Screenshot_20230422-132807.png" width="250"></td>
   </tr>
 </table>
 
