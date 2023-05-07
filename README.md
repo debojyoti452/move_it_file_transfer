@@ -1,4 +1,4 @@
-# Move AirDrop
+# MoveIt - File Transfer On Go
 
 ### AirDrop for all Platform (Windows, Linux, Mac, Android, iOS)
 
