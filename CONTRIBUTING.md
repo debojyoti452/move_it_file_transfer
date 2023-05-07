@@ -16,9 +16,9 @@ To contribute to this project, you will need to have the following tools install
 Once you have these tools installed, you can clone the project repository and install the required dependencies:
 
 ```
-git clone https://github.com/your-username/flutter-file-transfer.git
-cd flutter-file-transfer
-flutter pub get
+- git clone https://github.com/debojyoti452/move_it_file_transfer.git
+- cd move_it_file_transfer
+- clean.sh (Run this script to clean and build the project)
 ```
 
 You can then run the app on your local machine using the following command:
