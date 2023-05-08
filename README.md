@@ -1,20 +1,89 @@
-# `MoveIt - File Transfer On Go`
+# `MoveIt - File Transfer On Go 📡🔥`
+
 
 ### AirDrop for all Platform (Windows, Linux, Mac, Android, iOS)
+
+## Please support this initiative by giving this project a star ⭐️
 
 <p align="center">
 <img src="screenshots/feature_graphic.jpg">
 </p>
 
+<br></br>
+
+## Demo
+### Windows device paired with android device both connected by a same localhost
+
+https://user-images.githubusercontent.com/91400483/236869147-063d0896-669a-4ab3-a058-63ec9e64a4ce.mp4
+
+
+
+<table align="center">
+  <tr>
+    <td><img src="screenshots/phone_ss_send1.jpeg" width="250"></td>
+    <td><img src="screenshots/phone_ss_send2.jpeg" width="250"></td>
+  </tr>
+</table>
+
 ## Available at
 
-<p align="left">
+MoveIt App can be downloaded from the links below:
+
+<table>
+  <tr>
+    <th>Platforms</th>
+    <th>Download links</th>
+  </tr>
+  
+  <tr>
+    <td>Android Mobile</td>
+    <td><a href="https://play.google.com/store/apps/details?id=com.swing.moveit">
+    <img alt="Get it on Google Play"
+        height="80"
+        src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" />
+       </a>
+    </td>
+  </tr>
+
+  <tr>
+    <td>iOS Mobile</td>
+    <td>coming soon...</td>
+  </tr>
+
+  <tr>
+    <td>Windows</td>
+    <td><a href="https://github.com/debojyoti452/move_it_file_transfer/releases/tag/1.0.3">
+    <img alt="Get it on Windows"
+        height="80"
+        src="https://thestempedia.com/wp-content/uploads/2019/06/windows-button.png" />
+</a></td>
+  </tr>
+
+  <tr>
+    <td>Linux</td>
+    <td>coming soon...</td>
+  </tr>
+
+  <tr>
+    <td>MAC OS</td>
+    <td>coming soon...</td>
+  </tr>
+  
+</table>
+
+<!-- <p align="left">
 <a href="https://play.google.com/store/apps/details?id=com.swing.moveit">
     <img alt="Get it on Google Play"
         height="80"
         src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" />
 </a>
-</p>
+</p> -->
+
+## Provide Feedback, Report Bugs & Request New Features
+
+Just click on the [Issue tab](https://github.com/debojyoti452/move_it_file_transfer/issues) to raise a new issue in this repo.
+
+
 
 ## Description
 
@@ -42,11 +111,17 @@ devices.
 - Android
 - iOS
 
+## 👋Want to contribute to MoveIt?
+
+Get started with [good first issues](https://github.com/debojyoti452/move_it_file_transfer/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+
+
 ## Contributing Guide
 
 [Contributing Guide](https://github.com/debojyoti452/move_it_file_transfer/blob/main/CONTRIBUTING.md)
 
 ## Screenshots
+
 <table>
   <tr>
     <td><img src="screenshots/Screenshot_20230422-132528.png" width="250"></td>

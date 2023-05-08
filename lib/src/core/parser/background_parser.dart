@@ -22,8 +22,8 @@
  *
  */
 
-class BackgroundParser<T> {
-  String _data;
+// class BackgroundParser<T> {
+//   String _data;
 
-  BackgroundParser(this._data);
-}
+//   BackgroundParser(this._data);
+// }
