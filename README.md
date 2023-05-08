@@ -10,7 +10,6 @@
 
 ## Please support this initiative by giving this project a star ⭐️
 
-## Please support this initiative by giving this project a star ⭐️
 
 <p align="center">
 <img src="screenshots/feature_graphic.jpg">
