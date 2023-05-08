@@ -2,6 +2,11 @@
 
 
 ### AirDrop for all Platform (Windows, Linux, Mac, Android, iOS)
+<br></br>
+
+<img src="screenshots/moveit_logo_readme.png" width="100px" height="100px">
+
+<br></br>
 
 ## Please support this initiative by giving this project a star ⭐️
 
@@ -11,15 +16,19 @@
 
 <br></br>
 
-<p align="center">
-<iframe src="screenshots/windows_screenrecord.mp4" frameborder="0" ></iframe>
-</p>
+## Demo
+### Windows device paired with android device both connected by a same localhost
+
+https://user-images.githubusercontent.com/91400483/236869147-063d0896-669a-4ab3-a058-63ec9e64a4ce.mp4
 
 
-<p align="center">
-<img src="screenshots/phone_ss_send1.jpeg">
-<img src="screenshots/phone_ss_send2.jpeg">
-</p>
+
+<table align="center">
+  <tr>
+    <td><img src="screenshots/phone_ss_send1.jpeg" width="250"></td>
+    <td><img src="screenshots/phone_ss_send2.jpeg" width="250"></td>
+  </tr>
+</table>
 
 ## Available at
 
