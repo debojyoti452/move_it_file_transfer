@@ -2,11 +2,11 @@
 
 
 ### AirDrop for all Platform (Windows, Linux, Mac, Android, iOS)
-<br></br>
 
-<img src="screenshots/moveit_logo_readme.png" width="100px" height="100px">
 
-<br></br>
+<img src="screenshots/moveit_logo_readme.png" width="400px" height="400px">
+
+
 
 ## Please support this initiative by giving this project a star ⭐️
 
