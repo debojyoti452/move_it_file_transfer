@@ -1,14 +1,13 @@
+<img src="screenshots/moveit_logo_readme.png" width="90px" height="90px">
+
 # `MoveIt - File Transfer On Go 📡🔥`
 
 
-### AirDrop for all Platform (Windows, Linux, Mac, Android, iOS)
-
-
-<img src="screenshots/moveit_logo_readme.png" width="400px" height="400px">
+## AirDrop for all Platform (Windows, Linux, Mac, Android, iOS)
 
 
 
-## Please support this initiative by giving this project a star ⭐️
+### Please support this initiative by giving this project a star ⭐️
 
 
 <p align="center">
