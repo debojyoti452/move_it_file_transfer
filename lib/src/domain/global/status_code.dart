@@ -30,4 +30,5 @@ mixin StatusCode {
   static const int NEW_FILE_ACCEPTED = 904;
   static const int NEW_FILE_RECEIVER = 905;
   static const int NOTIFY_NEW_CONNECTION_REQUEST = 906;
+  static const int NOTIFY_NEW_DOWNLOAD_REQUEST = 907;
 }

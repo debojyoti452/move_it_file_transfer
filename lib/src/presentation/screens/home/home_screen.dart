@@ -39,6 +39,7 @@ import '../../widgets/dx_bottom_navigation_bar.dart';
 import '../../widgets/dx_sidebar.dart';
 import '../../widgets/extra_view.dart';
 import '../transfer/cubit/transfer_cubit.dart';
+import '../transfer/receive_file_screen.dart';
 import 'components/cubit/receive/receive_fragment_cubit.dart';
 import 'components/cubit/send/send_fragment_cubit.dart';
 import 'components/fragment/connect_history_fragment.dart';
@@ -136,6 +137,23 @@ class _HomeScreenState extends BaseStateWrapper<HomeScreen> {
                   1,
                   duration: const Duration(milliseconds: 200),
                   curve: Curves.ease,
+                );
+              },
+            );
+          }
+
+          if ((state.status as AppCubitSuccess).code ==
+              StatusCode.NOTIFY_NEW_DOWNLOAD_REQUEST) {
+            /// show notification for new file receiver
+            showNotificationView(
+              context: context,
+              message: 'New File Receiver, Tap to view',
+              onTap: () {
+                debugPrint('New File Receiver, Tap to view');
+                BotToast.cleanAll();
+                Navigator.pushNamed(
+                  context,
+                  ReceiveFileScreen.id,
                 );
               },
             );

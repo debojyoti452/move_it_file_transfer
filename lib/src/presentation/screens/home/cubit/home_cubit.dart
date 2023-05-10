@@ -152,6 +152,7 @@ class HomeCubit extends BaseCubitWrapper<HomeState> {
                 switch (status) {
                   case DownloadStatus.downloading:
                     BotToast.showText(text: 'File Transfer Success');
+                    notifyDownloadRequest();
                     break;
                   case DownloadStatus.failed:
                     BotToast.showText(text: 'File Transfer Failed');
@@ -225,13 +226,26 @@ class HomeCubit extends BaseCubitWrapper<HomeState> {
 
   /// notify if any request is available
   void notifyReceiverRequest() {
-    emit(state.copyWith(status: AppCubitLoading()));
     debugPrint('notifyRequest');
     emit(state.copyWith(
       status: AppCubitSuccess(
         code: StatusCode.NOTIFY_NEW_CONNECTION_REQUEST,
       ),
     ));
+
+    emit(state.copyWith(status: AppCubitLoading()));
+  }
+
+  /// notify if any download is available
+  void notifyDownloadRequest() {
+    debugPrint('notifyDownloadRequest');
+    emit(state.copyWith(
+      status: AppCubitSuccess(
+        code: StatusCode.NOTIFY_NEW_DOWNLOAD_REQUEST,
+      ),
+    ));
+
+    emit(state.copyWith(status: AppCubitLoading()));
   }
 
   @override
