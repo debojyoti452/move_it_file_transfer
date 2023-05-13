@@ -328,8 +328,8 @@ class _SendFileScreenState extends BaseStateWrapper<SendFileScreen> {
       );
       Navigator.pop(context);
     }
-    var clientModel = connectRequest.senderModel;
-    var userModel = connectRequest.receiverModel;
+    var clientModel = connectRequest.receiverModel;
+    var userModel = connectRequest.senderModel;
     return Column(
       children: [
         Container(

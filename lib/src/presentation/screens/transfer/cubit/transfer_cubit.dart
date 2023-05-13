@@ -196,11 +196,6 @@ class TransferCubit extends BaseCubitWrapper<TransferState> {
   void swapSenderToReceiver({bool? isSender}) async {
     var senderModel = state.connectRequest?.senderModel;
     var receiverModel = state.connectRequest?.receiverModel;
-
-    logger('Sender Model $senderModel');
-    logger('Receiver Model $receiverModel');
-    logger('Transfer Data ${state.transferData}');
-
     emitState(
       state.copyWith(
         transferData: TransferModel(
@@ -215,7 +210,6 @@ class TransferCubit extends BaseCubitWrapper<TransferState> {
         ),
       ),
     );
-    logger('Sender to Receiver swapped $state');
   }
 
   @override
