@@ -25,7 +25,7 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../data/constants/assets_constants.dart';
@@ -79,5 +79,14 @@ mixin Helper {
       debugPrint('Cannot get download folder path $err $stack');
     }
     return directory?.path ?? '/storage/emulated/0/Download';
+  }
+
+  /// Restart the root navigator
+  static void restartApp(BuildContext context) {
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      '/',
+      (route) => false,
+    );
   }
 }

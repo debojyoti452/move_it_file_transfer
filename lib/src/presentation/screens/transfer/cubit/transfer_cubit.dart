@@ -94,8 +94,6 @@ class TransferCubit extends BaseCubitWrapper<TransferState> {
       var transferModel = state.transferData;
       var fileList = state.fileList.toList();
 
-      debugPrint('transferModel: $transferModel');
-
       if (transferModel.senderModel == null ||
           transferModel.receiverModel == null ||
           (fileList.isEmpty)) {
@@ -107,12 +105,9 @@ class TransferCubit extends BaseCubitWrapper<TransferState> {
         fileList: fileList,
         transferModel: transferModel,
         onProgress: (value) {
-          log('Progress: $value');
           progressStreamController.sink.add(value);
         },
       );
-
-      debugPrint('response: $response');
 
       emitState(state.copyWith(
         status: AppCubitSuccess(),

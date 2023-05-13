@@ -22,6 +22,8 @@
  *
  */
 
+import 'dart:async';
+import 'dart:developer';
 import 'dart:isolate';
 
 import 'package:bot_toast/bot_toast.dart';
@@ -47,6 +49,7 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
 
   ReceivePort receivePort = ReceivePort();
   Isolate? searchAlgoIsolate;
+  Timer? bgSearchTimer;
 
   @override
   void initialize() async {
@@ -59,28 +62,51 @@ class SendFragmentCubit extends BaseCubitWrapper<SendFragmentState> {
       if (LocalDb.isAppOnboarded() == true) {
         var userModel = await LocalDb.getUserData();
 
+        if (userModel.clientName == null) {
+          emit(state.copyWith(
+            status: AppCubitError(message: 'User data not found', code: 500),
+          ));
+          return;
+        }
+
         emit(state.copyWith(
           userModel: userModel,
         ));
+      } else {
+        emit(state.copyWith(
+          status: AppCubitError(message: 'User data not found', code: 500),
+        ));
+        return;
       }
       emit(state.copyWith(status: AppCubitSuccess()));
-
-      /// Search nearby devices in background
-      // searchNearbyDevices();
     } catch (e) {
       debugPrint('SendFragmentState: initialHome: $e');
       emit(state.copyWith(status: AppCubitError(message: e.toString())));
     } finally {
       BotToast.closeAllLoading();
+
+      /// Search nearby devices in background
+      // runTwoMinuteService();
+    }
+  }
+
+  /// run a service after every 2 minutes to search nearby devices
+  void runTwoMinuteService() async {
+    try {
+      bgSearchTimer ??= Timer.periodic(const Duration(minutes: 2), (timer) {
+        searchNearbyDevices();
+      });
+    } catch (e) {
+      debugPrint('SendFragmentState: runTwoMinuteService: $e');
     }
   }
 
   void searchNearbyDevices() async {
-    if (state.status is AppCubitLoading) {
-      return;
-    }
+    // if (state.status is AppCubitLoading) {
+    //   return;
+    // }
     try {
-      BotToast.showLoading();
+      // BotToast.showLoading();
       emit(state.copyWith(status: AppCubitLoading()));
 
       var nearbyClients = state.nearbyClients;

@@ -65,7 +65,27 @@ class _SendFragmentState extends BaseStateWrapper<SendFragment> {
   ) {
     return BlocConsumer<SendFragmentCubit, SendFragmentState>(
       bloc: _cubit,
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state.status is AppCubitError) {
+          if ((state.status as AppCubitError).code == 500) {
+            logger('Restarting App');
+
+            /// Restart App
+            Helper.restartApp(context);
+          } else {
+            BotToast.showText(
+              text: (state.status as AppCubitError).message,
+              contentColor: ColorConstants.BLACK,
+              borderRadius: BorderRadius.circular(8.r),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 14.w,
+                vertical: 14.h,
+              ),
+              duration: const Duration(seconds: 3),
+            );
+          }
+        }
+      },
       builder: (context, state) {
         return Container(
           padding: EdgeInsets.symmetric(

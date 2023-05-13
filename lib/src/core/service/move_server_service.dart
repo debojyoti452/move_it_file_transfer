@@ -100,15 +100,6 @@ class MoveServerService extends _MoveServerInterface {
         return;
       }
       _internetAddress = await getOwnServerIpWithPort();
-      log('Server IP: ${_internetAddress.host}:${_internetAddress.port}');
-      // _server = await HttpServer.bindSecure(
-      //   _internetAddress.host,
-      //   _internetAddress.port!,
-      //   SecurityContext()
-      //     ..usePrivateKeyBytes(securityContextResult.privateKey.codeUnits)
-      //     ..useCertificateChainBytes(
-      //         securityContextResult.certificate.codeUnits),
-      // );
       _server = await HttpServer.bind(
         _internetAddress.host,
         _internetAddress.port ?? AppConstants.PORT,
@@ -158,9 +149,10 @@ class MoveServerService extends _MoveServerInterface {
     required Function(DownloadStatus) onCompleted,
   }) async {
     try {
+      debugPrint(
+          'Receiving file from device, Request: ${request.response.contentLength}');
       onCompleted(DownloadStatus.downloading);
       List<int> dataBytes = [];
-
       Directory appDocDir = await getApplicationDocumentsDirectory();
       String basePath = savePath ?? '${appDocDir.path}/move_download/';
       Directory(basePath).createSync(recursive: true);
@@ -180,23 +172,15 @@ class MoveServerService extends _MoveServerInterface {
       var fileList = <FileModel>[];
 
       for (var part in parts) {
-        debugPrint('part: ${part.headers}');
         final contentDisposition = part.headers['content-disposition'];
         final filename = RegExp(r'filename="([^"]*)"')
             .firstMatch(contentDisposition!)
             ?.group(1);
         final content = await part.toList();
 
-        debugPrint(
-            'parts: $part || content: ${content[0].length} || filename: $filename');
         if (filename == null) {
           continue;
         }
-
-        /// calculate download progress
-        var downloadProgress = content[0].length / request.contentLength;
-        var downPr = (downloadProgress / request.contentLength) * 100;
-        debugPrint('downloadProgress: $downPr');
 
         fileList.add(FileModel(
           fileName: filename,
@@ -213,7 +197,6 @@ class MoveServerService extends _MoveServerInterface {
         log('extension: ${filename.split('.').last} || size: ${content[0].length} || path: $uploadDirectory');
         var tempFile =
             await File('$uploadDirectory/$filename').writeAsBytes(content[0]);
-        debugPrint('tempFile: ${tempFile.path}');
 
         NativeCalls.saveFileMethod(
           fileName: filename,
@@ -275,8 +258,6 @@ class MoveServerService extends _MoveServerInterface {
         var updatedElement = element.copyWith(isAlreadySend: true);
         fileList[fileList.indexOf(element)] = updatedElement;
       }
-
-      debugPrint('response: ${response.data}, updatedList: $fileList');
 
       return Future.value(fileList);
     } catch (e) {

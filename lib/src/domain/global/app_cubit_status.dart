@@ -37,8 +37,9 @@ class AppCubitSuccess extends AppCubitStatus {
 
 class AppCubitError extends AppCubitStatus {
   final String message;
+  final int code;
 
-  AppCubitError({required this.message});
+  AppCubitError({required this.message, this.code = 452});
 }
 
 class AppCubitNoInternet extends AppCubitStatus {}
